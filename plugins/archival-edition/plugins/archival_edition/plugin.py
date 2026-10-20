@@ -7,11 +7,13 @@ documents to the schema and annotation guidelines in this repository.
 """
 
 import logging
+from pathlib import Path
 from typing import Any, Callable, Optional
 
 from fastapi_app.lib.core.url_cache import UrlCache
 from fastapi_app.lib.doc_rules.rules_providers import register_document_rules_provider, unregister_document_rules_provider
 from fastapi_app.lib.extraction import ExtractorRegistry
+from fastapi_app.lib.plugins.frontend_extension_registry import FrontendExtensionRegistry
 from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
 from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
 from fastapi_app.lib.secrets import register_secret_service
@@ -94,6 +96,8 @@ class ArchivalEditionPlugin(Plugin):
         register_secret_service(SECRET_SERVICE_ID, SECRET_SERVICE_LABEL, SECRET_SERVICE_DESCRIPTION, SECRET_SERVICE_HELP_URL)
         ExtractorRegistry.get_instance().register(ArchivalEditionExtractor)
         register_document_rules_provider(EXTRACTOR_ID, PLUGIN_ID, ArchivalEditionRulesProvider())
+        pb_sync = Path(__file__).parent / "extensions" / "pb-sync.js"
+        FrontendExtensionRegistry.get_instance().register_extension(pb_sync, PLUGIN_ID)
         logger.info("Archival edition plugin initialized")
 
     async def cleanup(self) -> None:
