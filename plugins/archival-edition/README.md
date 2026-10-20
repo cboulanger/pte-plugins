@@ -71,6 +71,7 @@ PDF ──► form pages (text layer) ──► form_parser.py ──► field v
 | [form_parser.py](plugins/archival_edition/form_parser.py) | Reads the form's tables from the text layer, or asks the model for scanned forms |
 | [header_builder.py](plugins/archival_edition/header_builder.py) | Maps form fields to the TEI header |
 | [transcriber.py](plugins/archival_edition/transcriber.py), [prompts/](plugins/archival_edition/prompts) | Page-by-page transcription with one repair round for malformed XML |
+| [extensions/pb-sync.js](plugins/archival_edition/extensions/pb-sync.js) | Autosearch fallback: the photographs have no text layer, so the PDF viewer scrolls to the page of the nearest preceding `<pb/>` (after the form pages). Needs the `pdfSearch.fallback` extension point of the editor |
 | [schema/](schema) | Composable RNG source of the schema |
 
 [examples/sample-letter.tei.xml](examples/sample-letter.tei.xml) shows the output for the test PDF (with a canned transcription instead of a real model).
@@ -87,6 +88,7 @@ Tests run in the Python environment of a PDF-TEI-Editor checkout (default `../pd
 
 ```bash
 uv run --project ../pdf-tei-editor python -m pytest
+PTE_ROOT=../pdf-tei-editor node --test plugins/archival_edition/tests/pb-sync.test.mjs   # frontend extension
 ```
 
 After editing anything in `schema/`, regenerate the flattened schema (written to `docs/schema/` and the plugin's `static/schema/`):
