@@ -88,7 +88,7 @@ Tests run in the Python environment of a PDF-TEI-Editor checkout (default `../pd
 
 ```bash
 uv run --project ../pdf-tei-editor python -m pytest
-PTE_ROOT=../pdf-tei-editor node --test plugins/archival_edition/tests/   # frontend extension
+PTE_ROOT=../pdf-tei-editor node --test plugins/archival_edition/tests/pb-sync.test.mjs   # frontend extension
 ```
 
 After editing anything in `schema/`, regenerate the flattened schema (written to `docs/schema/` and the plugin's `static/schema/`):
