@@ -20,6 +20,7 @@ from fastapi_app.lib.llm import LLMProvider
 from fastapi_app.lib.secrets import require_user_secret
 from fastapi_app.plugins.anthropic_llm.llm_provider import AnthropicLLMProvider
 from fastapi_app.lib.utils.annotation_rules_utils import AnnotationRuleRef
+from fastapi_app.lib.utils.annotation_tags import generate_annotation_tags
 from fastapi_app.lib.utils.config_utils import get_config
 from fastapi_app.lib.utils.debug_utils import log_extraction_response
 from fastapi_app.lib.utils.doi_utils import encode_for_xml_id
@@ -34,6 +35,9 @@ from fastapi_app.lib.utils.tei_utils import (
 
 from .config import (
     ANNOTATION_GUIDES,
+    ANNOTATION_TAG_EXCLUDE,
+    ANNOTATION_TAG_EXPAND,
+    ANNOTATION_TAG_ROOT,
     EXTRACTOR_ID,
     FORM_OPTIONS,
     GUIDELINES_MARKDOWN_URL,
@@ -48,7 +52,6 @@ from .config import (
     get_model,
     read_manifest_version,
 )
-from .annotation_tags import generate_annotation_tags
 from .form_parser import build_form_prompt, count_text_form_pages, parse_form_response, parse_form_tables
 from .header_builder import build_class_decl, build_facsimile, build_scaffold_header, main_language
 from .transcriber import plain_text, render_page_image, transcribe_page
@@ -97,7 +100,11 @@ class ArchivalEditionExtractor(BaseExtractor):
             "options": FORM_OPTIONS,
             "navigation_xpath": NAVIGATION_XPATH,
             "annotationGuides": ANNOTATION_GUIDES,
-            "annotationTags": {VARIANT_ID: generate_annotation_tags(LOCAL_SCHEMA)},
+            "annotationTags": {
+                VARIANT_ID: generate_annotation_tags(
+                    LOCAL_SCHEMA, ANNOTATION_TAG_ROOT, ANNOTATION_TAG_EXCLUDE, ANNOTATION_TAG_EXPAND
+                )
+            },
         }
 
     @classmethod

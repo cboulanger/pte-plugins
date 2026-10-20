@@ -12,7 +12,7 @@ The schema and guidelines are published at <https://cboulanger.github.io/pte-edi
 
 ## Installation
 
-The plugin needs a PDF-TEI-Editor version with support for multi-module external plugins, image input for LLM providers and per-user API keys (mpilhlt/pdf-tei-editor#566).
+The plugin needs a PDF-TEI-Editor version with support for multi-module external plugins, image input for LLM providers and per-user API keys (mpilhlt/pdf-tei-editor#566), and the shared annotation tag generator for the XML editor's visual mode (mpilhlt/pdf-tei-editor#576).
 
 1. Clone this repository next to the editor:
 
@@ -73,7 +73,6 @@ PDF ──► form pages (text layer) ──► form_parser.py ──► field v
 | [transcriber.py](plugins/archival_edition/transcriber.py), [prompts/](plugins/archival_edition/prompts) | Page-by-page transcription with one repair round for malformed XML |
 | [extensions/pb-sync.js](plugins/archival_edition/extensions/pb-sync.js) | Autosearch fallback: the photographs have no text layer, so the PDF viewer scrolls to the page of the nearest preceding `<pb/>` (after the form pages). Needs the `pdfSearch.fallback` extension point of the editor |
 | [extensions/tei-html-view.js](plugins/archival_edition/extensions/tei-html-view.js), [static/archival-edition-to-html.xsl](plugins/archival_edition/static/archival-edition-to-html.xsl) | Reading view in the XML editor's XSL viewer ("Archival edition (pages)"): the transcription as HTML, one box per page delimited by `<pb/>` |
-| [annotation_tags.py](plugins/archival_edition/annotation_tags.py) | Annotation tags for the XML editor's visual mode, generated from the schema: the inline transcription elements of `<p>` and the alternatives in `<choice>`/`<subst>` |
 | [schema/](schema) | Composable RNG source of the schema |
 
 [examples/sample-letter.tei.xml](examples/sample-letter.tei.xml) shows the output for the test PDF (with a canned transcription instead of a real model).
