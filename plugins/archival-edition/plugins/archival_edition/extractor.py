@@ -15,10 +15,10 @@ from typing import Any, Optional
 import pymupdf
 from lxml import etree
 
-from fastapi_app.lib.core.dependencies import get_auth_manager
 from fastapi_app.lib.extraction import BaseExtractor
-from fastapi_app.lib.llm import LLMProvider, LLMProviderRegistry, get_default_model
-from fastapi_app.lib.llm.model_access import check_model_access
+from fastapi_app.lib.llm import LLMProvider
+from fastapi_app.lib.secrets import require_user_secret
+from fastapi_app.plugins.anthropic_llm.llm_provider import AnthropicLLMProvider
 from fastapi_app.lib.utils.annotation_rules_utils import AnnotationRuleRef
 from fastapi_app.lib.utils.config_utils import get_config
 from fastapi_app.lib.utils.debug_utils import log_extraction_response
@@ -39,10 +39,13 @@ from .config import (
     GUIDELINES_MARKDOWN_URL,
     MAX_SCANNED_FORM_PAGES,
     NAVIGATION_XPATH,
+    SECRET_SERVICE_ID,
+    SECRET_SERVICE_LABEL,
     REPOSITORY_URL,
     SCHEMA_URL,
     VARIANT_ID,
     get_authority,
+    get_model,
 )
 from .form_parser import build_form_prompt, count_text_form_pages, parse_form_response, parse_form_tables
 from .header_builder import build_class_decl, build_facsimile, build_scaffold_header, main_language
@@ -52,7 +55,6 @@ logger = logging.getLogger(__name__)
 
 PLUGIN_VERSION = "0.1.0"
 LOCAL_SCHEMA = Path(__file__).parent / "static" / "schema" / "tei-archival.rng"
-NO_MODEL_MESSAGE = "No model is selected. Choose one under Tools > Default Model, or ask an administrator to set a default."
 
 CONTEXT_FIELDS: list[tuple[str, str]] = [
     ("doc_type", "Document type"),
@@ -88,7 +90,7 @@ class ArchivalEditionExtractor(BaseExtractor):
             "description": "Reads the Document Description Form at the start of the PDF into the TEI header and transcribes the photographed pages with the selected model",
             "input": ["pdf"],
             "output": ["tei-document"],
-            "uses_inference_model": True,
+            "uses_inference_model": False,
             "variants": [VARIANT_ID],
             "options": FORM_OPTIONS,
             "navigation_xpath": NAVIGATION_XPATH,
@@ -97,35 +99,22 @@ class ArchivalEditionExtractor(BaseExtractor):
 
     @classmethod
     def is_available(cls) -> bool:
-        """Available when at least one LLM provider is registered and usable."""
-        return bool(LLMProviderRegistry.get_instance().list_providers(available_only=True))
+        """Always available: each user supplies the Anthropic key, which is requested when it is missing."""
+        return True
 
     @staticmethod
     def _resolve_model(options: dict[str, Any]) -> tuple[LLMProvider, str]:
         """
-        The provider and model to use: `provider_id`/`model_id` from the options if
-        given, else the configured default model.
+        The provider and model to use: Claude with the key of the user who runs the extraction.
+
+        The key comes from the editor's per-user secret store, so the cost is billed to that user.
 
         Raises:
-            ValueError: If no model is configured, the provider is unknown or cannot take images
+            MissingSecretError: If the user has not stored an Anthropic key yet; the editor then asks for it
         """
-        provider_id = options.get("provider_id")
-        model_id = options.get("model_id")
-        if not (provider_id and model_id):
-            default = get_default_model()
-            if default is None:
-                raise ValueError(NO_MODEL_MESSAGE)
-            provider_id, model_id = default
-        try:
-            provider = LLMProviderRegistry.get_instance().get_provider(provider_id)
-        except KeyError as e:
-            raise ValueError(f"LLM provider '{provider_id}' is not available. {NO_MODEL_MESSAGE}") from e
-        if not provider.supports_image_input(model_id):
-            raise ValueError(f"The model '{model_id}' of '{provider.label}' cannot read images. Choose a multimodal model, e.g. Claude.")
-        username = options.get("username")
-        user = get_auth_manager().get_user_by_username(username) if username else None
-        check_model_access(provider, model_id, user)
-        return provider, model_id
+        api_key = require_user_secret(options.get("username"), SECRET_SERVICE_ID)
+        provider = AnthropicLLMProvider(id="archival-edition-anthropic", label=SECRET_SERVICE_LABEL, api_key=api_key)
+        return provider, get_model(options)
 
     async def _read_form(self, doc: pymupdf.Document, options: dict[str, Any]) -> tuple[int, dict[str, str]]:
         """

@@ -1,5 +1,8 @@
 {
   "plugin.archival-edition.authority": "Unpublished archival edition",
   "plugin.archival-edition.authority.type": "string",
-  "plugin.archival-edition.authority.description": "Responsible body recorded in publicationStmt/authority of archival edition documents"
+  "plugin.archival-edition.authority.description": "Responsible body recorded in publicationStmt/authority of archival edition documents",
+  "plugin.archival-edition.model": "claude-opus-5-5",
+  "plugin.archival-edition.model.type": "string",
+  "plugin.archival-edition.model.description": "Default Claude model for transcription when none is chosen in the extraction dialog"
 }

@@ -4,7 +4,7 @@ An external plugin for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-e
 
 It contains:
 
-- **an extractor** (`archival-edition`) for PDFs made of a filled-in [Document Description Form](plugins/archival_edition/tests/fixtures/document-description-form.docx) followed by photographs of the document. The form is read into the TEI header. The photographs are transcribed page by page by a multimodal model (Claude), diplomatically, in all languages the model supports;
+- **an extractor** (`archival-edition`) for PDFs made of a filled-in [Document Description Form](plugins/archival_edition/tests/fixtures/document-description-form.docx) followed by photographs of the document. The form is read into the TEI header. The photographs are transcribed page by page by Claude with the user's own API key, diplomatically, in all languages the model supports;
 - **a schema**, [tei-archival.rng](docs/schema/tei-archival.rng): a lightweight RELAX NG schema written from scratch (no ODD), derived from the schemas of [fossil](https://github.com/mpilhlt/fossil) and extended for archival material (`msDesc`, `correspDesc`, `facsimile`, diplomatic transcription);
 - **annotation guidelines**, [docs/guidelines.md](docs/guidelines.md), which also document how each form field maps to TEI.
 
@@ -12,7 +12,7 @@ The schema and guidelines are published at <https://cboulanger.github.io/pte-edi
 
 ## Installation
 
-The plugin needs a PDF-TEI-Editor version with support for multi-module external plugins and image input for LLM providers (mpilhlt/pdf-tei-editor#566).
+The plugin needs a PDF-TEI-Editor version with support for multi-module external plugins, image input for LLM providers and per-user API keys (mpilhlt/pdf-tei-editor#566).
 
 1. Clone this repository next to the editor:
 
@@ -36,7 +36,7 @@ The plugin needs a PDF-TEI-Editor version with support for multi-module external
      cboulanger/pdf-tei-editor:latest
    ```
 
-3. Configure a model that can read images, e.g. Claude: set `ANTHROPIC_API_KEY` for the editor's built-in Anthropic provider and choose the model under Tools > Default Model.
+3. Each user supplies their own Anthropic API key, so the cost of the transcription is billed to the user and not to the maintainer of the editor. When a user starts an extraction without a stored key, the editor asks for it and stores it encrypted (it can also be managed under the user menu > API Keys). Administrators and scripts can store keys with `uv run python bin/user-secrets.py set anthropic --user <name>` in the editor's directory. The model is chosen in the extraction dialog; `ARCHIVAL_EDITION_MODEL` (or the config key `plugin.archival-edition.model`) sets the default.
 4. Optional: set `ARCHIVAL_EDITION_AUTHORITY` (or the config key `plugin.archival-edition.authority`) to the project responsible for the edition; it goes into `publicationStmt/authority`.
 
 After a restart, "Archival Edition" appears as an external plugin in the Plugin Manager, and "Archival edition (description form + transcription)" is offered in the extraction dialog.

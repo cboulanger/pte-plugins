@@ -1,5 +1,7 @@
 """Configuration of the archival edition plugin."""
 
+from typing import Any
+
 from fastapi_app.lib.utils.config_utils import get_config
 
 EXTRACTOR_ID = "archival-edition"
@@ -17,6 +19,18 @@ AUTHORITY_CONFIG_KEY = "plugin.archival-edition.authority"
 AUTHORITY_ENV_VAR = "ARCHIVAL_EDITION_AUTHORITY"
 DEFAULT_AUTHORITY = "Unpublished archival edition"
 
+# The model is billed to the user, so it runs with the user's own Anthropic key, stored in the
+# editor's encrypted per-user secret store under this service id
+SECRET_SERVICE_ID = "anthropic"
+SECRET_SERVICE_LABEL = "Anthropic Claude"
+SECRET_SERVICE_DESCRIPTION = "The archival edition extractor sends page images to Claude with your own API key, so the cost is billed to you."
+SECRET_SERVICE_HELP_URL = "https://console.anthropic.com/settings/keys"
+
+MODEL_CONFIG_KEY = "plugin.archival-edition.model"
+MODEL_ENV_VAR = "ARCHIVAL_EDITION_MODEL"
+DEFAULT_MODEL = "claude-opus-5-5"
+MODELS = [DEFAULT_MODEL, "claude-sonnet-5-5"]
+
 # Pages read by the model when the form has no text layer (scanned form)
 MAX_SCANNED_FORM_PAGES = 6
 
@@ -27,6 +41,13 @@ FORM_OPTIONS = {
         "description": "Variant of the archival edition schema",
         "required": False,
         "options": [VARIANT_ID],
+    },
+    "model": {
+        "type": "string",
+        "label": "Claude model",
+        "description": "Model used for transcription, billed to your own API key; leave empty for the default",
+        "required": False,
+        "options": MODELS,
     },
     "transcribe": {
         "type": "string",
@@ -61,3 +82,9 @@ ANNOTATION_GUIDES = [
 def get_authority() -> str:
     """The responsible body recorded in publicationStmt/authority."""
     return str(get_config().get(AUTHORITY_CONFIG_KEY, default=DEFAULT_AUTHORITY) or DEFAULT_AUTHORITY)
+
+
+def get_model(options: dict[str, Any]) -> str:
+    """The model chosen in the extraction options, else the configured default."""
+    chosen = str(options.get("model") or "").strip()
+    return chosen or str(get_config().get(MODEL_CONFIG_KEY, default=DEFAULT_MODEL) or DEFAULT_MODEL)

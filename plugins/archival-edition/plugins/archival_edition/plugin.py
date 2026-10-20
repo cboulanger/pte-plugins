@@ -14,15 +14,23 @@ from fastapi_app.lib.doc_rules.rules_providers import register_document_rules_pr
 from fastapi_app.lib.extraction import ExtractorRegistry
 from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
 from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
+from fastapi_app.lib.secrets import register_secret_service
 from fastapi_app.lib.utils.annotation_rules_utils import AnnotationRuleRef
 
 from .config import (
     AUTHORITY_CONFIG_KEY,
     AUTHORITY_ENV_VAR,
     DEFAULT_AUTHORITY,
+    DEFAULT_MODEL,
     EXTRACTOR_ID,
     GUIDELINES_MARKDOWN_URL,
+    MODEL_CONFIG_KEY,
+    MODEL_ENV_VAR,
     PLUGIN_ID,
+    SECRET_SERVICE_DESCRIPTION,
+    SECRET_SERVICE_HELP_URL,
+    SECRET_SERVICE_ID,
+    SECRET_SERVICE_LABEL,
     SCHEMA_URL,
     VARIANT_ID,
 )
@@ -57,6 +65,12 @@ class ArchivalEditionPlugin(Plugin):
             default=DEFAULT_AUTHORITY,
             description="Responsible body recorded in publicationStmt/authority of archival edition documents",
         )
+        get_plugin_config(
+            MODEL_CONFIG_KEY,
+            MODEL_ENV_VAR,
+            default=DEFAULT_MODEL,
+            description="Default Claude model for transcription when none is chosen in the extraction dialog",
+        )
 
     @property
     def metadata(self) -> dict[str, Any]:
@@ -77,6 +91,7 @@ class ArchivalEditionPlugin(Plugin):
 
     async def initialize(self, context: PluginContext) -> None:
         """Register the extractor and the document rules provider."""
+        register_secret_service(SECRET_SERVICE_ID, SECRET_SERVICE_LABEL, SECRET_SERVICE_DESCRIPTION, SECRET_SERVICE_HELP_URL)
         ExtractorRegistry.get_instance().register(ArchivalEditionExtractor)
         register_document_rules_provider(EXTRACTOR_ID, PLUGIN_ID, ArchivalEditionRulesProvider())
         logger.info("Archival edition plugin initialized")

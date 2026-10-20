@@ -6,12 +6,14 @@ the plugin from FASTAPI_PLUGIN_PATHS.
 import asyncio
 import os
 import unittest
+import unittest.mock
 from pathlib import Path
 from unittest.mock import patch
 
 from lxml import etree
 
-from fastapi_app.lib.llm import LLMImage, LLMModel, LLMProvider, LLMProviderRegistry
+from fastapi_app.lib.llm import LLMImage, LLMModel, LLMProvider
+from fastapi_app.lib.secrets import MissingSecretError
 
 from archival_edition import extractor as extractor_module
 from archival_edition.extractor import ArchivalEditionExtractor
@@ -65,25 +67,41 @@ class TestTranscriberHelpers(unittest.TestCase):
             parse_fragment("Here is the transcription: <p>a</p>")
 
 
-@patch.object(extractor_module, "check_model_access", lambda provider, model_id, user: None)
 @patch.object(extractor_module, "get_authority", lambda: "Test project")
 @patch.object(extractor_module, "log_extraction_response", lambda *args, **kwargs: None)
 class TestExtractor(unittest.TestCase):
 
     def setUp(self):
         self.provider = FakeProvider()
-        LLMProviderRegistry.get_instance().register(self.provider)
-        self.config = patch.object(extractor_module, "get_config")
-        self.config.start().return_value.get.return_value = ["Extraction"]
+        self.api_keys: list[tuple[object, str]] = []
+        self.models: list[str] = []
+
+        def require_user_secret(username, service):
+            self.api_keys.append((username, service))
+            if username != "alice":
+                raise MissingSecretError(service, username)
+            return "sk-test"
+
+        def make_provider(id, label, api_key):
+            self.assertEqual(api_key, "sk-test")
+            return self.provider
+
+        self.patches = [
+            patch.object(extractor_module, "get_config", return_value=unittest.mock.MagicMock(get=lambda *a, **k: ["Extraction"])),
+            patch.object(extractor_module, "require_user_secret", require_user_secret),
+            patch.object(extractor_module, "AnthropicLLMProvider", make_provider),
+        ]
+        for p in self.patches:
+            p.start()
 
     def tearDown(self):
-        self.config.stop()
-        LLMProviderRegistry.get_instance().unregister("fake")
+        for p in self.patches:
+            p.stop()
 
     def extract(self, **options: str) -> etree._Element:
         xml = asyncio.run(ArchivalEditionExtractor().extract(
             pdf_path=str(FIXTURES / "sample-letter.pdf"),
-            options={"provider_id": "fake", "model_id": "m", "stable_id": "abc123", **options},
+            options={"username": "alice", "stable_id": "abc123", **options},
         ))
         self.assertTrue(xml.startswith("<?xml-model href=\"https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng\""))
         return etree.fromstring(xml.encode("utf-8"))
@@ -107,8 +125,24 @@ class TestExtractor(unittest.TestCase):
         self.assertEqual(tei.xpath("//tei:closer/tei:signed/text()", namespaces=NS), ["Teszt Elek"])
         self.assertEqual(tei.xpath("//tei:application[@type='extractor']/@ident", namespaces=NS), ["archival-edition"])
         self.assertEqual(tei.xpath("//tei:label[@type='variant-id']/text()", namespaces=NS), ["archival-edition"])
-        self.assertEqual(tei.xpath("//tei:respStmt[tei:resp='automatic transcription']/tei:orgName/text()", namespaces=NS), ["Fake / m"])
+        self.assertEqual(tei.xpath("//tei:respStmt[tei:resp='automatic transcription']/tei:orgName/text()", namespaces=NS), ["Fake / claude-opus-5-5"])
         self.assertTrue(tei.xpath("//tei:interpretation//tei:ref[contains(@target, 'guidelines.md')]", namespaces=NS))
+
+    def test_uses_the_key_of_the_user_and_the_chosen_model(self):
+        self.extract(model="claude-sonnet-5-5")
+        self.assertEqual(set(self.api_keys), {("alice", "anthropic")})
+
+    def test_missing_key_asks_the_editor_to_prompt(self):
+        with self.assertRaises(MissingSecretError) as ctx:
+            asyncio.run(ArchivalEditionExtractor().extract(
+                pdf_path=str(FIXTURES / "sample-letter.pdf"), options={"username": "bob", "stable_id": "abc123"},
+            ))
+        self.assertEqual(ctx.exception.service, "anthropic")
+        self.assertEqual(self.provider.image_calls, [])
+
+    def test_header_only_needs_no_key(self):
+        self.extract(transcribe="no", username="bob")
+        self.assertEqual(self.api_keys, [])
 
     def test_header_only(self):
         tei = self.extract(transcribe="no")
