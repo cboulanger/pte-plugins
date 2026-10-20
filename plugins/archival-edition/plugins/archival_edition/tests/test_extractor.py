@@ -98,9 +98,9 @@ class TestExtractor(unittest.TestCase):
         for p in self.patches:
             p.stop()
 
-    def extract(self, **options: str) -> etree._Element:
+    def extract(self, pdf: str = "sample-letter.pdf", **options: str) -> etree._Element:
         xml = asyncio.run(ArchivalEditionExtractor().extract(
-            pdf_path=str(FIXTURES / "sample-letter.pdf"),
+            pdf_path=str(FIXTURES / pdf),
             options={"username": "alice", "stable_id": "abc123", **options},
         ))
         self.assertTrue(xml.startswith("<?xml-model href=\"https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng\""))
@@ -149,6 +149,12 @@ class TestExtractor(unittest.TestCase):
         self.assert_valid(tei)
         self.assertEqual(self.provider.image_calls, [])
         self.assertEqual(len(tei.xpath("//tei:pb", namespaces=NS)), 2)
+
+    def test_handwritten_example(self):
+        tei = self.extract("schlote-letter-1906.pdf", transcribe="no")
+        self.assert_valid(tei)
+        self.assertEqual(tei.xpath("//tei:pb/@n", namespaces=NS), ["1r", "1v-2r", "2v"])
+        self.assertEqual(tei.xpath("//tei:text/@xml:lang", namespaces=NS), ["de"])
 
 
 class TestPluginLoading(unittest.TestCase):

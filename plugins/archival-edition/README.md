@@ -75,6 +75,8 @@ PDF ──► form pages (text layer) ──► form_parser.py ──► field v
 
 [examples/sample-letter.tei.xml](examples/sample-letter.tei.xml) shows the output for the test PDF (with a canned transcription instead of a real model).
 
+[schlote-letter-1906.pdf](plugins/archival_edition/tests/fixtures/schlote-letter-1906.pdf) is an example of a real input PDF: the filled-in form followed by the scans of a handwritten letter from 1906 (German Kurrent script with Chinese numerals, CC0, from Wikimedia Commons; see the [fixtures README](plugins/archival_edition/tests/fixtures/README.md)). Upload it to the editor to try the extractor.
+
 ## Extending the PDF-TEI-Editor
 
 This repository is an example of a plugin that lives outside the editor's source tree. How external plugins work (discovery, the `pte-plugin.json` marker, packages, routes, static files, dependencies) is described in the editor's [backend plugin guide](https://github.com/mpilhlt/pdf-tei-editor/blob/devel/docs/code-assistant/backend-plugins.md#external-plugins).
