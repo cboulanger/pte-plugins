@@ -15,14 +15,19 @@ class AnnotationTagsTest(unittest.TestCase):
         for name in ("unclear", "gap", "del", "add", "persName", "placeName", "date", "choice", "supplied"):
             self.assertIn(name, self.tags)
 
+    def test_letter_structure_elements_are_tags(self) -> None:
+        for name in ("opener", "dateline", "salute", "p", "ab", "list", "item", "closer", "signed", "postscript"):
+            self.assertIn(name, self.tags)
+
     def test_alternatives_in_choice_and_subst_are_tags(self) -> None:
         for name in ("abbr", "expan", "sic", "corr", "orig", "reg"):
             self.assertIn(name, self.tags)
 
-    def test_milestones_are_not_tags(self) -> None:
-        for name in ("lb", "pb", "cb", "milestone"):
-            self.assertNotIn(name, self.tags)
-            self.assertNotIn(name, self.tags["p"]["childTags"])
+    def test_empty_elements_are_marked_empty(self) -> None:
+        for name in ("lb", "pb", "cb", "milestone", "gap", "space", "ptr"):
+            self.assertTrue(self.tags[name]["empty"], name)
+        for name in ("p", "unclear", "choice", "list"):
+            self.assertFalse(self.tags[name]["empty"], name)
 
     def test_tag_data(self) -> None:
         unclear = self.tags["unclear"]
