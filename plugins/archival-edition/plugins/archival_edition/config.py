@@ -88,10 +88,12 @@ NAVIGATION_XPATH = {
 
 # Chips of the XML editor's visual mode: the elements allowed in a <div> (opener, dateline, salute, p, ab, list,
 # closer, signed, postscript, ...), the inline transcription elements inside them, the items of lists and the
-# alternatives grouped in <choice>/<subst> (abbr/expan, sic/corr, orig/reg), without the empty milestones.
+# alternatives grouped in <choice>/<subst> (abbr/expan, sic/corr, orig/reg). Empty elements (lb, pb, cb, milestone,
+# gap, space, ptr) become clickable badges for their attributes and are not offered for tagging text; <desc> (inside
+# <gap>) is not a chip, so <gap> counts as empty.
 # ANNOTATION_TAG_EXPAND is processed in order, so a parent comes before the elements found inside it.
 ANNOTATION_TAG_ROOT = "div"
-ANNOTATION_TAG_EXCLUDE = {"lb", "pb", "cb", "milestone"}
+ANNOTATION_TAG_EXCLUDE = {"desc"}
 ANNOTATION_TAG_EXPAND = ["p", "opener", "closer", "list", "choice", "subst"]
 
 ANNOTATION_GUIDES = [
