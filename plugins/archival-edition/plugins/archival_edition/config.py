@@ -1,8 +1,21 @@
 """Configuration of the archival edition plugin."""
 
+import json
+from pathlib import Path
 from typing import Any
 
 from fastapi_app.lib.utils.config_utils import get_config
+
+MANIFEST_FILE = Path(__file__).parent / "pte-plugin.json"
+
+
+def read_manifest_version() -> str:
+    """The plugin version, declared once in pte-plugin.json (which also holds the compatible editor versions)."""
+    try:
+        return str(json.loads(MANIFEST_FILE.read_text(encoding="utf-8"))["version"])
+    except (OSError, ValueError, KeyError):
+        return "0.0.0"
+
 
 EXTRACTOR_ID = "archival-edition"
 VARIANT_ID = "archival-edition"

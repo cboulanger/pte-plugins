@@ -20,7 +20,7 @@ The plugin needs a PDF-TEI-Editor version with support for multi-module external
    git clone https://github.com/cboulanger/pte-edition-plugin.git /opt/pte-edition-plugin
    ```
 
-2. Point the editor to the `plugins/` directory (the plugin has a `pte-plugin.json` marker, so the editor finds it). The variable can list several directories, separated by `:` (`;` on Windows):
+2. Point the editor to the `plugins/` directory (the plugin's `pte-plugin.json` marks it as a plugin and declares its version and the editor versions it works with; an incompatible plugin is shown as "Incompatible" in the plugin manager and not loaded). The variable can list several directories, separated by `:` (`;` on Windows):
 
    ```bash
    # .env of the editor

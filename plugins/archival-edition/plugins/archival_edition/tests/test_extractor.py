@@ -151,6 +151,18 @@ class TestExtractor(unittest.TestCase):
         self.assertEqual(len(tei.xpath("//tei:pb", namespaces=NS)), 2)
 
 
+class TestManifest(unittest.TestCase):
+    """pte-plugin.json declares the plugin version and the compatible editor versions."""
+
+    def test_manifest_is_valid_and_the_plugin_version_comes_from_it(self):
+        from fastapi_app.lib.plugins.plugin_manifest import read_manifest
+        from fastapi_app.lib.utils.semver import satisfies
+        manifest = read_manifest(PLUGIN_DIR)
+        assert manifest is not None and manifest.version and manifest.pte
+        self.assertEqual(extractor_module.PLUGIN_VERSION, manifest.version)
+        self.assertTrue(satisfies("0.75.0", manifest.pte))
+
+
 class TestPluginLoading(unittest.TestCase):
     """The plugin loads from FASTAPI_PLUGIN_PATHS as an external, multi-module plugin."""
 

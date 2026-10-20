@@ -46,6 +46,7 @@ from .config import (
     VARIANT_ID,
     get_authority,
     get_model,
+    read_manifest_version,
 )
 from .form_parser import build_form_prompt, count_text_form_pages, parse_form_response, parse_form_tables
 from .header_builder import build_class_decl, build_facsimile, build_scaffold_header, main_language
@@ -53,7 +54,7 @@ from .transcriber import plain_text, render_page_image, transcribe_page
 
 logger = logging.getLogger(__name__)
 
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = read_manifest_version()
 LOCAL_SCHEMA = Path(__file__).parent / "static" / "schema" / "tei-archival.rng"
 
 CONTEXT_FIELDS: list[tuple[str, str]] = [
