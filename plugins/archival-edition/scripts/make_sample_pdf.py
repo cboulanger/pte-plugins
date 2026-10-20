@@ -58,14 +58,14 @@ VALUES = {
 }
 
 
-def fill_form(target: Path) -> None:
-    """Write the filled form to target."""
+def fill_form(target: Path, values: dict[str, str] = VALUES) -> None:
+    """Write the form filled with values (keyed by field label) to target."""
     document = docx.Document(str(FORM))
     for table in document.tables:
         for row in table.rows[1:]:
             label = row.cells[0].text.strip()
-            if label in VALUES:
-                row.cells[2].text = VALUES[label]
+            if label in values:
+                row.cells[2].text = values[label]
     document.save(str(target))
 
 

@@ -55,6 +55,8 @@ def _cell_text(page: pymupdf.Page, bbox: tuple[float, float, float, float] | Non
     if bbox is None:
         return ""
     text = page.get_text("text", clip=pymupdf.Rect(bbox), flags=0)
+    # a line wrapped after a hyphen ("German-|style", "1v-|2r") continues the word
+    text = re.sub(r"(?<=\w-)\s*\n\s*", "", text)
     return re.sub(r"\s+", " ", text).strip()
 
 
