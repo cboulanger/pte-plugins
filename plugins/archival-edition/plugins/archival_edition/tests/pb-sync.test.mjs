@@ -31,6 +31,12 @@ test('content after the second <pb/> is on the second photograph', () => {
   assert.equal(pageForNode(closer, 8), 8);
 });
 
+test('a <pb/> maps to its own photograph', () => {
+  const pbs = doc.getElementsByTagNameNS(TEI, 'pb');
+  assert.equal(pageForNode(pbs[0], 8), 7);
+  assert.equal(pageForNode(pbs[1], 8), 8);
+});
+
 test('a page outside the PDF is rejected', () => {
   assert.equal(pageForNode(first('closer'), 7), null);
 });

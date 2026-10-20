@@ -35,7 +35,8 @@ export default class ArchivalPbSyncExtension extends FrontendExtensionPlugin {
 
   /**
    * The PDF page showing the start of a node: the photograph of the nearest preceding <pb/>
-   * (or of the first <pb/> for content before it), after the form pages.
+   * (or of the first <pb/> for content before it), after the form pages. A <pb/> itself, as
+   * selected by the "<pb>" navigation, maps to its own photograph.
    * @param {Node} node
    * @param {number} pageCount - number of pages of the PDF
    * @returns {number|null} 1-based page, or null if the document is not an archival edition
@@ -52,8 +53,9 @@ export default class ArchivalPbSyncExtension extends FrontendExtensionPlugin {
 
     const pbs = Array.from(doc.getElementsByTagNameNS(TEI_NS, 'pb'));
     if (pbs.length === 0) return null;
-    // pbs are in document order; count those that precede the node and do not lie inside it
-    const preceding = pbs.filter(pb => node.compareDocumentPosition(pb) & Node.DOCUMENT_POSITION_PRECEDING).length;
+    // pbs are in document order; count those that precede the node and do not lie inside it,
+    // and the node itself if it is a pb
+    const preceding = pbs.filter(pb => pb === node || node.compareDocumentPosition(pb) & Node.DOCUMENT_POSITION_PRECEDING).length;
     const page = formPages + Math.max(preceding, 1);
     return page <= pageCount ? page : null;
   }
