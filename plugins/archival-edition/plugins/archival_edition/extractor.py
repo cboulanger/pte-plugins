@@ -48,6 +48,7 @@ from .config import (
     get_model,
     read_manifest_version,
 )
+from .annotation_tags import generate_annotation_tags
 from .form_parser import build_form_prompt, count_text_form_pages, parse_form_response, parse_form_tables
 from .header_builder import build_class_decl, build_facsimile, build_scaffold_header, main_language
 from .transcriber import plain_text, render_page_image, transcribe_page
@@ -96,6 +97,7 @@ class ArchivalEditionExtractor(BaseExtractor):
             "options": FORM_OPTIONS,
             "navigation_xpath": NAVIGATION_XPATH,
             "annotationGuides": ANNOTATION_GUIDES,
+            "annotationTags": {VARIANT_ID: generate_annotation_tags(LOCAL_SCHEMA)},
         }
 
     @classmethod
