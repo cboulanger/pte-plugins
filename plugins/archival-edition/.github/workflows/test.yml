@@ -9,7 +9,7 @@ env:
   # pdf-tei-editor branch to test against. External multi-module plugins and
   # image input for LLM providers need mpilhlt/pdf-tei-editor#566; switch to
   # "devel" once it is merged.
-  PTE_REF: claude/project-thread-1a12hz
+  PTE_REF: devel
 
 jobs:
   test:
