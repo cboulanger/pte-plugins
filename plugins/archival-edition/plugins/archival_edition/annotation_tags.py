@@ -10,10 +10,14 @@ around text.
 
 import copy
 import hashlib
+import tempfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import TypedDict
 
 from fastapi_app.lib.utils.relaxng_to_codemirror import RelaxNGParser, TagAttribute, TagVariant
+
+RNG_NS = "{http://relaxng.org/ns/structure/1.0}"
 
 # Element whose content model holds the inline transcription markup
 ROOT_TAG = "p"
@@ -55,6 +59,25 @@ def _color_for_tag(tag_name: str, taken: set[str]) -> str:
     return PALETTE[index]
 
 
+def _parse_schema(schema_path: Path) -> RelaxNGParser:
+    """
+    Parse the schema with `<mixed>p</mixed>` rewritten as `<interleave><text/>p</interleave>`.
+
+    The schema's paragraph content is `<mixed>`, which editor versions without mpilhlt/pdf-tei-editor#575 do not
+    descend into; the rewrite is equivalent RELAX NG and a no-op for versions that handle `<mixed>` themselves.
+    """
+    tree = ET.parse(schema_path)
+    for mixed in tree.getroot().iter(f"{RNG_NS}mixed"):
+        mixed.tag = f"{RNG_NS}interleave"
+        mixed.insert(0, ET.Element(f"{RNG_NS}text"))
+    parser = RelaxNGParser(include_global_attrs=False, sort_alphabetically=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        normalized = Path(tmp) / schema_path.name
+        tree.write(normalized, encoding="utf-8", xml_declaration=True)
+        parser.parse_file(str(normalized))
+    return parser
+
+
 def generate_annotation_tags(schema_path: Path) -> list[AnnotationTag]:
     """The annotation tags derived from the schema at `schema_path`; empty if the file does not exist."""
     if not schema_path.is_file():
@@ -64,8 +87,7 @@ def generate_annotation_tags(schema_path: Path) -> list[AnnotationTag]:
     if cached is not None and cached[0] == mtime:
         return copy.deepcopy(cached[1])
 
-    parser = RelaxNGParser(include_global_attrs=False, sort_alphabetically=True)
-    parser.parse_file(str(schema_path))
+    parser = _parse_schema(schema_path)
     definitions = parser.extract_tag_definitions(ROOT_TAG, EXCLUDE)
     for group in GROUPING_TAGS:
         children = definitions[group]["children"] if group in definitions else []
