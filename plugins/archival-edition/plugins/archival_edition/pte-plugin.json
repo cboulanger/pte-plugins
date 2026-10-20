@@ -1,5 +1,6 @@
 {
   "version": "0.1.0",
+  "readme": "https://github.com/cboulanger/pte-edition-plugin#readme",
   "engines": {
     "pte": ">=0.74.0"
   }
