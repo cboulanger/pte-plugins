@@ -108,6 +108,8 @@ class ArchivalEditionPlugin(Plugin):
             register_bundled_schema(SCHEMA_URL, LOCAL_SCHEMA)
         pb_sync = Path(__file__).parent / "extensions" / "pb-sync.js"
         FrontendExtensionRegistry.get_instance().register_extension(pb_sync, PLUGIN_ID)
+        html_view = Path(__file__).parent / "extensions" / "tei-html-view.js"
+        FrontendExtensionRegistry.get_instance().register_extension(html_view, PLUGIN_ID)
         logger.info("Archival edition plugin initialized")
 
     async def cleanup(self) -> None:

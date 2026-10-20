@@ -72,6 +72,7 @@ PDF ──► form pages (text layer) ──► form_parser.py ──► field v
 | [header_builder.py](plugins/archival_edition/header_builder.py) | Maps form fields to the TEI header |
 | [transcriber.py](plugins/archival_edition/transcriber.py), [prompts/](plugins/archival_edition/prompts) | Page-by-page transcription with one repair round for malformed XML |
 | [extensions/pb-sync.js](plugins/archival_edition/extensions/pb-sync.js) | Autosearch fallback: the photographs have no text layer, so the PDF viewer scrolls to the page of the nearest preceding `<pb/>` (after the form pages). Needs the `pdfSearch.fallback` extension point of the editor |
+| [extensions/tei-html-view.js](plugins/archival_edition/extensions/tei-html-view.js), [static/archival-edition-to-html.xsl](plugins/archival_edition/static/archival-edition-to-html.xsl) | Reading view in the XML editor's XSL viewer ("Archival edition (pages)"): the transcription as HTML, one box per page delimited by `<pb/>` |
 | [schema/](schema) | Composable RNG source of the schema |
 
 [examples/sample-letter.tei.xml](examples/sample-letter.tei.xml) shows the output for the test PDF (with a canned transcription instead of a real model).
