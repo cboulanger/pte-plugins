@@ -186,5 +186,24 @@ class TestPluginLoading(unittest.TestCase):
         self.assertEqual(type(record.plugin).__module__, "pte_external_plugins.archival_edition.plugin")
 
 
+class TestBundledSchema(unittest.TestCase):
+    """Validation uses the schema shipped with the plugin instead of downloading SCHEMA_URL."""
+
+    def test_validates_without_network(self):
+        import tempfile
+        from fastapi_app.lib.core import schema_validator
+        if not hasattr(schema_validator, "register_bundled_schema"):
+            self.skipTest("editor version without register_bundled_schema")
+        from archival_edition.plugin import ArchivalEditionPlugin
+
+        plugin = ArchivalEditionPlugin()
+        asyncio.run(plugin.initialize(unittest.mock.MagicMock()))
+        self.addCleanup(lambda: asyncio.run(plugin.cleanup()))
+        xml = (PLUGIN_DIR.parent.parent / "examples" / "sample-letter.tei.xml").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as cache_root, \
+                patch.object(schema_validator.requests, "get", side_effect=AssertionError("no download expected")):
+            self.assertEqual(schema_validator.validate(xml, cache_root=Path(cache_root)), [])
+
+
 if __name__ == "__main__":
     unittest.main()
