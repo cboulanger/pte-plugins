@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  # pdf-tei-editor branch to test against. External multi-module plugins and
+  # image input for LLM providers need mpilhlt/pdf-tei-editor#566; switch to
+  # "devel" once it is merged.
+  PTE_REF: claude/project-thread-1a12hz
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: pte-edition-plugin
+
+      - uses: actions/checkout@v4
+        with:
+          repository: mpilhlt/pdf-tei-editor
+          ref: ${{ env.PTE_REF }}
+          path: pdf-tei-editor
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install pdf-tei-editor's Python environment
+        run: uv sync --project pdf-tei-editor
+
+      - name: Check that the generated schema is up to date
+        working-directory: pte-edition-plugin
+        run: uv run --project ../pdf-tei-editor python scripts/build_schema.py --check
+
+      - name: Run tests
+        working-directory: pte-edition-plugin
+        env:
+          PTE_ROOT: ${{ github.workspace }}/pdf-tei-editor
+        run: uv run --project ../pdf-tei-editor python -m pytest -q

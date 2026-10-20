@@ -1,0 +1,5 @@
+{
+  "plugin.archival-edition.authority": "Unpublished archival edition",
+  "plugin.archival-edition.authority.type": "string",
+  "plugin.archival-edition.authority.description": "Responsible body recorded in publicationStmt/authority of archival edition documents"
+}
