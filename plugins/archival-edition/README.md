@@ -12,7 +12,7 @@ The schema and guidelines are published at <https://cboulanger.github.io/pte-edi
 
 ## Installation
 
-The plugin needs a PDF-TEI-Editor version with support for multi-module external plugins, image input for LLM providers and per-user API keys (mpilhlt/pdf-tei-editor#566).
+The plugin needs a PDF-TEI-Editor version with support for multi-module external plugins, image input for LLM providers and per-user API keys (mpilhlt/pdf-tei-editor#566), and the shared annotation tag generator for the XML editor's visual mode (mpilhlt/pdf-tei-editor#576).
 
 1. Clone this repository next to the editor:
 

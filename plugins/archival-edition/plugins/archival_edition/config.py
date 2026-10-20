@@ -86,6 +86,12 @@ NAVIGATION_XPATH = {
     ]
 }
 
+# Chips of the XML editor's visual mode: the inline transcription elements of <p> and the alternatives grouped
+# in <choice>/<subst> (abbr/expan, sic/corr, orig/reg), without the empty milestones
+ANNOTATION_TAG_ROOT = "p"
+ANNOTATION_TAG_EXCLUDE = {"lb", "pb", "cb", "milestone"}
+ANNOTATION_TAG_EXPAND = ["choice", "subst"]
+
 ANNOTATION_GUIDES = [
     {"variant_ids": [VARIANT_ID], "category": "primary", "type": "markdown", "url": GUIDELINES_MARKDOWN_URL},
     {"variant_ids": [VARIANT_ID], "category": "primary", "type": "html", "url": GUIDELINES_HTML_URL},
