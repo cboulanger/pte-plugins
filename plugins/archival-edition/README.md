@@ -4,7 +4,7 @@ An external plugin for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-e
 
 It contains:
 
-- **an extractor** (`archival-edition`) for PDFs made of a filled-in [Document Description Form](plugins/archival_edition/tests/fixtures/document-description-form.docx) followed by photographs of the document. The form is read into the TEI header. The photographs are transcribed page by page by a multimodal model (Claude), diplomatically and in Hungarian, English or German;
+- **an extractor** (`archival-edition`) for PDFs made of a filled-in [Document Description Form](plugins/archival_edition/tests/fixtures/document-description-form.docx) followed by photographs of the document. The form is read into the TEI header. The photographs are transcribed page by page by a multimodal model (Claude), diplomatically, in all languages the model supports;
 - **a schema**, [tei-archival.rng](docs/schema/tei-archival.rng): a lightweight RELAX NG schema written from scratch (no ODD), derived from the schemas of [fossil](https://github.com/mpilhlt/fossil) and extended for archival material (`msDesc`, `correspDesc`, `facsimile`, diplomatic transcription);
 - **annotation guidelines**, [docs/guidelines.md](docs/guidelines.md), which also document how each form field maps to TEI.
 
@@ -20,7 +20,7 @@ The plugin needs a PDF-TEI-Editor version with support for multi-module external
    git clone https://github.com/cboulanger/pte-edition-plugin.git /opt/pte-edition-plugin
    ```
 
-2. Point the editor to the `plugins/` directory, which can hold several plugins. Separate several directories with `:` (`;` on Windows):
+2. Point the editor to the `plugins/` directory (the plugin has a `pte-plugin.json` marker, so the editor finds it). The variable can list several directories, separated by `:` (`;` on Windows):
 
    ```bash
    # .env of the editor
@@ -75,14 +75,9 @@ PDF ──► form pages (text layer) ──► form_parser.py ──► field v
 
 [examples/sample-letter.tei.xml](examples/sample-letter.tei.xml) shows the output for the test PDF (with a canned transcription instead of a real model).
 
-## Extending the PDF-TEI-Editor with external plugins
+## Extending the PDF-TEI-Editor
 
-This repository is a template for plugins that live outside the editor's source tree:
-
-- `FASTAPI_PLUGIN_PATHS` lists directories. Every directory below them (up to three levels deep) with a `plugin.py` and a `pte-plugin.json` marker file is one plugin, so you can also point it to the folder this repository is cloned into. Put several plugins side by side in `plugins/`.
-- A plugin is a Python package (`pte_external_plugins.<directory>` at runtime), so it can be split into modules with relative imports. Import the editor's API with absolute imports (`from fastapi_app.lib.extraction import BaseExtractor`).
-- `routes.py`, `static/` (served at `/api/plugins/<plugin-id>/static/`) and frontend extensions work as for built-in plugins. See the editor's [backend plugin guide](https://github.com/mpilhlt/pdf-tei-editor/blob/devel/docs/code-assistant/backend-plugins.md#external-plugins).
-- Plugins cannot add Python dependencies to the editor's environment; use what the editor installs or install extra packages in the deployment.
+This repository is an example of a plugin that lives outside the editor's source tree. How external plugins work (discovery, the `pte-plugin.json` marker, packages, routes, static files, dependencies) is described in the editor's [backend plugin guide](https://github.com/mpilhlt/pdf-tei-editor/blob/devel/docs/code-assistant/backend-plugins.md#external-plugins).
 
 ## Development
 
