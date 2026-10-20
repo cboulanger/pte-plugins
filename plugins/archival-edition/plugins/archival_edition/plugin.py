@@ -36,7 +36,14 @@ from .config import (
     SCHEMA_URL,
     VARIANT_ID,
 )
-from .extractor import PLUGIN_VERSION, ArchivalEditionExtractor
+from .extractor import LOCAL_SCHEMA, PLUGIN_VERSION, ArchivalEditionExtractor
+
+try:
+    # Editor versions without it download the schema from SCHEMA_URL (GitHub Pages)
+    from fastapi_app.lib.core.schema_validator import register_bundled_schema, unregister_bundled_schema
+except ImportError:
+    register_bundled_schema = None
+    unregister_bundled_schema = None
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +103,9 @@ class ArchivalEditionPlugin(Plugin):
         register_secret_service(SECRET_SERVICE_ID, SECRET_SERVICE_LABEL, SECRET_SERVICE_DESCRIPTION, SECRET_SERVICE_HELP_URL)
         ExtractorRegistry.get_instance().register(ArchivalEditionExtractor)
         register_document_rules_provider(EXTRACTOR_ID, PLUGIN_ID, ArchivalEditionRulesProvider())
+        if register_bundled_schema is not None:
+            # validate against the schema of the installed plugin, without depending on GitHub Pages
+            register_bundled_schema(SCHEMA_URL, LOCAL_SCHEMA)
         pb_sync = Path(__file__).parent / "extensions" / "pb-sync.js"
         FrontendExtensionRegistry.get_instance().register_extension(pb_sync, PLUGIN_ID)
         logger.info("Archival edition plugin initialized")
@@ -104,3 +114,5 @@ class ArchivalEditionPlugin(Plugin):
         """Unregister the extractor and the document rules provider."""
         ExtractorRegistry.get_instance().unregister(EXTRACTOR_ID)
         unregister_document_rules_provider(EXTRACTOR_ID)
+        if unregister_bundled_schema is not None:
+            unregister_bundled_schema(SCHEMA_URL)
