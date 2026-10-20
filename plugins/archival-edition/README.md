@@ -79,7 +79,7 @@ PDF ──► form pages (text layer) ──► form_parser.py ──► field v
 
 This repository is a template for plugins that live outside the editor's source tree:
 
-- `FASTAPI_PLUGIN_PATHS` lists directories; every subdirectory with a `plugin.py` is one plugin. Put several plugins side by side in `plugins/`.
+- `FASTAPI_PLUGIN_PATHS` lists directories. Every directory below them (up to three levels deep) with a `plugin.py` and a `pte-plugin.json` marker file is one plugin, so you can also point it to the folder this repository is cloned into. Put several plugins side by side in `plugins/`.
 - A plugin is a Python package (`pte_external_plugins.<directory>` at runtime), so it can be split into modules with relative imports. Import the editor's API with absolute imports (`from fastapi_app.lib.extraction import BaseExtractor`).
 - `routes.py`, `static/` (served at `/api/plugins/<plugin-id>/static/`) and frontend extensions work as for built-in plugins. See the editor's [backend plugin guide](https://github.com/mpilhlt/pdf-tei-editor/blob/devel/docs/code-assistant/backend-plugins.md#external-plugins).
 - Plugins cannot add Python dependencies to the editor's environment; use what the editor installs or install extra packages in the deployment.
