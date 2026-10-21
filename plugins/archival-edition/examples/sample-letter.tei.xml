@@ -1,0 +1,187 @@
+<?xml-model href="https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+    <fileDesc xml:id="sample-letter">
+      <titleStmt>
+        <title level="a" type="supplied">Letter from Teszt Elek to Jane Example, 12 March 1962</title>
+        <author>
+          <persName>
+            <surname>Teszt</surname>
+            <forename>Elek</forename>
+          </persName>
+        </author>
+        <respStmt>
+          <resp when="2026-10-01">photography</resp>
+          <persName>
+            <surname>Tester</surname>
+            <forename>Tom</forename>
+          </persName>
+        </respStmt>
+        <respStmt>
+          <resp when="2026-10-02">metadata</resp>
+          <persName>
+            <surname>Tester</surname>
+            <forename>Tom</forename>
+          </persName>
+        </respStmt>
+        <respStmt>
+          <resp>automatic transcription</resp>
+          <orgName>Example provider / example-model</orgName>
+        </respStmt>
+      </titleStmt>
+      <publicationStmt>
+        <authority>Example project</authority>
+        <idno type="document-id">TEST-0001</idno>
+        <availability status="unknown">
+          <p>author still in copyright</p>
+        </availability>
+      </publicationStmt>
+      <notesStmt>
+        <note type="entities">
+          <persName>
+            <surname>Example</surname>
+            <forename>Jane</forename>
+          </persName>
+          <orgName>University of Vienna</orgName>
+        </note>
+        <relatedItem>
+          <bibl>reply to no. TEST-0000</bibl>
+        </relatedItem>
+      </notesStmt>
+      <sourceDesc>
+        <msDesc>
+          <msIdentifier>
+            <country>Hungary</country>
+            <settlement>Budapest</settlement>
+            <repository>Example Archive</repository>
+            <collection>Nachlass Example</collection>
+            <idno type="shelfmark">Box 3, Folder 12, No. 4</idno>
+          </msIdentifier>
+          <msContents>
+            <msItem>
+              <author>
+                <persName>
+                  <surname>Teszt</surname>
+                  <forename>Elek</forename>
+                </persName>
+              </author>
+            </msItem>
+          </msContents>
+          <physDesc>
+            <objectDesc form="original">
+              <supportDesc>
+                <support>letter paper</support>
+                <extent>1 leaf, 2 pages written</extent>
+                <condition>small tear at the upper margin</condition>
+              </supportDesc>
+            </objectDesc>
+            <handDesc>
+              <handNote scope="major" script="handwritten" xml:id="hand-main">Main hand of the document.</handNote>
+            </handDesc>
+          </physDesc>
+          <history>
+            <origin>
+              <origDate when="1962-03-12" evidence="internal">1962-03-12</origDate>
+              <origPlace>Budapest</origPlace>
+            </origin>
+          </history>
+        </msDesc>
+      </sourceDesc>
+    </fileDesc>
+    <encodingDesc>
+      <editorialDecl>
+        <interpretation type="primary" n="Archival edition annotation guidelines">
+          <p>
+            <ref target="https://cboulanger.github.io/pte-edition-plugin/guidelines.md" subtype="human" type="markdown"/>
+          </p>
+        </interpretation>
+      </editorialDecl>
+      <appInfo>
+        <application version="1.0" ident="pdf-tei-editor" type="editor">
+          <label>PDF-TEI Editor</label>
+          <ref target="https://github.com/mpilhlt/pdf-tei-editor"/>
+        </application>
+        <application version="0.1.0" ident="archival-edition" when="2026-10-20T00:00:00Z" type="extractor">
+          <label>Archival edition</label>
+          <label type="variant-id">archival-edition</label>
+          <label type="form-pages">6</label>
+          <label type="provider">Example provider</label>
+          <label type="model">example-model</label>
+          <ref target="https://github.com/cboulanger/pte-edition-plugin"/>
+          <ref target="https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng"/>
+        </application>
+      </appInfo>
+      <classDecl>
+        <taxonomy xml:id="doctype">
+          <category xml:id="doctype-letter">
+            <catDesc>Letter</catDesc>
+          </category>
+          <category xml:id="doctype-postcard">
+            <catDesc>Postcard</catDesc>
+          </category>
+          <category xml:id="doctype-telegram">
+            <catDesc>Telegram</catDesc>
+          </category>
+          <category xml:id="doctype-program">
+            <catDesc>Conference program or other printed matter</catDesc>
+          </category>
+          <category xml:id="doctype-manuscript">
+            <catDesc>Manuscript of a paper or talk</catDesc>
+          </category>
+          <category xml:id="doctype-offprint">
+            <catDesc>Printed paper or offprint</catDesc>
+          </category>
+          <category xml:id="doctype-notes">
+            <catDesc>Notes</catDesc>
+          </category>
+          <category xml:id="doctype-other">
+            <catDesc>Other</catDesc>
+          </category>
+        </taxonomy>
+      </classDecl>
+    </encodingDesc>
+    <profileDesc>
+      <abstract>
+        <p>Thanks the addressee for an offprint and proposes a meeting at the conference in Vienna.</p>
+      </abstract>
+      <langUsage>
+        <language ident="hu"/>
+        <language ident="en"/>
+      </langUsage>
+      <textClass>
+        <catRef target="#doctype-letter" scheme="#doctype"/>
+        <keywords>
+          <term>comparative law</term>
+          <term>conference</term>
+          <term>offprint</term>
+        </keywords>
+      </textClass>
+      <correspDesc>
+        <correspAction type="sent">
+          <persName>
+            <surname>Teszt</surname>
+            <forename>Elek</forename>
+          </persName>
+          <placeName>Budapest</placeName>
+          <date when="1962-03-12" ana="#inferred" cert="low">1962-03-12</date>
+        </correspAction>
+        <correspAction type="received">
+          <persName>
+            <surname>Example</surname>
+            <forename>Jane</forename>
+          </persName>
+          <placeName>Vienna</placeName>
+        </correspAction>
+      </correspDesc>
+    </profileDesc>
+    <revisionDesc>
+      <change when="2026-10-20T00:00:00Z" status="extraction">
+        <note type="label">Extraction</note>
+        <desc>Header from the description form; transcription by Example provider / example-model</desc>
+      </change>
+    </revisionDesc>
+  </teiHeader>
+  <facsimile xmlns="http://www.tei-c.org/ns/1.0"><surface n="1r" xml:id="surface-1"><graphic url="IMG_0001"/></surface><surface n="1v" xml:id="surface-2"><graphic url="IMG_0002"/></surface></facsimile>
+  <text xmlns="http://www.tei-c.org/ns/1.0" xml:lang="hu"><body><div type="letter"><pb n="1r" facs="#surface-1"/><opener><dateline>Budapest, 1962. márc. 12.</dateline><lb/><salute>Kedves Jane!</salute></opener>
+<p><lb/>Köszönöm a <unclear cert="low">különlenyomatot</unclear>,<lb/>nagy örömmel olvastam. Remélem</p><pb n="1v" facs="#surface-2"/><p part="F"><lb/>Bécsben találkozunk<lb/>a konferencián.</p><closer><salute>Szívélyes üdvözlettel</salute><signed>Teszt Elek</signed></closer></div></body></text>
+</TEI>

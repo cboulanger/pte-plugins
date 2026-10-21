@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Attributes, names, dates and phrase-level elements shared by the header and the transcription.
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  ns="http://www.tei-c.org/ns/1.0">
+
+  <!-- ===== Attributes ===== -->
+
+  <define name="att.global">
+    <a:documentation>Attributes available on every element: identification, language, numbering, rendition, certainty, responsibility, analysis and facsimile links.</a:documentation>
+    <optional><attribute name="xml:id"><data type="ID"/></attribute></optional>
+    <optional><attribute name="xml:lang"><ref name="data.language"/></attribute></optional>
+    <optional><attribute name="n"/></optional>
+    <optional><attribute name="rend"/></optional>
+    <optional><attribute name="cert"><ref name="data.certainty"/></attribute></optional>
+    <optional><attribute name="resp"><ref name="data.pointers"/></attribute></optional>
+    <optional><attribute name="ana"><ref name="data.pointers"/></attribute></optional>
+    <optional><attribute name="source"><ref name="data.pointers"/></attribute></optional>
+    <optional><attribute name="facs"><ref name="data.pointers"/></attribute></optional>
+    <optional><attribute name="corresp"><ref name="data.pointers"/></attribute></optional>
+  </define>
+
+  <define name="att.typed">
+    <optional><attribute name="type"/></optional>
+    <optional><attribute name="subtype"/></optional>
+  </define>
+
+  <define name="att.canonical">
+    <a:documentation>@ref: URIs of authority records (GND, VIAF, Wikidata) for the named entity.</a:documentation>
+    <optional><attribute name="ref"><ref name="data.pointers"/></attribute></optional>
+  </define>
+
+  <define name="att.datable">
+    <a:documentation>Normalized dates: @when for a precise date, @notBefore/@notAfter for a range, @from/@to for a duration.</a:documentation>
+    <optional><attribute name="when"><ref name="data.temporal"/></attribute></optional>
+    <optional><attribute name="notBefore"><ref name="data.temporal"/></attribute></optional>
+    <optional><attribute name="notAfter"><ref name="data.temporal"/></attribute></optional>
+    <optional><attribute name="from"><ref name="data.temporal"/></attribute></optional>
+    <optional><attribute name="to"><ref name="data.temporal"/></attribute></optional>
+  </define>
+
+  <define name="att.handFeatures">
+    <a:documentation>@hand: pointer to the handNote of the hand responsible.</a:documentation>
+    <optional><attribute name="hand"><ref name="data.pointer"/></attribute></optional>
+  </define>
+
+  <!-- ===== Datatypes ===== -->
+
+  <define name="data.language">
+    <choice>
+      <data type="language"/>
+      <value></value>
+    </choice>
+  </define>
+
+  <define name="data.certainty">
+    <choice>
+      <value>high</value>
+      <value>medium</value>
+      <value>low</value>
+      <value>unknown</value>
+    </choice>
+  </define>
+
+  <define name="data.pointer">
+    <data type="anyURI"><param name="pattern">\S+</param></data>
+  </define>
+
+  <define name="data.pointers">
+    <list><oneOrMore><ref name="data.pointer"/></oneOrMore></list>
+  </define>
+
+  <define name="data.temporal">
+    <choice>
+      <data type="date"/>
+      <data type="gYear"/>
+      <data type="gYearMonth"/>
+      <data type="dateTime"/>
+    </choice>
+  </define>
+
+  <!-- ===== Names and dates ===== -->
+
+  <define name="persName">
+    <element name="persName">
+      <a:documentation>(personal name) the name of a person, as "Surname, Forename" or split into surname and forename.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.canonical"/>
+      <optional><attribute name="role"/></optional>
+      <mixed>
+        <zeroOrMore>
+          <choice>
+            <ref name="surname"/>
+            <ref name="forename"/>
+            <ref name="roleName"/>
+            <ref name="addName"/>
+            <ref name="lb"/>
+          </choice>
+        </zeroOrMore>
+      </mixed>
+    </element>
+  </define>
+
+  <define name="surname">
+    <element name="surname"><ref name="att.global"/><text/></element>
+  </define>
+
+  <define name="forename">
+    <element name="forename"><ref name="att.global"/><text/></element>
+  </define>
+
+  <define name="roleName">
+    <element name="roleName"><ref name="att.global"/><ref name="att.typed"/><text/></element>
+  </define>
+
+  <define name="addName">
+    <element name="addName"><ref name="att.global"/><ref name="att.typed"/><text/></element>
+  </define>
+
+  <define name="orgName">
+    <element name="orgName">
+      <a:documentation>(organization name) an institution, society, committee or publisher.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.canonical"/>
+      <optional><attribute name="role"/></optional>
+      <mixed><zeroOrMore><choice><ref name="placeName"/><ref name="lb"/></choice></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="placeName">
+    <element name="placeName">
+      <a:documentation>(place name) a city, venue or address.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.canonical"/>
+      <mixed><zeroOrMore><ref name="lb"/></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="date">
+    <element name="date">
+      <a:documentation>a date; the normalized value goes into @when or @notBefore/@notAfter, the text keeps the form found in the source.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.datable"/>
+      <optional><attribute name="evidence"><ref name="data.evidence"/></attribute></optional>
+      <mixed><zeroOrMore><ref name="lb"/></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="data.evidence">
+    <a:documentation>Source of a date: internal (on the document), postmark, conjecture (inferred from content), external or other.</a:documentation>
+    <choice>
+      <value>internal</value>
+      <value>postmark</value>
+      <value>conjecture</value>
+      <value>external</value>
+      <value>other</value>
+    </choice>
+  </define>
+
+  <define name="idno">
+    <element name="idno">
+      <a:documentation>(identifier) an identifier such as the document ID or a shelfmark.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <text/>
+    </element>
+  </define>
+
+  <define name="title">
+    <element name="title">
+      <a:documentation>the title of a work, copied exactly; @type="supplied" for a title made up by the editor.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional>
+        <attribute name="level">
+          <choice><value>a</value><value>m</value><value>j</value><value>s</value><value>u</value></choice>
+        </attribute>
+      </optional>
+      <ref name="macro.phrase"/>
+    </element>
+  </define>
+
+  <define name="author">
+    <element name="author">
+      <a:documentation>the author of a work: a persName or orgName, or plain text such as "Unknown".</a:documentation>
+      <ref name="att.global"/><ref name="att.canonical"/>
+      <optional><attribute name="role"/></optional>
+      <mixed><zeroOrMore><choice><ref name="persName"/><ref name="orgName"/></choice></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="respStmt">
+    <element name="respStmt">
+      <a:documentation>(statement of responsibility) who did what, e.g. photography, metadata, transcription or annotation.</a:documentation>
+      <ref name="att.global"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="resp"/>
+          <ref name="persName"/>
+          <ref name="orgName"/>
+          <ref name="note"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+  <define name="resp">
+    <element name="resp">
+      <a:documentation>(responsibility) the kind of responsibility, e.g. "photography"; @when gives the date of the work.</a:documentation>
+      <ref name="att.global"/><ref name="att.datable"/>
+      <text/>
+    </element>
+  </define>
+
+  <!-- ===== Generic phrase-level elements ===== -->
+
+  <define name="macro.phrase">
+    <mixed>
+      <zeroOrMore>
+        <choice>
+          <ref name="persName"/>
+          <ref name="orgName"/>
+          <ref name="placeName"/>
+          <ref name="date"/>
+          <ref name="title"/>
+          <ref name="ref"/>
+          <ref name="ptr"/>
+          <ref name="idno"/>
+          <ref name="hi"/>
+          <ref name="foreign"/>
+          <ref name="term"/>
+          <ref name="lb"/>
+        </choice>
+      </zeroOrMore>
+    </mixed>
+  </define>
+
+  <define name="p">
+    <element name="p">
+      <a:documentation>(paragraph)</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="part"><ref name="data.part"/></attribute></optional>
+      <ref name="att.handFeatures"/>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="data.part">
+    <a:documentation>I (initial), M (medial), F (final) part of a paragraph or other unit split by a page break.</a:documentation>
+    <choice><value>I</value><value>M</value><value>F</value><value>Y</value><value>N</value></choice>
+  </define>
+
+  <define name="note">
+    <element name="note">
+      <a:documentation>a note or annotation; @type distinguishes notes taken from the description form (entities, participation, stage, ...).</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.handFeatures"/>
+      <optional><attribute name="place"/></optional>
+      <optional><attribute name="anchored"><data type="boolean"/></attribute></optional>
+      <optional><attribute name="target"><ref name="data.pointers"/></attribute></optional>
+      <choice>
+        <oneOrMore><ref name="p"/></oneOrMore>
+        <ref name="macro.transcription"/>
+      </choice>
+    </element>
+  </define>
+
+  <define name="ref">
+    <element name="ref">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="target"><ref name="data.pointers"/></attribute></optional>
+      <ref name="macro.phrase"/>
+    </element>
+  </define>
+
+  <define name="ptr">
+    <element name="ptr">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <attribute name="target"><ref name="data.pointers"/></attribute>
+      <empty/>
+    </element>
+  </define>
+
+  <define name="label">
+    <element name="label">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <text/>
+    </element>
+  </define>
+
+  <define name="desc">
+    <element name="desc">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <ref name="macro.phrase"/>
+    </element>
+  </define>
+
+  <define name="term">
+    <element name="term">
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.canonical"/>
+      <text/>
+    </element>
+  </define>
+
+  <define name="hi">
+    <element name="hi">
+      <a:documentation>(highlighted) text set off visually, e.g. underlined (rend="underline"), superscript, spaced.</a:documentation>
+      <ref name="att.global"/><ref name="att.handFeatures"/>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="foreign">
+    <element name="foreign">
+      <a:documentation>a word or phrase in a language other than that of the surrounding text, identified by @xml:lang.</a:documentation>
+      <ref name="att.global"/>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="bibl">
+    <element name="bibl">
+      <a:documentation>(bibliographic citation) a loosely structured reference, e.g. to a related document or a later publication.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <mixed>
+        <zeroOrMore>
+          <choice>
+            <ref name="author"/>
+            <ref name="title"/>
+            <ref name="date"/>
+            <ref name="idno"/>
+            <ref name="note"/>
+            <ref name="ref"/>
+            <ref name="ptr"/>
+            <ref name="publisher"/>
+            <ref name="pubPlace"/>
+            <ref name="biblScope"/>
+          </choice>
+        </zeroOrMore>
+      </mixed>
+    </element>
+  </define>
+
+  <define name="publisher">
+    <element name="publisher">
+      <ref name="att.global"/><ref name="att.canonical"/>
+      <mixed><zeroOrMore><ref name="orgName"/></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="pubPlace">
+    <element name="pubPlace">
+      <ref name="att.global"/><ref name="att.canonical"/>
+      <mixed><zeroOrMore><ref name="placeName"/></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="biblScope">
+    <element name="biblScope">
+      <ref name="att.global"/>
+      <optional><attribute name="unit"/></optional>
+      <optional><attribute name="from"/></optional>
+      <optional><attribute name="to"/></optional>
+      <text/>
+    </element>
+  </define>
+
+</grammar>
