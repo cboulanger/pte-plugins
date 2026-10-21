@@ -74,7 +74,8 @@ jobs:
 
       - name: Plugin unit tests (Python)
         working-directory: pte-plugins
-        run: "$PTE_ROOT/.venv/bin/python" -m pytest -q
+        run: |
+          "$PTE_ROOT/.venv/bin/python" -m pytest -q
 
       - name: Plugin unit tests (JavaScript)
         working-directory: pte-plugins
