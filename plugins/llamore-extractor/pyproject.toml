@@ -1,0 +1,32 @@
+[project]
+name = "pte-plugin-llamore-extractor"
+dynamic = ["version"]
+description = "Extract references using LLamore with the configured LLM model"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = [
+    "llamore>=0.2.0",
+    "pypdf>=6.16.1",
+]
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+llamore = "pte_plugin_llamore_extractor"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_llamore_extractor/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_llamore_extractor"]
+exclude = ["src/pte_plugin_llamore_extractor/tests"]
+
+[tool.uv.sources]
+llamore = { git = "https://github.com/mpilhlt/llamore.git" }

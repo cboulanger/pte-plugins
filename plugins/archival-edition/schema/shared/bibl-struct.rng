@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  biblStruct subset for printed matter (conference programs, offprints), after
+  the fossil schema's shared/bibl-struct.rng, with meeting for events.
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  ns="http://www.tei-c.org/ns/1.0">
+
+  <define name="biblStruct">
+    <element name="biblStruct">
+      <a:documentation>(structured bibliographic citation) the printed document as a publication.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><ref name="analytic"/></optional>
+      <oneOrMore><ref name="monogr"/></oneOrMore>
+      <zeroOrMore>
+        <choice>
+          <ref name="note"/>
+          <ref name="idno"/>
+          <ref name="ptr"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+  <define name="analytic">
+    <element name="analytic">
+      <ref name="att.global"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="author"/>
+          <ref name="editor"/>
+          <ref name="respStmt"/>
+          <ref name="title"/>
+          <ref name="idno"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+  <define name="monogr">
+    <element name="monogr">
+      <ref name="att.global"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="author"/>
+          <ref name="editor"/>
+          <ref name="respStmt"/>
+          <ref name="title"/>
+          <ref name="meeting"/>
+          <ref name="idno"/>
+          <ref name="imprint"/>
+          <ref name="biblScope"/>
+          <ref name="note"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+  <define name="meeting">
+    <element name="meeting">
+      <a:documentation>the conference, congress, workshop or lecture series, with its dates and place.</a:documentation>
+      <ref name="att.global"/><ref name="att.canonical"/>
+      <mixed>
+        <zeroOrMore>
+          <choice>
+            <ref name="date"/>
+            <ref name="placeName"/>
+            <ref name="title"/>
+          </choice>
+        </zeroOrMore>
+      </mixed>
+    </element>
+  </define>
+
+  <define name="imprint">
+    <element name="imprint">
+      <ref name="att.global"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="publisher"/>
+          <ref name="pubPlace"/>
+          <ref name="date"/>
+          <ref name="biblScope"/>
+          <ref name="note"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+</grammar>

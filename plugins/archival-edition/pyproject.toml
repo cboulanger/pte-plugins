@@ -1,0 +1,32 @@
+[project]
+name = "pte-plugin-archival-edition"
+dynamic = ["version"]
+description = "Extractor for photographed archival documents with a description form, schema and annotation guidelines"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = [
+    "pymupdf>=1.25.0",
+    "pte-plugin-anthropic-llm",
+]
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+archival-edition = "pte_plugin_archival_edition"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_archival_edition/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_archival_edition"]
+exclude = ["src/pte_plugin_archival_edition/tests"]
+
+[tool.uv.sources]
+pte-plugin-anthropic-llm = { workspace = true }

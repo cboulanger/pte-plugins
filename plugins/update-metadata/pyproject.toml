@@ -1,0 +1,26 @@
+[project]
+name = "pte-plugin-update-metadata"
+dynamic = ["version"]
+description = "Update TEI documents with complete bibliographic metadata from DOI lookup"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+update-metadata = "pte_plugin_update_metadata"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_update_metadata/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_update_metadata"]
+exclude = ["src/pte_plugin_update_metadata/tests"]

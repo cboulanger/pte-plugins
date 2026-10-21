@@ -1,0 +1,26 @@
+[project]
+name = "pte-plugin-annotation-review"
+dynamic = ["version"]
+description = "Reviews a document's annotations against its own editorialDecl-linked rules using an LLM"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+annotation-review = "pte_plugin_annotation_review"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_annotation_review/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_annotation_review"]
+exclude = ["src/pte_plugin_annotation_review/tests"]

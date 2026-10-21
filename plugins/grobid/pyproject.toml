@@ -1,0 +1,26 @@
+[project]
+name = "pte-plugin-grobid"
+dynamic = ["version"]
+description = "Extract training data using GROBID server"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+grobid = "pte_plugin_grobid"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_grobid/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_grobid"]
+exclude = ["src/pte_plugin_grobid/tests"]

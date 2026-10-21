@@ -1,0 +1,29 @@
+[project]
+name = "pte-plugin-kisski"
+dynamic = ["version"]
+description = "Text and PDF processing using KISSKI Academic Cloud API"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = [
+    "jsonschema>=4.23.0",
+    "pdf2image>=1.17.0",
+]
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+kisski = "pte_plugin_kisski"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_kisski/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_kisski"]
+exclude = ["src/pte_plugin_kisski/tests"]
