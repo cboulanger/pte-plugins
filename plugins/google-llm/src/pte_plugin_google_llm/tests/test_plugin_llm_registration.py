@@ -1,14 +1,14 @@
 """
 Unit tests for GoogleLLMPlugin's LLM provider registration.
 
-@testCovers fastapi_app/plugins/google_llm/plugin.py
+@testCovers plugins/google-llm/src/pte_plugin_google_llm/plugin.py
 """
 
 import unittest
 from unittest.mock import MagicMock, patch
 
 from fastapi_app.lib.llm import LLMProviderRegistry
-from fastapi_app.plugins.google_llm.plugin import GoogleLLMPlugin
+from pte_plugin_google_llm.plugin import GoogleLLMPlugin
 
 
 class TestGoogleLLMPluginRegistration(unittest.IsolatedAsyncioTestCase):
@@ -23,7 +23,7 @@ class TestGoogleLLMPluginRegistration(unittest.IsolatedAsyncioTestCase):
     def _mock_config(self, api_key):
         """Build a get_config() replacement returning a controlled value for our key.
 
-        Patching fastapi_app.plugins.google_llm.plugin.get_config (rather than
+        Patching pte_plugin_google_llm.plugin.get_config (rather than
         relying on real env vars + get_plugin_config's global persistence) keeps
         these tests isolated from any other test's config state. GoogleLLMPlugin
         .__init__'s own get_plugin_config(...) call still runs for real underneath
@@ -34,7 +34,7 @@ class TestGoogleLLMPluginRegistration(unittest.IsolatedAsyncioTestCase):
         mock_config.get.side_effect = lambda key, *a, **kw: values.get(key)
         return mock_config
 
-    @patch("fastapi_app.plugins.google_llm.plugin.get_config")
+    @patch("pte_plugin_google_llm.plugin.get_config")
     async def test_initialize_registers_provider_when_api_key_present(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key="real-key")
         plugin = GoogleLLMPlugin()
@@ -45,7 +45,7 @@ class TestGoogleLLMPluginRegistration(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(provider.label, "Google Gemini")
         self.assertTrue(provider.is_available())
 
-    @patch("fastapi_app.plugins.google_llm.plugin.get_config")
+    @patch("pte_plugin_google_llm.plugin.get_config")
     async def test_initialize_registers_provider_for_user_keys_without_api_key(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key=None)
         plugin = GoogleLLMPlugin()
@@ -56,7 +56,7 @@ class TestGoogleLLMPluginRegistration(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(provider.has_shared_key())
         self.assertEqual(provider.secret_service, "google")
 
-    @patch("fastapi_app.plugins.google_llm.plugin.get_config")
+    @patch("pte_plugin_google_llm.plugin.get_config")
     async def test_cleanup_unregisters_provider(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key="real-key")
         plugin = GoogleLLMPlugin()
@@ -68,7 +68,7 @@ class TestGoogleLLMPluginRegistration(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(KeyError):
             LLMProviderRegistry.get_instance().get_provider("google")
 
-    @patch("fastapi_app.plugins.google_llm.plugin.get_config")
+    @patch("pte_plugin_google_llm.plugin.get_config")
     async def test_initialize_skips_provider_in_testing_mode(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key="real-key")
         plugin = GoogleLLMPlugin()

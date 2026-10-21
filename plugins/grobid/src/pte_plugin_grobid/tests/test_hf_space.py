@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 
-from fastapi_app.plugins.grobid import hf_space
-from fastapi_app.plugins.grobid.hf_space import check_space_running
+from pte_plugin_grobid import hf_space
+from pte_plugin_grobid.hf_space import check_space_running
 
 URL = "https://acme-grobid-server.hf.space"
 

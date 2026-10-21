@@ -3,7 +3,7 @@
  *
  * Tests the bibl element splitting on semicolons.
  *
- * @testCovers fastapi_app/plugins/grobid/enhancements/split-bibl.js
+ * @testCovers plugins/grobid/src/pte_plugin_grobid/enhancements/split-bibl.js
  */
 
 import { describe, it } from 'node:test';

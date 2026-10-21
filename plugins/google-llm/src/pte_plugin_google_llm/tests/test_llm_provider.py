@@ -1,14 +1,14 @@
 """
 Unit tests for the Google Gemini LLM provider connector.
 
-@testCovers fastapi_app/plugins/google_llm/llm_provider.py
+@testCovers plugins/google-llm/src/pte_plugin_google_llm/llm_provider.py
 """
 
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi_app.lib.llm import LLMProviderError
-from fastapi_app.plugins.google_llm.llm_provider import GoogleLLMProvider
+from pte_plugin_google_llm.llm_provider import GoogleLLMProvider
 
 
 class TestGoogleLLMProviderAvailability(unittest.TestCase):
@@ -26,7 +26,7 @@ class TestGoogleLLMProviderAvailability(unittest.TestCase):
 class TestGoogleLLMProviderListModels(unittest.TestCase):
     """Test list_models() filters and shapes the SDK's model list."""
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     def test_list_models_filters_gemini_models_with_generate_content(self, mock_client_cls):
         model_a = MagicMock()
         model_a.name = "models/gemini-2.0-flash"
@@ -62,7 +62,7 @@ class TestGoogleLLMProviderListModels(unittest.TestCase):
         provider = GoogleLLMProvider(id="google", label="Google Gemini", api_key="")
         self.assertEqual(provider.list_models(), [])
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     def test_list_models_excludes_image_tts_and_transcribe_models(self, mock_client_cls):
         # These all support generateContent (so pass the existing filter) but
         # are not text chat models - the SDK exposes no modality field to
@@ -108,7 +108,7 @@ class TestGoogleLLMProviderListModels(unittest.TestCase):
 class TestGoogleLLMProviderListModelsErrors(unittest.TestCase):
     """Test list_models() reports failed API calls as LLMProviderError."""
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     def test_connection_error_becomes_llm_provider_error(self, mock_client_cls):
         import httpx
 
@@ -124,7 +124,7 @@ class TestGoogleLLMProviderListModelsErrors(unittest.TestCase):
 class TestGoogleLLMProviderChatCompletion(unittest.IsolatedAsyncioTestCase):
     """Test chat_completion() delegates to the SDK's async generate_content."""
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     async def test_chat_completion_calls_generate_content_and_returns_text(self, mock_client_cls):
         mock_response = MagicMock()
         mock_response.text = "hello from gemini"
@@ -156,7 +156,7 @@ class TestGoogleLLMProviderChatCompletion(unittest.IsolatedAsyncioTestCase):
         await provider.chat_completion(model_id=model_id, system_prompt="sys", user_prompt="usr", temperature=0.4)
         return mock_client.aio.models.generate_content.call_args.kwargs["config"]
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     async def test_gemini_3_flash_lite_gets_default_temperature_and_medium_thinking(self, mock_client_cls):
         from google.genai import types
 
@@ -165,19 +165,19 @@ class TestGoogleLLMProviderChatCompletion(unittest.IsolatedAsyncioTestCase):
             self.assertIsNone(config.temperature, model_id)
             self.assertEqual(config.thinking_config.thinking_level, types.ThinkingLevel.MEDIUM, model_id)
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     async def test_other_gemini_3_models_keep_their_default_thinking_level(self, mock_client_cls):
         config = await self._config_for(mock_client_cls, "gemini-3.5-flash")
         self.assertIsNone(config.temperature)
         self.assertIsNone(config.thinking_config)
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     async def test_gemini_2_flash_lite_keeps_temperature_and_no_thinking_config(self, mock_client_cls):
         config = await self._config_for(mock_client_cls, "gemini-2.5-flash-lite")
         self.assertEqual(config.temperature, 0.4)
         self.assertIsNone(config.thinking_config)
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     async def test_sdk_api_errors_become_llm_provider_errors(self, mock_client_cls):
         from google.genai import errors as genai_errors
 
@@ -190,7 +190,7 @@ class TestGoogleLLMProviderChatCompletion(unittest.IsolatedAsyncioTestCase):
         with self.assertRaisesRegex(LLMProviderError, "503.*high demand"):
             await provider.chat_completion(model_id="m", system_prompt="s", user_prompt="u")
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     async def test_connection_errors_become_llm_provider_errors(self, mock_client_cls):
         import httpx
 
@@ -207,7 +207,7 @@ class TestGoogleLLMProviderChatCompletion(unittest.IsolatedAsyncioTestCase):
 class TestGoogleLLMProviderPdfInput(unittest.IsolatedAsyncioTestCase):
     """Test chat_completion_with_pdf() uploads the PDF, prompts with it and deletes it."""
 
-    @patch("fastapi_app.plugins.google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
     async def test_uploads_prompts_with_file_and_deletes_it(self, mock_client_cls):
         mock_client = MagicMock()
         uploaded = MagicMock()

@@ -1,7 +1,7 @@
 """
 Unit tests for the revision feed plugin's public, token-authenticated feed route.
 
-@testCovers fastapi_app/plugins/revision_feed/routes.py
+@testCovers plugins/revision-feed/src/pte_plugin_revision_feed/routes.py
 """
 
 import unittest
@@ -27,7 +27,7 @@ TEI_SAMPLE = """<?xml version="1.0" encoding="UTF-8"?>
 
 class TestFeedRoute(unittest.TestCase):
     def setUp(self):
-        from fastapi_app.plugins.revision_feed.routes import router
+        from pte_plugin_revision_feed.routes import router
         from fastapi_app.lib.core.dependencies import get_auth_manager, get_db, get_file_storage
 
         self.app = FastAPI()
@@ -47,7 +47,7 @@ class TestFeedRoute(unittest.TestCase):
         response = self.client.get("/api/plugins/revision-feed/feed/proj-1.atom")
         self.assertEqual(response.status_code, 422)
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.resolve_token")
+    @patch("pte_plugin_revision_feed.token_store.resolve_token")
     @patch("fastapi_app.config.get_settings")
     def test_unknown_token_returns_401(self, mock_settings, mock_resolve):
         mock_settings_obj = MagicMock()
@@ -61,7 +61,7 @@ class TestFeedRoute(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 401)
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.resolve_token")
+    @patch("pte_plugin_revision_feed.token_store.resolve_token")
     @patch("fastapi_app.lib.utils.project_utils.get_projects_with_details")
     @patch("fastapi_app.config.get_settings")
     def test_unknown_project_returns_403(self, mock_settings, mock_get_projects, mock_resolve):
@@ -79,7 +79,7 @@ class TestFeedRoute(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.resolve_token")
+    @patch("pte_plugin_revision_feed.token_store.resolve_token")
     @patch("fastapi_app.lib.permissions.user_utils.user_has_collection_access")
     @patch("fastapi_app.lib.utils.project_utils.get_projects_with_details")
     @patch("fastapi_app.config.get_settings")
@@ -105,7 +105,7 @@ class TestFeedRoute(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.resolve_token")
+    @patch("pte_plugin_revision_feed.token_store.resolve_token")
     @patch("fastapi_app.lib.permissions.user_utils.user_has_collection_access")
     @patch("fastapi_app.lib.utils.project_utils.get_projects_with_details")
     @patch("fastapi_app.lib.repository.file_repository.FileRepository")
@@ -159,7 +159,7 @@ class TestFeedRoute(unittest.TestCase):
         self.assertIn("Sample Doc", response.text)
         self.assertIn("approved", response.text)
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.resolve_token")
+    @patch("pte_plugin_revision_feed.token_store.resolve_token")
     @patch("fastapi_app.lib.permissions.user_utils.user_has_collection_access")
     @patch("fastapi_app.lib.utils.project_utils.get_projects_with_details")
     @patch("fastapi_app.lib.repository.file_repository.FileRepository")

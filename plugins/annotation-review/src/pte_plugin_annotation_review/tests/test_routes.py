@@ -1,7 +1,7 @@
 """
 Unit tests for the annotation-review route.
 
-@testCovers fastapi_app/plugins/annotation_review/routes.py
+@testCovers plugins/annotation-review/src/pte_plugin_annotation_review/routes.py
 """
 
 import tempfile
@@ -18,9 +18,9 @@ from fastapi_app.lib.core.dependencies import get_document_rules_store, require_
 from fastapi_app.lib.doc_rules.storage import DocumentRulesStore
 from fastapi_app.lib.llm.model_access import ModelAccessDenied
 from fastapi_app.lib.llm import LLMModel, LLMProvider, LLMProviderError, LLMProviderRegistry
-from fastapi_app.plugins.annotation_review.prompts import UnusableResponseError
-from fastapi_app.plugins.annotation_review import routes as routes_module
-from fastapi_app.plugins.annotation_review.routes import router
+from pte_plugin_annotation_review.prompts import UnusableResponseError
+from pte_plugin_annotation_review import routes as routes_module
+from pte_plugin_annotation_review.routes import router
 
 TEI_DOC = """<?xml version="1.0"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
@@ -75,8 +75,8 @@ class TestReviewRoute(unittest.TestCase):
         LLMProviderRegistry.reset_instance()
         self.app.dependency_overrides.clear()
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     def test_returns_validated_findings(self, mock_fetch, mock_is_safe):
         # fetch_rule_excerpt would otherwise make a real HTTP request to the
         # (non-resolvable) rule URL in TEI_DOC; mocked here for test isolation,

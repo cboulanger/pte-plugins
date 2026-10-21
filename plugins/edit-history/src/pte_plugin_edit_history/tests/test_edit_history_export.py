@@ -3,7 +3,7 @@ Unit tests for Edit History plugin export route.
 
 Tests CSV export functionality, authentication, and access control.
 
-@testCovers fastapi_app/plugins/edit_history/routes.py
+@testCovers plugins/edit-history/src/pte_plugin_edit_history/routes.py
 """
 
 import unittest
@@ -20,7 +20,7 @@ class TestEditHistoryExport(unittest.IsolatedAsyncioTestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from fastapi_app.plugins.edit_history.routes import router
+        from pte_plugin_edit_history.routes import router
         from fastapi_app.lib.core.dependencies import (
             get_auth_manager,
             get_session_manager,
@@ -111,8 +111,8 @@ class TestEditHistoryExport(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 403)
         self.assertIn("Access denied", response.json()["detail"])
 
-    @patch("fastapi_app.plugins.edit_history.routes.get_file_storage")
-    @patch("fastapi_app.plugins.edit_history.routes.get_db")
+    @patch("pte_plugin_edit_history.routes.get_file_storage")
+    @patch("pte_plugin_edit_history.routes.get_db")
     @patch("fastapi_app.lib.repository.file_repository.FileRepository")
     @patch("fastapi_app.lib.permissions.user_utils.user_has_collection_access")
     @patch("fastapi_app.config.get_settings")
@@ -207,8 +207,8 @@ class TestEditHistoryExport(unittest.IsolatedAsyncioTestCase):
         self.assertIn("test-user", csv_content)  # ID without #
         self.assertIn("Test User", csv_content)  # Full name
 
-    @patch("fastapi_app.plugins.edit_history.routes.get_file_storage")
-    @patch("fastapi_app.plugins.edit_history.routes.get_db")
+    @patch("pte_plugin_edit_history.routes.get_file_storage")
+    @patch("pte_plugin_edit_history.routes.get_db")
     @patch("fastapi_app.lib.repository.file_repository.FileRepository")
     @patch("fastapi_app.lib.permissions.user_utils.user_has_collection_access")
     @patch("fastapi_app.config.get_settings")
@@ -283,8 +283,8 @@ class TestEditHistoryExport(unittest.IsolatedAsyncioTestCase):
         self.assertIn("10.1234/doc1", csv_content)
         # standard variant should be filtered out (but we can't verify absence since both use same TEI)
 
-    @patch("fastapi_app.plugins.edit_history.routes.get_file_storage")
-    @patch("fastapi_app.plugins.edit_history.routes.get_db")
+    @patch("pte_plugin_edit_history.routes.get_file_storage")
+    @patch("pte_plugin_edit_history.routes.get_db")
     @patch("fastapi_app.lib.repository.file_repository.FileRepository")
     @patch("fastapi_app.lib.permissions.user_utils.user_has_collection_access")
     @patch("fastapi_app.config.get_settings")

@@ -164,8 +164,8 @@ async def backfill_collection_metadata(
     from fastapi_app.config import get_settings
     from fastapi_app.lib.repository.file_repository import FileRepository
     from fastapi_app.lib.sse.sse_utils import ProgressBar, send_notification
-    from fastapi_app.plugins.metadata_extraction.backfill import backfill_collection
-    from fastapi_app.plugins.metadata_extraction.grobid_header import (
+    from pte_plugin_metadata_extraction.backfill import backfill_collection
+    from pte_plugin_metadata_extraction.grobid_header import (
         fetch_grobid_header_metadata,
         get_live_grobid_server_url,
     )

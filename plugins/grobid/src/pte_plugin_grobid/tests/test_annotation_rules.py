@@ -1,10 +1,10 @@
 """
-Unit tests for fastapi_app/plugins/grobid/annotation_rules.py.
+Unit tests for plugins/grobid/src/pte_plugin_grobid/annotation_rules.py.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_annotation_rules.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_annotation_rules.py -v
 
-@testCovers fastapi_app/plugins/grobid/annotation_rules.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/annotation_rules.py
 """
 
 import sys
@@ -14,12 +14,12 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
-from fastapi_app.plugins.grobid.annotation_rules import build_editorial_decl_entries
+from pte_plugin_grobid.annotation_rules import build_editorial_decl_entries
 
 
 class TestBuildEditorialDeclEntriesVariantMatching(unittest.TestCase):
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_matches_variant_listed_explicitly(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["grobid.training.segmentation"], "category": "primary",
@@ -31,8 +31,8 @@ class TestBuildEditorialDeclEntriesVariantMatching(unittest.TestCase):
         guide_entries = [e for e in entries if e["category"] == "primary"]
         self.assertEqual(len(guide_entries), 1)
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_wildcard_matches_any_variant(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["*"], "category": "house-style",
@@ -44,8 +44,8 @@ class TestBuildEditorialDeclEntriesVariantMatching(unittest.TestCase):
         self.assertEqual(len(entries), 1)
         self.assertEqual(entries[0]["category"], "house-style")
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_returns_empty_list_for_unconfigured_variant(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["grobid.training.segmentation"], "category": "primary",
@@ -65,8 +65,8 @@ class TestBuildRefsForGuideShapeTable(unittest.TestCase):
     translation to a machine ref).
     """
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_no_fragment_produces_human_only(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["v1"], "category": "primary", "type": "markdown",
@@ -81,8 +81,8 @@ class TestBuildRefsForGuideShapeTable(unittest.TestCase):
             ], "n": "Guide"},
         ])
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_line_range_fragment_produces_machine_only(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["v1"], "category": "footnote-annotation", "type": "markdown",
@@ -97,8 +97,8 @@ class TestBuildRefsForGuideShapeTable(unittest.TestCase):
             ], "n": "Guide"},
         ])
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_heading_anchor_with_html_type_produces_human_only(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["v1"], "category": "primary", "type": "html",
@@ -113,9 +113,9 @@ class TestBuildRefsForGuideShapeTable(unittest.TestCase):
             ], "n": "Guide"},
         ])
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.translate_anchor_to_line_range")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.translate_anchor_to_line_range")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_heading_anchor_with_markdown_type_produces_both_refs(
         self, mock_get_guides, mock_resolve, mock_translate
     ):
@@ -139,9 +139,9 @@ class TestBuildRefsForGuideShapeTable(unittest.TestCase):
         self.assertEqual(call_args[0], "https://github.com/x/y/blob/sha1/g.md")
         self.assertEqual(call_args[1], "segmentation")
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.translate_anchor_to_line_range")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.translate_anchor_to_line_range")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_heading_anchor_with_markdown_type_falls_back_to_human_only_when_anchor_not_found(
         self, mock_get_guides, mock_resolve, mock_translate
     ):
@@ -162,8 +162,8 @@ class TestBuildRefsForGuideShapeTable(unittest.TestCase):
 
 
 class TestBuildEditorialDeclEntriesSchemaFragment(unittest.TestCase):
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_appends_schema_fragment_entry_for_a_fragment_variant(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = []
         mock_resolve.side_effect = lambda url, cache: url.replace("main", "sha1")
@@ -182,8 +182,8 @@ class TestBuildEditorialDeclEntriesSchemaFragment(unittest.TestCase):
             },
         ])
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_no_schema_fragment_entry_for_a_variant_without_a_fossil_source_file(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = []
         mock_resolve.side_effect = lambda url, cache: url
@@ -192,8 +192,8 @@ class TestBuildEditorialDeclEntriesSchemaFragment(unittest.TestCase):
 
         self.assertEqual(entries, [])
 
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_schema_fragment_entry_appended_alongside_guide_entries(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["grobid.training.segmentation"], "category": "primary", "type": "markdown",
@@ -209,8 +209,8 @@ class TestBuildEditorialDeclEntriesSchemaFragment(unittest.TestCase):
 
 
 class TestBuildEditorialDeclEntriesLabel(unittest.TestCase):
-    @patch("fastapi_app.plugins.grobid.annotation_rules.resolve_forge_permalink")
-    @patch("fastapi_app.plugins.grobid.annotation_rules.get_annotation_guides")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
     def test_guide_label_becomes_entry_n(self, mock_get_guides, mock_resolve):
         mock_get_guides.return_value = [
             {"variant_ids": ["v1"], "category": "primary", "type": "markdown",

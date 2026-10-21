@@ -1,8 +1,8 @@
 """
 Unit tests for GROBID's DocumentRulesProvider registration.
 
-@testCovers fastapi_app/plugins/grobid/plugin.py
-@testCovers fastapi_app/plugins/grobid/annotation_rules.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/plugin.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/annotation_rules.py
 """
 
 import asyncio
@@ -14,7 +14,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from fastapi_app.lib.doc_rules.rules_providers import get_document_rules_provider_for_document
-from fastapi_app.plugins.grobid.annotation_rules import GrobidRulesProvider
+from pte_plugin_grobid.annotation_rules import GrobidRulesProvider
 
 TEI_GROBID = """<TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader><encodingDesc><appInfo>
@@ -26,7 +26,7 @@ TEI_GROBID = """<TEI xmlns="http://www.tei-c.org/ns/1.0">
 
 
 class TestGrobidRulesProvider(unittest.TestCase):
-    @mock.patch("fastapi_app.plugins.grobid.annotation_rules.build_editorial_decl_entries")
+    @mock.patch("pte_plugin_grobid.annotation_rules.build_editorial_decl_entries")
     def test_build_editorial_decl_entries_delegates(self, mock_build):
         mock_build.return_value = [{"category": "primary", "refs": []}]
         provider = GrobidRulesProvider()
@@ -37,7 +37,7 @@ class TestGrobidRulesProvider(unittest.TestCase):
         self.assertEqual(result, [{"category": "primary", "refs": []}])
         mock_build.assert_called_once_with("grobid.training.segmentation", cache)
 
-    @mock.patch("fastapi_app.plugins.grobid.annotation_rules.get_schema_url")
+    @mock.patch("pte_plugin_grobid.annotation_rules.get_schema_url")
     def test_get_schema_url_delegates(self, mock_get_url):
         mock_get_url.return_value = "https://mpilhlt.github.io/fossil/schema/grobid.training.segmentation.rng"
         provider = GrobidRulesProvider()
@@ -50,7 +50,7 @@ class TestGrobidRulesProvider(unittest.TestCase):
 
 class TestGrobidPluginRegistersProvider(unittest.TestCase):
     def setUp(self):
-        from fastapi_app.plugins.grobid.plugin import GrobidPlugin
+        from pte_plugin_grobid.plugin import GrobidPlugin
         self.plugin = GrobidPlugin.__new__(GrobidPlugin)  # skip __init__ (config bootstrap)
         context = mock.Mock()
         context.get_dependency.return_value = None  # no tei-wizard dependency in this test

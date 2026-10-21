@@ -1,7 +1,7 @@
 /**
  * Annotation Progress Plugin E2E Tests
  *
- * @testCovers fastapi_app/plugins/annotation_progress/routes.py
+ * @testCovers plugins/annotation-progress/src/pte_plugin_annotation_progress/routes.py
  */
 
 import { test, expect } from '../fixtures/debug-on-failure.js';

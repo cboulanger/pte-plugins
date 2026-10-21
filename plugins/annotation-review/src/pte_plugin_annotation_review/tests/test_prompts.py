@@ -1,13 +1,13 @@
 """
 Unit tests for prompt building and response validation.
 
-@testCovers fastapi_app/plugins/annotation_review/prompts.py
+@testCovers plugins/annotation-review/src/pte_plugin_annotation_review/prompts.py
 """
 
 import json
 import unittest
 
-from fastapi_app.plugins.annotation_review.prompts import (
+from pte_plugin_annotation_review.prompts import (
     UnusableResponseError,
     build_retry_note,
     build_system_prompt,
@@ -100,7 +100,7 @@ class TestParseAndValidateFindings(unittest.TestCase):
 
     def test_unparseable_response_raises_with_the_response_text_logged(self):
         with (
-            self.assertLogs("fastapi_app.plugins.annotation_review.prompts", level="WARNING") as logs,
+            self.assertLogs("pte_plugin_annotation_review.prompts", level="WARNING") as logs,
             self.assertRaises(UnusableResponseError),
         ):
             parse_and_validate_findings("not json at all", self.SOURCE)
@@ -120,7 +120,7 @@ class TestParseAndValidateFindings(unittest.TestCase):
             '  {"old": "<title>A Paper</title>", "new": "n2", "rationale": "r2"},\n'
             '  {"old": "<title>A Pa'
         )
-        with self.assertLogs("fastapi_app.plugins.annotation_review.prompts", level="WARNING") as logs:
+        with self.assertLogs("pte_plugin_annotation_review.prompts", level="WARNING") as logs:
             findings = parse_and_validate_findings(raw, self.SOURCE)
         self.assertEqual([f["new"] for f in findings], ["n", "n2"])
         self.assertIn("truncated", "\n".join(logs.output))
@@ -157,7 +157,7 @@ class TestParseAndValidateFindings(unittest.TestCase):
             '[{"old": "<title>A Paper</title>", "new": "<title level="a">A Paper</title>", "rationale": "r"},\n'
             ' {"old": "<persName>J. Doe</persName>", "new": "<persName ref="#p'
         )
-        with self.assertLogs("fastapi_app.plugins.annotation_review.prompts", level="WARNING"):
+        with self.assertLogs("pte_plugin_annotation_review.prompts", level="WARNING"):
             findings = parse_and_validate_findings(raw, self.SOURCE)
         self.assertEqual([f["new"] for f in findings], ['<title level="a">A Paper</title>'])
 

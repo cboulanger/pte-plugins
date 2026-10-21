@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 from fastapi_app.lib.extraction import BaseExtractor, get_retry_session
 from fastapi_app.lib.services.metadata_extraction import get_metadata_for_document
-from fastapi_app.plugins.grobid.config import (
+from pte_plugin_grobid.config import (
     get_annotation_guides,
     get_annotation_tags,
     get_form_options,
@@ -26,8 +26,8 @@ from fastapi_app.plugins.grobid.config import (
     get_supported_variants,
     is_grobid_cache_disabled,
 )
-from fastapi_app.plugins.grobid.hf_space import check_space_running
-from fastapi_app.plugins.grobid.handlers import (
+from pte_plugin_grobid.hf_space import check_space_running
+from pte_plugin_grobid.handlers import (
     GrobidHandler,
     TrainingHandler,
     FulltextHandler,
@@ -46,7 +46,7 @@ from fastapi_app.lib.utils.debug_utils import log_extraction_response, log_xml_p
 from fastapi_app.lib.utils.config_utils import get_config
 from fastapi_app.config import get_settings
 from fastapi_app.lib.core.url_cache import UrlCache
-from fastapi_app.plugins.grobid.annotation_rules import build_editorial_decl_entries
+from pte_plugin_grobid.annotation_rules import build_editorial_decl_entries
 
 
 class GrobidTrainingExtractor(BaseExtractor):
@@ -146,7 +146,7 @@ class GrobidTrainingExtractor(BaseExtractor):
         is_training_variant = variant_id.startswith("grobid.training.")
 
         if is_training_variant:
-            from fastapi_app.plugins.grobid.cache import check_cache, cache_training_data
+            from pte_plugin_grobid.cache import check_cache, cache_training_data
 
             # Get doc_id from options or PDF filename
             doc_id = options.get('doc_id')
@@ -174,7 +174,7 @@ class GrobidTrainingExtractor(BaseExtractor):
                     raw_tei_content = handler.fetch_tei(pdf_path, grobid_server_url, variant_id, flavor, options)
             else:
                 # Cache miss - fetch and cache
-                from fastapi_app.plugins.grobid.handlers.training import TrainingHandler
+                from pte_plugin_grobid.handlers.training import TrainingHandler
                 training_handler: TrainingHandler = handler  # type: ignore[assignment]
                 temp_dir, extracted_files = training_handler._fetch_training_package(
                     pdf_path, grobid_server_url, flavor
@@ -203,7 +203,7 @@ class GrobidTrainingExtractor(BaseExtractor):
 
         # For training variants with non-standard content location, move content to <text>
         if is_training_variant:
-            from fastapi_app.plugins.grobid.handlers.training import normalize_grobid_content
+            from pte_plugin_grobid.handlers.training import normalize_grobid_content
             raw_tei_content = normalize_grobid_content(raw_tei_content, variant_id)
 
         # Clean invalid XML attributes before parsing

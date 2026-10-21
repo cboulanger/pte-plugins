@@ -1,7 +1,7 @@
 """
 Unit tests for LLamoreExtractor's use of the general LLM provider registry.
 
-@testCovers fastapi_app/plugins/llamore_extractor/extractor.py
+@testCovers plugins/llamore-extractor/src/pte_plugin_llamore_extractor/extractor.py
 """
 
 import asyncio
@@ -10,9 +10,9 @@ from unittest.mock import MagicMock, patch
 
 from fastapi_app.lib.llm import LLMModel, LLMProvider, LLMProviderRegistry
 from fastapi_app.lib.llm.model_access import ModelAccessDenied
-from fastapi_app.plugins.llamore_extractor.extractor import LLamoreExtractor
+from pte_plugin_llamore_extractor.extractor import LLamoreExtractor
 
-EXTRACTOR_MODULE = "fastapi_app.plugins.llamore_extractor.extractor"
+EXTRACTOR_MODULE = "pte_plugin_llamore_extractor.extractor"
 
 RESPONSE = "Doe, J. (2020). A title. Journal 1, 2-3."
 

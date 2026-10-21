@@ -1,7 +1,7 @@
 /**
  * Unit tests for the edit history dashboard box.
  *
- * @testCovers fastapi_app/plugins/edit_history/extensions/edit-history-dashboard.js
+ * @testCovers plugins/edit-history/src/pte_plugin_edit_history/extensions/edit-history-dashboard.js
  */
 
 import { describe, it } from 'node:test';

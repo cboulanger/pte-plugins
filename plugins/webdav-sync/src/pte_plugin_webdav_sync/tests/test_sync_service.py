@@ -13,7 +13,7 @@ Tests:
 - SSE progress updates
 - Transaction handling
 
-@testCovers fastapi_app/plugins/webdav_sync/service.py
+@testCovers plugins/webdav-sync/src/pte_plugin_webdav_sync/service.py
 """
 
 import unittest
@@ -24,7 +24,7 @@ from pathlib import Path
 from unittest.mock import Mock, MagicMock, patch, PropertyMock
 from datetime import datetime
 
-from fastapi_app.plugins.webdav_sync.service import SyncService
+from pte_plugin_webdav_sync.service import SyncService
 from fastapi_app.lib.repository.file_repository import FileRepository
 from fastapi_app.lib.storage.file_storage import FileStorage
 from fastapi_app.lib.core.database import DatabaseManager
@@ -117,7 +117,7 @@ class TestSyncService(unittest.TestCase):
         gc.collect()  # Force garbage collection to close lingering connections
         shutil.rmtree(self.test_dir)
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_initialization(self, mock_webdav_class):
         """Test service initialization."""
         mock_webdav_class.return_value = self.mock_fs
@@ -133,7 +133,7 @@ class TestSyncService(unittest.TestCase):
         self.assertEqual(service.remote_root, '/test_root')
         self.assertEqual(service.lock_path, '/test_root/version.txt.lock')
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_check_if_sync_needed_no_changes(self, mock_webdav_class):
         """Test sync check when no changes."""
         mock_webdav_class.return_value = self.mock_fs
@@ -160,7 +160,7 @@ class TestSyncService(unittest.TestCase):
         self.assertEqual(status['remote_version'], 1)
         self.assertEqual(status['unsynced_count'], 0)
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_check_if_sync_needed_with_unsynced_files(self, mock_webdav_class):
         """Test sync check with unsynced local files."""
         mock_webdav_class.return_value = self.mock_fs
@@ -192,7 +192,7 @@ class TestSyncService(unittest.TestCase):
         self.assertTrue(status['needs_sync'])
         self.assertGreater(status['unsynced_count'], 0)
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_check_if_sync_needed_version_mismatch(self, mock_webdav_class):
         """Test sync check with version mismatch."""
         mock_webdav_class.return_value = self.mock_fs
@@ -216,7 +216,7 @@ class TestSyncService(unittest.TestCase):
         self.assertEqual(status['local_version'], 3)
         self.assertEqual(status['remote_version'], 5)
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_acquire_and_release_lock(self, mock_webdav_class):
         """Test lock acquisition and release."""
         mock_webdav_class.return_value = self.mock_fs
@@ -242,7 +242,7 @@ class TestSyncService(unittest.TestCase):
         # Verify lock file is removed
         self.assertNotIn('/test_root/version.txt.lock', self.mock_fs.files)
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_acquire_lock_when_locked(self, mock_webdav_class):
         """Test lock acquisition when already locked."""
         mock_webdav_class.return_value = self.mock_fs
@@ -267,7 +267,7 @@ class TestSyncService(unittest.TestCase):
         # Should eventually timeout or acquire stale lock
         # Implementation may vary based on stale lock handling
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_get_remote_version(self, mock_webdav_class):
         """Test retrieving remote version."""
         mock_webdav_class.return_value = self.mock_fs
@@ -290,7 +290,7 @@ class TestSyncService(unittest.TestCase):
         version = service._get_remote_version()
         self.assertEqual(version, 0)
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_get_remote_file_path(self, mock_webdav_class):
         """Test generating remote file paths."""
         mock_webdav_class.return_value = self.mock_fs
@@ -311,7 +311,7 @@ class TestSyncService(unittest.TestCase):
         path = service._get_remote_file_path('xyz789', 'tei')
         self.assertEqual(path, '/test_root/xy/xyz789.tei.xml')
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_perform_sync_skipped(self, mock_webdav_class):
         """Test sync is skipped when not needed."""
         mock_webdav_class.return_value = self.mock_fs
@@ -336,7 +336,7 @@ class TestSyncService(unittest.TestCase):
         self.assertEqual(summary.uploaded, 0)
         self.assertEqual(summary.downloaded, 0)
 
-    @patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem')
+    @patch('pte_plugin_webdav_sync.service.WebdavFileSystem')
     def test_sse_progress_updates(self, mock_webdav_class):
         """Test SSE progress updates during sync."""
         mock_webdav_class.return_value = self.mock_fs

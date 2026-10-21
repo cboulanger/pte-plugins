@@ -2,13 +2,13 @@
 Unit tests for the KISSKI LLM provider connector, including live
 demand/busy status classification.
 
-@testCovers fastapi_app/plugins/kisski/llm_provider.py
+@testCovers plugins/kisski/src/pte_plugin_kisski/llm_provider.py
 """
 
 import unittest
 from unittest.mock import MagicMock, patch
 
-from fastapi_app.plugins.kisski.llm_provider import (
+from pte_plugin_kisski.llm_provider import (
     KisskiLLMProvider,
     _demand_to_availability,
 )
@@ -40,7 +40,7 @@ class TestDemandToAvailability(unittest.TestCase):
 class TestKisskiLLMProviderListModels(unittest.TestCase):
     """Test that list_models() populates ModelStatus from the demand field."""
 
-    @patch("fastapi_app.plugins.kisski.llm_provider.get_retry_session")
+    @patch("pte_plugin_kisski.llm_provider.get_retry_session")
     def test_list_models_populates_status_from_demand(self, mock_get_session):
         mock_session = MagicMock()
         mock_response = MagicMock()
@@ -66,7 +66,7 @@ class TestKisskiLLMProviderListModels(unittest.TestCase):
         self.assertEqual(models[2]["status"]["availability"], "very_busy")
         self.assertTrue(all(m["free"] for m in models))
 
-    @patch("fastapi_app.plugins.kisski.llm_provider.get_retry_session")
+    @patch("pte_plugin_kisski.llm_provider.get_retry_session")
     def test_list_models_defaults_missing_demand_to_zero(self, mock_get_session):
         mock_session = MagicMock()
         mock_response = MagicMock()

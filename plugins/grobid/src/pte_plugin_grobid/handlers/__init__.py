@@ -1,9 +1,9 @@
 """GROBID API endpoint handlers."""
 
-from fastapi_app.plugins.grobid.handlers.base import GrobidHandler
-from fastapi_app.plugins.grobid.handlers.training import TrainingHandler
-from fastapi_app.plugins.grobid.handlers.fulltext import FulltextHandler
-from fastapi_app.plugins.grobid.handlers.references import ReferencesHandler
+from pte_plugin_grobid.handlers.base import GrobidHandler
+from pte_plugin_grobid.handlers.training import TrainingHandler
+from pte_plugin_grobid.handlers.fulltext import FulltextHandler
+from pte_plugin_grobid.handlers.references import ReferencesHandler
 
 __all__ = [
     "GrobidHandler",

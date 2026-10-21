@@ -38,12 +38,12 @@ def get_live_grobid_server_url() -> Optional[str]:
             return None
 
         from fastapi_app.lib.extraction import get_retry_session
-        from fastapi_app.plugins.grobid.config import (
+        from pte_plugin_grobid.config import (
             get_grobid_hf_space,
             get_grobid_server_timeout,
             get_grobid_server_url,
         )
-        from fastapi_app.plugins.grobid.hf_space import check_space_running
+        from pte_plugin_grobid.hf_space import check_space_running
     except ImportError as e:
         logger.debug(f"GROBID plugin not available: {e}")
         return None
@@ -186,7 +186,7 @@ def fetch_grobid_header_metadata(pdf_path: str, server_url: str) -> Bibliographi
         RuntimeError: If the request fails
     """
     from fastapi_app.lib.extraction import get_retry_session
-    from fastapi_app.plugins.grobid.config import get_grobid_extraction_timeout
+    from pte_plugin_grobid.config import get_grobid_extraction_timeout
 
     session = get_retry_session(retries=2, backoff_factor=2.0)
     try:

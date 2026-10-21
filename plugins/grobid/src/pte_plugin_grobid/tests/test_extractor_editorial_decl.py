@@ -2,9 +2,9 @@
 Unit tests for editorialDecl generation in the GROBID extractor.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_extractor_editorial_decl.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_extractor_editorial_decl.py -v
 
-@testCovers fastapi_app/plugins/grobid/extractor.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/extractor.py
 """
 
 import sys
@@ -14,7 +14,7 @@ from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
-from fastapi_app.plugins.grobid.extractor import GrobidTrainingExtractor
+from pte_plugin_grobid.extractor import GrobidTrainingExtractor
 
 
 class TestBuildEncodingDesc(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestBuildEncodingDesc(unittest.TestCase):
     extractor itself passes.
     """
 
-    @patch("fastapi_app.plugins.grobid.extractor.build_editorial_decl_entries")
+    @patch("pte_plugin_grobid.extractor.build_editorial_decl_entries")
     def test_training_variant_uses_local_variant_id_not_enc_variant_id(self, mock_build):
         """
         For GROBID training variants, `enc_variant_id` passed to
@@ -53,7 +53,7 @@ class TestBuildEncodingDesc(unittest.TestCase):
         # variant_id is the first positional argument to build_editorial_decl_entries
         self.assertEqual(call_args[0][0], "grobid.training.segmentation")
 
-    @patch("fastapi_app.plugins.grobid.extractor.build_editorial_decl_entries")
+    @patch("pte_plugin_grobid.extractor.build_editorial_decl_entries")
     def test_returned_entries_are_wired_into_encoding_desc(self, mock_build):
         """
         The entries build_editorial_decl_entries() returns must actually reach
@@ -82,7 +82,7 @@ class TestBuildEncodingDesc(unittest.TestCase):
         self.assertIsNotNone(ref)
         self.assertEqual(ref.get("target"), "https://example.org/guide")
 
-    @patch("fastapi_app.plugins.grobid.extractor.build_editorial_decl_entries")
+    @patch("pte_plugin_grobid.extractor.build_editorial_decl_entries")
     def test_non_training_variant_also_uses_variant_id_for_guide_lookup(self, mock_build):
         """
         Non-training variants pass variant_id through as enc_variant_id too,

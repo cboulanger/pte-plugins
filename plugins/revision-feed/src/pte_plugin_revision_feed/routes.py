@@ -77,7 +77,7 @@ async def my_feeds(
 ) -> dict[str, Any]:
     """Return the user's feed token and feed URLs for every project they belong to."""
     from fastapi_app.config import get_settings
-    from fastapi_app.plugins.revision_feed.token_store import get_or_create_token
+    from pte_plugin_revision_feed.token_store import get_or_create_token
 
     user = _authenticate(session_id, x_session_id, session_manager, auth_manager)
     settings = get_settings()
@@ -96,7 +96,7 @@ async def regenerate_token_endpoint(
 ) -> dict[str, Any]:
     """Issue a new feed token for the user, invalidating the previous one."""
     from fastapi_app.config import get_settings
-    from fastapi_app.plugins.revision_feed.token_store import regenerate_token
+    from pte_plugin_revision_feed.token_store import regenerate_token
 
     user = _authenticate(session_id, x_session_id, session_manager, auth_manager)
     settings = get_settings()
@@ -120,12 +120,12 @@ async def project_feed(
     from fastapi_app.lib.repository.file_repository import FileRepository
     from fastapi_app.lib.utils.config_utils import get_config
     from fastapi_app.lib.utils.project_utils import find_project, get_projects_with_details
-    from fastapi_app.plugins.revision_feed.revisions import (
+    from pte_plugin_revision_feed.revisions import (
         RevisionEntry,
         build_atom_feed,
         extract_revision_entries,
     )
-    from fastapi_app.plugins.revision_feed.token_store import resolve_token
+    from pte_plugin_revision_feed.token_store import resolve_token
 
     settings = get_settings()
 

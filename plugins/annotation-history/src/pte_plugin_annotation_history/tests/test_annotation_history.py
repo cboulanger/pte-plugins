@@ -3,15 +3,15 @@ Unit tests for the Annotation History plugin.
 
 Tests XML parsing, nested HTML table generation, and error handling.
 
-@testCovers fastapi_app/plugins/annotation_history/plugin.py
-@testCovers fastapi_app/plugins/annotation_history/routes.py
+@testCovers plugins/annotation-history/src/pte_plugin_annotation_history/plugin.py
+@testCovers plugins/annotation-history/src/pte_plugin_annotation_history/routes.py
 """
 
 import unittest
 from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
 
-from fastapi_app.plugins.annotation_history.plugin import AnnotationHistoryPlugin
+from pte_plugin_annotation_history.plugin import AnnotationHistoryPlugin
 from fastapi_app.lib.plugins.plugin_base import PluginContext
 
 
@@ -395,7 +395,7 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
     def setUp(self):
         """Set up test client."""
         from fastapi import FastAPI
-        from fastapi_app.plugins.annotation_history.routes import router
+        from pte_plugin_annotation_history.routes import router
         from fastapi_app.lib.core.dependencies import (
             get_auth_manager,
             get_session_manager,
@@ -463,7 +463,7 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
         mock_tei_file.stable_id = "test-stable-id"
 
         # Mock dependencies
-        with patch("fastapi_app.plugins.annotation_history.routes.FileRepository") as mock_repo_class:
+        with patch("pte_plugin_annotation_history.routes.FileRepository") as mock_repo_class:
             # Setup mock repository
             mock_repo = MagicMock()
             mock_repo.get_doc_id_by_file_id.return_value = "test-doc-id"
@@ -496,8 +496,8 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
     def test_view_pdf_not_found(self):
         """Test view with non-existent PDF."""
         with (
-            patch("fastapi_app.plugins.annotation_history.routes.get_db") as mock_get_db,
-            patch("fastapi_app.plugins.annotation_history.routes.FileRepository") as mock_repo_class,
+            patch("pte_plugin_annotation_history.routes.get_db") as mock_get_db,
+            patch("pte_plugin_annotation_history.routes.FileRepository") as mock_repo_class,
         ):
             # Setup mock repository to return None
             mock_repo = MagicMock()
@@ -550,7 +550,7 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
         mock_tei_file.stable_id = "test-stable-id"
 
         # Mock dependencies
-        with patch("fastapi_app.plugins.annotation_history.routes.FileRepository") as mock_repo_class:
+        with patch("pte_plugin_annotation_history.routes.FileRepository") as mock_repo_class:
             # Setup mock repository
             mock_repo = MagicMock()
             mock_repo.get_doc_id_by_file_id.return_value = "test-doc-id"
@@ -612,7 +612,7 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
         mock_tei_file.stable_id = "test-stable-id"
 
         # Mock dependencies
-        with patch("fastapi_app.plugins.annotation_history.routes.FileRepository") as mock_repo_class:
+        with patch("pte_plugin_annotation_history.routes.FileRepository") as mock_repo_class:
             mock_repo = MagicMock()
             mock_repo.get_doc_id_by_file_id.return_value = "test-doc-id"
             mock_repo.get_files_by_doc_id.return_value = [mock_tei_file]
@@ -635,7 +635,7 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
 
     def test_export_csv_pdf_not_found(self):
         """Test CSV export with non-existent PDF."""
-        with patch("fastapi_app.plugins.annotation_history.routes.FileRepository") as mock_repo_class:
+        with patch("pte_plugin_annotation_history.routes.FileRepository") as mock_repo_class:
             # Setup mock repository to return None
             mock_repo = MagicMock()
             mock_repo.get_doc_id_by_file_id.return_value = None
@@ -653,7 +653,7 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
 
     def test_export_csv_no_tei_files(self):
         """Test CSV export when no TEI files exist."""
-        with patch("fastapi_app.plugins.annotation_history.routes.FileRepository") as mock_repo_class:
+        with patch("pte_plugin_annotation_history.routes.FileRepository") as mock_repo_class:
             # Setup mock repository with no TEI files
             mock_repo = MagicMock()
             mock_repo.get_doc_id_by_file_id.return_value = "test-doc-id"
@@ -709,7 +709,7 @@ class TestAnnotationHistoryRoutes(unittest.TestCase):
         mock_tei_standard.stable_id = "standard-stable-id"
 
         # Mock dependencies
-        with patch("fastapi_app.plugins.annotation_history.routes.FileRepository") as mock_repo_class:
+        with patch("pte_plugin_annotation_history.routes.FileRepository") as mock_repo_class:
             mock_repo = MagicMock()
             mock_repo.get_doc_id_by_file_id.return_value = "test-doc-id"
             mock_repo.get_files_by_doc_id.return_value = [mock_tei_grobid, mock_tei_standard]

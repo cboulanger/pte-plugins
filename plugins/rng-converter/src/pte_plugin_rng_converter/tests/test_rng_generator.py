@@ -3,7 +3,7 @@ Unit tests for RNG Generator Module.
 """
 
 import unittest
-from fastapi_app.plugins.rng_converter.rng_generator import (
+from pte_plugin_rng_converter.rng_generator import (
     generate_rng_schema,
     SchemaAnalyzer,
     RelaxNGGenerator

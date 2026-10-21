@@ -1,7 +1,7 @@
 """
 Unit tests for the edit history routes across all accessible projects (dashboard box and "See all" page).
 
-@testCovers fastapi_app/plugins/edit_history/routes.py
+@testCovers plugins/edit-history/src/pte_plugin_edit_history/routes.py
 """
 
 import unittest
@@ -18,7 +18,7 @@ from fastapi_app.lib.core.dependencies import (
     require_authenticated_user,
 )
 from fastapi_app.plugins.dashboard.tests.fixtures import TempFileRepository
-from fastapi_app.plugins.edit_history.routes import router
+from pte_plugin_edit_history.routes import router
 
 PROJECTS = [
     {"id": "p1", "name": "Mine", "members": ["alice"], "collections": ["c1"]},

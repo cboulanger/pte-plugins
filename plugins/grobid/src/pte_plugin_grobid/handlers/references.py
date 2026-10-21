@@ -7,8 +7,8 @@ from urllib.parse import urlparse
 from requests.exceptions import ConnectionError, RequestException, RetryError  # type: ignore[import-untyped]
 
 from fastapi_app.lib.extraction import get_retry_session
-from fastapi_app.plugins.grobid.config import get_grobid_extraction_timeout
-from fastapi_app.plugins.grobid.handlers.base import GrobidHandler
+from pte_plugin_grobid.config import get_grobid_extraction_timeout
+from pte_plugin_grobid.handlers.base import GrobidHandler
 
 logger = logging.getLogger(__name__)
 

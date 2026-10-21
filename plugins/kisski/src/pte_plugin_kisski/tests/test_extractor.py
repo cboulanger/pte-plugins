@@ -3,7 +3,7 @@ Unit tests for KISSKI extractor with mocked inference endpoint.
 
 Tests JSON parsing retries and schema validation retries.
 
-@testCovers fastapi_app/plugins/kisski/extractor.py
+@testCovers plugins/kisski/src/pte_plugin_kisski/extractor.py
 """
 
 import unittest
@@ -41,7 +41,7 @@ class TestKisskiExtractorRetries(unittest.TestCase):
         """Clean up patches."""
         self.env_patcher.stop()
         # Reset the models cache
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         KisskiExtractor._models_cache = None
 
@@ -52,7 +52,7 @@ class TestKisskiExtractorRetries(unittest.TestCase):
         Args:
             responses: List of response strings to return in sequence
         """
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
         extractor.client = "test-api-key"
@@ -278,7 +278,7 @@ class TestKisskiExtractorRetries(unittest.TestCase):
                 return '{"title": "Test"}'  # Missing year
             return '{"title": "Test", "year": "2024"}'
 
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
         extractor.client = "test-api-key"
@@ -365,14 +365,14 @@ class TestKisskiExtractorPdfRetries(unittest.TestCase):
     def tearDown(self):
         """Clean up patches."""
         self.env_patcher.stop()
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         KisskiExtractor._models_cache = None
         KisskiExtractor._pdf_support_available = None
 
-    @patch("fastapi_app.plugins.kisski.extractor.KisskiExtractor.check_pdf_support")
-    @patch("fastapi_app.plugins.kisski.cache.extract_pdf_to_images")
-    @patch("fastapi_app.plugins.kisski.cache.cleanup_temp_dir")
+    @patch("pte_plugin_kisski.extractor.KisskiExtractor.check_pdf_support")
+    @patch("pte_plugin_kisski.cache.extract_pdf_to_images")
+    @patch("pte_plugin_kisski.cache.cleanup_temp_dir")
     def test_pdf_extraction_retry_on_invalid_json(
         self, mock_cleanup, mock_extract_images, mock_pdf_support
     ):
@@ -380,7 +380,7 @@ class TestKisskiExtractorPdfRetries(unittest.TestCase):
         from pathlib import Path
         import tempfile
 
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         # Set up mocks
         mock_pdf_support.return_value = True
@@ -423,9 +423,9 @@ class TestKisskiExtractorPdfRetries(unittest.TestCase):
         # Verify cleanup was called
         mock_cleanup.assert_called_once_with(temp_dir)
 
-    @patch("fastapi_app.plugins.kisski.extractor.KisskiExtractor.check_pdf_support")
-    @patch("fastapi_app.plugins.kisski.cache.extract_pdf_to_images")
-    @patch("fastapi_app.plugins.kisski.cache.cleanup_temp_dir")
+    @patch("pte_plugin_kisski.extractor.KisskiExtractor.check_pdf_support")
+    @patch("pte_plugin_kisski.cache.extract_pdf_to_images")
+    @patch("pte_plugin_kisski.cache.cleanup_temp_dir")
     def test_pdf_extraction_cleanup_on_failure(
         self, mock_cleanup, mock_extract_images, mock_pdf_support
     ):
@@ -433,7 +433,7 @@ class TestKisskiExtractorPdfRetries(unittest.TestCase):
         from pathlib import Path
         import tempfile
 
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         mock_pdf_support.return_value = True
 
@@ -467,7 +467,7 @@ class TestKisskiExtractorJsonParsing(unittest.TestCase):
 
     def test_parse_plain_json(self):
         """Test parsing plain JSON response."""
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
 
@@ -477,7 +477,7 @@ class TestKisskiExtractorJsonParsing(unittest.TestCase):
 
     def test_parse_json_with_whitespace(self):
         """Test parsing JSON with leading/trailing whitespace."""
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
 
@@ -487,7 +487,7 @@ class TestKisskiExtractorJsonParsing(unittest.TestCase):
 
     def test_parse_json_in_markdown_code_block(self):
         """Test parsing JSON from markdown code block."""
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
 
@@ -499,7 +499,7 @@ class TestKisskiExtractorJsonParsing(unittest.TestCase):
 
     def test_parse_json_in_plain_code_block(self):
         """Test parsing JSON from plain code block without language."""
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
 
@@ -509,7 +509,7 @@ class TestKisskiExtractorJsonParsing(unittest.TestCase):
 
     def test_parse_invalid_json_returns_none(self):
         """Test that invalid JSON returns None."""
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
 
@@ -519,7 +519,7 @@ class TestKisskiExtractorJsonParsing(unittest.TestCase):
 
     def test_parse_json_with_text_before_code_block(self):
         """Test parsing when there's text before the code block."""
-        from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+        from pte_plugin_kisski.extractor import KisskiExtractor
 
         extractor = KisskiExtractor()
 

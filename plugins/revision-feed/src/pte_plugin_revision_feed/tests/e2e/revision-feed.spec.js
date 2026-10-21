@@ -1,8 +1,8 @@
 /**
  * Revision Feed Plugin E2E Tests
  *
- * @testCovers fastapi_app/plugins/revision_feed/extensions/revision-feed.js
- * @testCovers fastapi_app/plugins/revision_feed/routes.py
+ * @testCovers plugins/revision-feed/src/pte_plugin_revision_feed/extensions/revision-feed.js
+ * @testCovers plugins/revision-feed/src/pte_plugin_revision_feed/routes.py
  */
 
 import { test, expect } from '../fixtures/debug-on-failure.js';

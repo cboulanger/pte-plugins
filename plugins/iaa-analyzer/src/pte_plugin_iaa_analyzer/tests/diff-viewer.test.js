@@ -4,7 +4,7 @@
  * Tests the diff calculation logic for both "all differences" mode (which works)
  * and "semantic differences" mode (which currently doesn't work correctly).
  *
- * @testCovers fastapi_app/plugins/iaa_analyzer/diff-viewer.js
+ * @testCovers plugins/iaa-analyzer/src/pte_plugin_iaa_analyzer/diff-viewer.js
  */
 
 import { describe, it } from 'node:test';

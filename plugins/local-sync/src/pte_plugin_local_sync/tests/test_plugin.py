@@ -1,7 +1,7 @@
 """
 Unit tests for Local Sync Plugin.
 
-@testCovers fastapi_app/plugins/local_sync/plugin.py
+@testCovers plugins/local-sync/src/pte_plugin_local_sync/plugin.py
 """
 
 import unittest
@@ -29,7 +29,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
         (test_path / "subdir" / "doc2.tei.xml").write_text("<TEI>test2</TEI>")
         (test_path / "ignore.xml").write_text("<TEI>ignore</TEI>")
 
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         plugin = LocalSyncPlugin()
 
         docs = plugin._scan_filesystem(test_path)
@@ -47,7 +47,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
         (test_path / "subdir" / "doc2.tei.xml").write_text("<TEI>test2</TEI>")
         (test_path / "other.tei.xml").write_text("<TEI>other</TEI>")
 
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         plugin = LocalSyncPlugin()
 
         # Only include files in subdir
@@ -65,7 +65,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
         (test_path / "subdir" / "doc2.tei.xml").write_text("<TEI>test2</TEI>")
         (test_path / "other.tei.xml").write_text("<TEI>other</TEI>")
 
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         plugin = LocalSyncPlugin()
 
         # Exclude files in subdir
@@ -86,7 +86,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
         (test_path / "draft").mkdir()
         (test_path / "draft" / "doc3.tei.xml").write_text("<TEI>test3</TEI>")
 
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         plugin = LocalSyncPlugin()
 
         # Include only files in gold, exclude files with "draft" in name
@@ -105,7 +105,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
         (test_path / "article-002.tei.xml").write_text("<TEI>test2</TEI>")
         (test_path / "review-001.tei.xml").write_text("<TEI>review</TEI>")
 
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         plugin = LocalSyncPlugin()
 
         # Only include files starting with "article"
@@ -204,7 +204,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
     @patch('fastapi_app.lib.plugins.plugin_tools.get_plugin_config')
     def test_plugin_availability_disabled(self, mock_config):
         """Test plugin is not available when disabled."""
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
 
         # Mock config to return disabled
         def config_side_effect(key, env_var, default=None, value_type="string"):
@@ -219,7 +219,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
     @patch('fastapi_app.lib.plugins.plugin_tools.get_plugin_config')
     def test_plugin_availability_no_repo_path(self, mock_config):
         """Test plugin is not available when repo path not configured."""
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
 
         # Mock config to return enabled but no repo path
         def config_side_effect(key, env_var, default=None, value_type="string"):
@@ -236,7 +236,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
     @patch('fastapi_app.lib.plugins.plugin_tools.get_plugin_config')
     def test_plugin_availability_enabled(self, mock_config):
         """Test plugin is available when enabled and repo path configured."""
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
 
         # Mock config to return enabled and repo path
         def config_side_effect(key, env_var, default=None, value_type="string"):
@@ -252,7 +252,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
 
     def test_update_filesystem_with_backup(self):
         """Test filesystem update creates backup."""
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
 
         plugin = LocalSyncPlugin()
         test_path = Path(self.temp_dir)
@@ -271,7 +271,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
 
     def test_update_filesystem_without_backup(self):
         """Test filesystem update without backup."""
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
 
         plugin = LocalSyncPlugin()
         test_path = Path(self.temp_dir)
@@ -289,7 +289,7 @@ class TestLocalSyncPlugin(unittest.TestCase):
 
     def test_create_new_version_preserves_processing_instructions(self):
         """Test that _create_new_version preserves processing instructions from filesystem."""
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         from unittest.mock import Mock
         import hashlib
 

@@ -1,7 +1,7 @@
 /**
  * Unit tests for the annotation progress dashboard box.
  *
- * @testCovers fastapi_app/plugins/annotation_progress/extensions/annotation-progress-dashboard.js
+ * @testCovers plugins/annotation-progress/src/pte_plugin_annotation_progress/extensions/annotation-progress-dashboard.js
  */
 
 import { describe, it } from 'node:test';

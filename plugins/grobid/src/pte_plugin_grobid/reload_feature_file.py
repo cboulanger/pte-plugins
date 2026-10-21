@@ -21,10 +21,10 @@ from fastapi_app.lib.plugins.plugin_tools import (
 )
 from fastapi_app.lib.repository.file_repository import FileRepository
 from fastapi_app.lib.storage.file_storage import FileStorage
-from fastapi_app.plugins.grobid.cache import cache_training_data
-from fastapi_app.plugins.grobid.extractor import GrobidTrainingExtractor
-from fastapi_app.plugins.grobid.handlers.training import TrainingHandler
-from fastapi_app.plugins.grobid.sync import parse_encoding_labels, set_revision_label
+from pte_plugin_grobid.cache import cache_training_data
+from pte_plugin_grobid.extractor import GrobidTrainingExtractor
+from pte_plugin_grobid.handlers.training import TrainingHandler
+from pte_plugin_grobid.sync import parse_encoding_labels, set_revision_label
 
 
 class ReloadPreconditionError(Exception):

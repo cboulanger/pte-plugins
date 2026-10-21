@@ -12,8 +12,8 @@ from unittest.mock import patch
 from fastapi_app.lib.extraction import ExtractorRegistry
 from fastapi_app.lib.plugins.plugin_base import PluginContext
 
-from fastapi_app.plugins.kisski.plugin import KisskiPlugin
-from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+from pte_plugin_kisski.plugin import KisskiPlugin
+from pte_plugin_kisski.extractor import KisskiExtractor
 
 
 class TestKisskiPluginRegistration(unittest.TestCase):

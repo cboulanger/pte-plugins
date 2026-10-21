@@ -56,7 +56,7 @@ const xml2Preprocessed = '<text>\n<p>Hello</p>\n</text>';
 ### 3. File Organization
 
 ```
-fastapi_app/plugins/iaa_analyzer/
+plugins/iaa-analyzer/src/pte_plugin_iaa_analyzer/
 ├── diff-viewer.js          # Refactored, testable JavaScript
 ├── diff-viewer.css         # Extracted CSS
 ├── plugin.py               # IAA calculation logic

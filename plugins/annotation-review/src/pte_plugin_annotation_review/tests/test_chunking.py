@@ -1,12 +1,12 @@
 """
 Unit tests for splitting <text> content into review chunks.
 
-@testCovers fastapi_app/plugins/annotation_review/chunking.py
+@testCovers plugins/annotation-review/src/pte_plugin_annotation_review/chunking.py
 """
 
 import unittest
 
-from fastapi_app.plugins.annotation_review.chunking import split_into_chunks
+from pte_plugin_annotation_review.chunking import split_into_chunks
 
 
 def _bibls(n: int) -> str:

@@ -1,7 +1,7 @@
 """
 Unit tests for the annotation-review plugin registration.
 
-@testCovers fastapi_app/plugins/annotation_review/plugin.py
+@testCovers plugins/annotation-review/src/pte_plugin_annotation_review/plugin.py
 """
 
 import unittest
@@ -11,7 +11,7 @@ from fastapi_app.lib.plugins.frontend_extension_registry import (
     FrontendExtensionRegistry,
 )
 from fastapi_app.lib.plugins.plugin_base import PluginContext
-from fastapi_app.plugins.annotation_review.plugin import AnnotationReviewPlugin
+from pte_plugin_annotation_review.plugin import AnnotationReviewPlugin
 
 
 class TestAnnotationReviewPlugin(unittest.TestCase):

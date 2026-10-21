@@ -1,8 +1,8 @@
 """
 Unit tests for Collection Coverage Overview plugin.
 
-@testCovers fastapi_app/plugins/collection_overview/plugin.py
-@testCovers fastapi_app/plugins/collection_overview/routes.py
+@testCovers plugins/collection-overview/src/pte_plugin_collection_overview/plugin.py
+@testCovers plugins/collection-overview/src/pte_plugin_collection_overview/routes.py
 """
 
 import asyncio
@@ -13,7 +13,7 @@ from unittest.mock import MagicMock, patch
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from fastapi_app.plugins.collection_overview.plugin import CollectionOverviewPlugin
+from pte_plugin_collection_overview.plugin import CollectionOverviewPlugin
 
 
 class TestCollectionOverviewPlugin(unittest.TestCase):
@@ -59,7 +59,7 @@ class TestCollectionOverviewRoutes(unittest.TestCase):
             get_db,
             get_session_manager,
         )
-        from fastapi_app.plugins.collection_overview.routes import router
+        from pte_plugin_collection_overview.routes import router
 
         self.app = FastAPI()
         self.app.include_router(router)

@@ -30,8 +30,8 @@ from fastapi_app.lib.utils.auth import AuthManager
 from fastapi_app.lib.sse.sse_service import SSEService
 from fastapi_app.lib.sse.sse_utils import ProgressBar, send_notification
 from fastapi_app.lib.permissions.acl_utils import user_is_admin, user_has_role
-from fastapi_app.plugins.grobid.cache import check_cache, cache_training_data
-from fastapi_app.plugins.grobid.config import get_grobid_server_url, get_model_path, get_grobid_server_timeout, is_grobid_cache_disabled
+from pte_plugin_grobid.cache import check_cache, cache_training_data
+from pte_plugin_grobid.config import get_grobid_server_url, get_model_path, get_grobid_server_timeout, is_grobid_cache_disabled
 
 logger = logging.getLogger(__name__)
 
@@ -146,9 +146,9 @@ async def get_feature_tokens(
     """
     from fastapi_app.config import get_settings
     from fastapi_app.lib.repository.file_repository import FileRepository
-    from fastapi_app.plugins.grobid.cache import get_cache_dir, get_cache_key
-    from fastapi_app.plugins.grobid.config import get_feature_suffix, LINE_BASED_VARIANTS
-    from fastapi_app.plugins.grobid.sync import extract_feature_tokens, parse_encoding_labels
+    from pte_plugin_grobid.cache import get_cache_dir, get_cache_key
+    from pte_plugin_grobid.config import get_feature_suffix, LINE_BASED_VARIANTS
+    from pte_plugin_grobid.sync import extract_feature_tokens, parse_encoding_labels
 
     session_id_value = x_session_id or session_id
     if not session_id_value:
@@ -247,7 +247,7 @@ async def reload_feature_file_preview(
     iframe (see the 'outputUrl' returned by GrobidPlugin.reload_feature_file).
     """
     from fastapi_app.lib.repository.file_repository import FileRepository
-    from fastapi_app.plugins.grobid.reload_feature_file import (
+    from pte_plugin_grobid.reload_feature_file import (
         ReloadPreconditionError,
         check_grobid_revision,
         render_precondition_error_html,
@@ -297,7 +297,7 @@ async def reload_feature_file_execute(
     `reload_feature_file.perform_reload` for exactly what changes.
     """
     from fastapi_app.lib.repository.file_repository import FileRepository
-    from fastapi_app.plugins.grobid.reload_feature_file import (
+    from pte_plugin_grobid.reload_feature_file import (
         ReloadPreconditionError,
         perform_reload,
         render_error_html,
@@ -511,7 +511,7 @@ async def download_training_package(
     from fastapi_app.config import get_settings
     from fastapi_app.lib.repository.file_repository import FileRepository
     from fastapi_app.lib.permissions.user_utils import user_has_collection_access
-    from fastapi_app.plugins.grobid.sync import parse_encoding_labels
+    from pte_plugin_grobid.sync import parse_encoding_labels
 
     # Extract session ID (header takes precedence)
     session_id_value = x_session_id or session_id
@@ -553,9 +553,9 @@ async def download_training_package(
             raise HTTPException(status_code=503, detail="GROBID server not configured")
 
         # Get GROBID version info for cache key
-        from fastapi_app.plugins.grobid.extractor import GrobidTrainingExtractor
-        from fastapi_app.plugins.grobid.handlers.training import TrainingHandler
-        from fastapi_app.plugins.grobid.handlers.training import denormalize_grobid_content
+        from pte_plugin_grobid.extractor import GrobidTrainingExtractor
+        from pte_plugin_grobid.handlers.training import TrainingHandler
+        from pte_plugin_grobid.handlers.training import denormalize_grobid_content
         extractor = GrobidTrainingExtractor()
         training_handler = TrainingHandler()
         _, grobid_revision = extractor._get_grobid_version(grobid_server_url)

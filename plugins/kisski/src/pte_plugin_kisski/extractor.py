@@ -114,7 +114,7 @@ class KisskiExtractor(LLMBaseExtractor):
         fastapi_app.lib.llm.openai_compatible.chat_completion_sync, so this
         codebase has one implementation of the OpenAI-compatible
         chat/completions call, reused by both the extraction feature and
-        the LLM provider registry (fastapi_app/plugins/kisski/llm_provider.py).
+        the LLM provider registry (plugins/kisski/src/pte_plugin_kisski/llm_provider.py).
         """
         if not model or model == "":
             raise RuntimeError("No model given")

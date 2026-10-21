@@ -1,13 +1,13 @@
 """
 Unit tests for revision extraction and Atom feed building.
 
-@testCovers fastapi_app/plugins/revision_feed/revisions.py
+@testCovers plugins/revision-feed/src/pte_plugin_revision_feed/revisions.py
 """
 
 import unittest
 from datetime import datetime
 
-from fastapi_app.plugins.revision_feed.revisions import (
+from pte_plugin_revision_feed.revisions import (
     RevisionEntry,
     build_atom_feed,
     extract_revision_entries,

@@ -1,7 +1,7 @@
 """
 Unit tests for LLamore's DocumentRulesProvider registration.
 
-@testCovers fastapi_app/plugins/llamore_extractor/plugin.py
+@testCovers plugins/llamore-extractor/src/pte_plugin_llamore_extractor/plugin.py
 """
 
 import asyncio
@@ -25,14 +25,14 @@ TEI_LLAMORE = """<TEI xmlns="http://www.tei-c.org/ns/1.0">
 
 class TestLlamoreRulesProvider(unittest.TestCase):
     def test_build_editorial_decl_entries_returns_empty(self):
-        from fastapi_app.plugins.llamore_extractor.plugin import LlamoreRulesProvider
+        from pte_plugin_llamore_extractor.plugin import LlamoreRulesProvider
 
         provider = LlamoreRulesProvider()
         self.assertEqual(provider.build_editorial_decl_entries("llamore-default", mock.MagicMock()), [])
 
-    @mock.patch("fastapi_app.plugins.llamore_extractor.plugin.get_schema_url")
+    @mock.patch("pte_plugin_llamore_extractor.plugin.get_schema_url")
     def test_get_schema_url_delegates(self, mock_get_url):
-        from fastapi_app.plugins.llamore_extractor.plugin import LlamoreRulesProvider
+        from pte_plugin_llamore_extractor.plugin import LlamoreRulesProvider
 
         mock_get_url.return_value = "https://mpilhlt.github.io/llamore/schema/llamore-default.rng"
         provider = LlamoreRulesProvider()
@@ -45,7 +45,7 @@ class TestLlamoreRulesProvider(unittest.TestCase):
 
 class TestLLamorePluginRegistersProvider(unittest.TestCase):
     def setUp(self):
-        from fastapi_app.plugins.llamore_extractor.plugin import LLamorePlugin, LlamoreRulesProvider
+        from pte_plugin_llamore_extractor.plugin import LLamorePlugin, LlamoreRulesProvider
         self.LlamoreRulesProvider = LlamoreRulesProvider
         self.plugin = LLamorePlugin.__new__(LLamorePlugin)  # skip __init__ (config bootstrap)
         asyncio.run(self.plugin.initialize(mock.Mock()))

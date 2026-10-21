@@ -2,9 +2,9 @@
 Unit tests for the GROBID training-data cache.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_cache.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_cache.py -v
 
-@testCovers fastapi_app/plugins/grobid/cache.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/cache.py
 """
 
 import sys
@@ -27,7 +27,7 @@ class CacheFlavorIsolationTestCase(unittest.TestCase):
         cache_dir = Path(self._cache_tmp.name)
 
         patcher = mock.patch(
-            "fastapi_app.plugins.grobid.cache.get_cache_dir",
+            "pte_plugin_grobid.cache.get_cache_dir",
             return_value=cache_dir,
         )
         patcher.start()
@@ -41,7 +41,7 @@ class CacheFlavorIsolationTestCase(unittest.TestCase):
         self.src_dir = src_dir
 
     def test_different_flavor_is_a_cache_miss(self):
-        from fastapi_app.plugins.grobid.cache import cache_training_data, check_cache
+        from pte_plugin_grobid.cache import cache_training_data, check_cache
 
         cache_training_data(
             "doc-1", "rev-1", "default", str(self.src_dir),
@@ -55,7 +55,7 @@ class CacheFlavorIsolationTestCase(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_same_flavor_is_a_cache_hit(self):
-        from fastapi_app.plugins.grobid.cache import cache_training_data, check_cache
+        from pte_plugin_grobid.cache import cache_training_data, check_cache
 
         cache_training_data(
             "doc-1", "rev-1", "default", str(self.src_dir),

@@ -2,7 +2,7 @@
 
 from typing import NotRequired, TypedDict
 
-from fastapi_app.plugins.grobid.config.variants import PROCESSING_FLAVORS, SUPPORTED_VARIANTS
+from pte_plugin_grobid.config.variants import PROCESSING_FLAVORS, SUPPORTED_VARIANTS
 
 
 class FormOptionSpec(TypedDict):

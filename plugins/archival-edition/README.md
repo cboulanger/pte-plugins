@@ -1,47 +1,33 @@
-# pte-edition-plugin
+# Archival Edition
 
-An external plugin for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor) for editing archival documents (letters, postcards, telegrams, conference programs, manuscripts of papers and talks, notes), and an example of how to extend the editor without changing its source code.
+A plugin for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor) for editing archival documents (letters, postcards, telegrams, conference programs, manuscripts of papers and talks, notes). It was developed in the separate repository `cboulanger/pte-edition-plugin` and is now part of [pte-plugins](../../README.md).
 
 It contains:
 
-- **an extractor** (`archival-edition`) for PDFs made of a filled-in [Document Description Form](plugins/archival_edition/tests/fixtures/document-description-form.docx) followed by photographs of the document. The form is read into the TEI header. The photographs are transcribed page by page by Claude with the user's own API key, diplomatically, in all languages the model supports;
+- **an extractor** (`archival-edition`) for PDFs made of a filled-in [Document Description Form](src/pte_plugin_archival_edition/tests/fixtures/document-description-form.docx) followed by photographs of the document. The form is read into the TEI header. The photographs are transcribed page by page by Claude with the user's own API key, diplomatically, in all languages the model supports;
 - **a schema**, [tei-archival.rng](docs/schema/tei-archival.rng): a lightweight RELAX NG schema written from scratch (no ODD), derived from the schemas of [fossil](https://github.com/mpilhlt/fossil) and extended for archival material (`msDesc`, `correspDesc`, `facsimile`, diplomatic transcription);
 - **annotation guidelines**, [docs/guidelines.md](docs/guidelines.md), which also document how each form field maps to TEI.
 
-The schema and guidelines are published at <https://cboulanger.github.io/pte-edition-plugin/>.
+The schema and guidelines are published at <https://cboulanger.github.io/pte-plugins/archival-edition/>. Documents created before the move refer to the schema at `https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng`; the plugin validates them with the bundled schema as well.
 
 ## Installation
 
-The plugin needs a PDF-TEI-Editor version with support for multi-module external plugins, image input for LLM providers and per-user API keys (mpilhlt/pdf-tei-editor#566), and the shared annotation tag generator for the XML editor's visual mode (mpilhlt/pdf-tei-editor#576).
+Install the package into the editor's environment (see the [repository README](../../README.md#installing-plugins)); it also installs the `anthropic-llm` plugin it depends on:
 
-1. Clone this repository next to the editor:
+```bash
+uv pip install "pte-plugin-archival-edition @ git+https://github.com/cboulanger/pte-plugins#subdirectory=plugins/archival-edition"
+```
 
-   ```bash
-   git clone https://github.com/cboulanger/pte-edition-plugin.git /opt/pte-edition-plugin
-   ```
+The package declares the editor versions and plugin API versions it works with in `pte-plugin.json`; an incompatible plugin is shown as "Incompatible" in the plugin manager and not loaded.
 
-2. Point the editor to the `plugins/` directory (the plugin's `pte-plugin.json` marks it as a plugin and declares its version and the editor versions it works with; an incompatible plugin is shown as "Incompatible" in the plugin manager and not loaded). The variable can list several directories, separated by `:` (`;` on Windows):
+Configuration:
 
-   ```bash
-   # .env of the editor
-   FASTAPI_PLUGIN_PATHS=/opt/pte-edition-plugin/plugins
-   ```
+1. Each user supplies their own Anthropic API key, so the cost of the transcription is billed to the user and not to the maintainer of the editor. When a user starts an extraction without a stored key, the editor asks for it and stores it encrypted (it can also be managed under the user menu > API Keys). Administrators and scripts can store keys with `uv run python bin/user-secrets.py set anthropic --user <name>` in the editor's directory. The model is chosen in the extraction dialog; `ARCHIVAL_EDITION_MODEL` (or the config key `plugin.archival-edition.model`) sets the default.
+2. Optional: set `ARCHIVAL_EDITION_AUTHORITY` (or the config key `plugin.archival-edition.authority`) to the project responsible for the edition; it goes into `publicationStmt/authority`.
 
-   For Docker, mount the directory into the container:
+After a restart, "Archival Edition" appears in the Plugin Manager, and "Archival edition (description form + transcription)" is offered in the extraction dialog.
 
-   ```bash
-   docker run ... \
-     -v /opt/pte-edition-plugin/plugins:/opt/pte-plugins:ro \
-     -e FASTAPI_PLUGIN_PATHS=/opt/pte-plugins \
-     cboulanger/pdf-tei-editor:latest
-   ```
-
-3. Each user supplies their own Anthropic API key, so the cost of the transcription is billed to the user and not to the maintainer of the editor. When a user starts an extraction without a stored key, the editor asks for it and stores it encrypted (it can also be managed under the user menu > API Keys). Administrators and scripts can store keys with `uv run python bin/user-secrets.py set anthropic --user <name>` in the editor's directory. The model is chosen in the extraction dialog; `ARCHIVAL_EDITION_MODEL` (or the config key `plugin.archival-edition.model`) sets the default.
-4. Optional: set `ARCHIVAL_EDITION_AUTHORITY` (or the config key `plugin.archival-edition.authority`) to the project responsible for the edition; it goes into `publicationStmt/authority`.
-
-After a restart, "Archival Edition" appears as an external plugin in the Plugin Manager, and "Archival edition (description form + transcription)" is offered in the extraction dialog.
-
-The plugin uses only Python packages the editor already installs (lxml, PyMuPDF).
+Besides the editor's own dependencies, the plugin needs PyMuPDF, which the package declares.
 
 ## Usage
 
@@ -65,44 +51,35 @@ PDF ──► form pages (text layer) ──► form_parser.py ──► field v
 
 | File | Purpose |
 | --- | --- |
-| [plugin.py](plugins/archival_edition/plugin.py) | Registers the extractor and the document rules provider (schema URL, guidelines) |
-| [extractor.py](plugins/archival_edition/extractor.py) | Assembles the TEI document |
-| [fields.py](plugins/archival_edition/fields.py), [values.py](plugins/archival_edition/values.py) | Form fields and their conventions (`[inferred]`, `?`, dates, names) |
-| [form_parser.py](plugins/archival_edition/form_parser.py) | Reads the form's tables from the text layer, or asks the model for scanned forms |
-| [header_builder.py](plugins/archival_edition/header_builder.py) | Maps form fields to the TEI header |
-| [transcriber.py](plugins/archival_edition/transcriber.py), [prompts/](plugins/archival_edition/prompts) | Page-by-page transcription with one repair round for malformed XML |
-| [extensions/pb-sync.js](plugins/archival_edition/extensions/pb-sync.js) | Autosearch fallback: the photographs have no text layer, so the PDF viewer scrolls to the page of the nearest preceding `<pb/>` (after the form pages). Needs the `pdfSearch.fallback` extension point of the editor |
-| [extensions/tei-html-view.js](plugins/archival_edition/extensions/tei-html-view.js), [static/archival-edition-to-html.xsl](plugins/archival_edition/static/archival-edition-to-html.xsl) | Reading view in the XML editor's XSL viewer ("Archival edition (pages)"): the transcription as HTML, one box per page delimited by `<pb/>` |
+| [plugin.py](src/pte_plugin_archival_edition/plugin.py) | Registers the extractor and the document rules provider (schema URL, guidelines) |
+| [extractor.py](src/pte_plugin_archival_edition/extractor.py) | Assembles the TEI document |
+| [fields.py](src/pte_plugin_archival_edition/fields.py), [values.py](src/pte_plugin_archival_edition/values.py) | Form fields and their conventions (`[inferred]`, `?`, dates, names) |
+| [form_parser.py](src/pte_plugin_archival_edition/form_parser.py) | Reads the form's tables from the text layer, or asks the model for scanned forms |
+| [header_builder.py](src/pte_plugin_archival_edition/header_builder.py) | Maps form fields to the TEI header |
+| [transcriber.py](src/pte_plugin_archival_edition/transcriber.py), [prompts/](src/pte_plugin_archival_edition/prompts) | Page-by-page transcription with one repair round for malformed XML |
+| [extensions/pb-sync.js](src/pte_plugin_archival_edition/extensions/pb-sync.js) | Autosearch fallback: the photographs have no text layer, so the PDF viewer scrolls to the page of the nearest preceding `<pb/>` (after the form pages). Needs the `pdfSearch.fallback` extension point of the editor |
+| [extensions/tei-html-view.js](src/pte_plugin_archival_edition/extensions/tei-html-view.js), [static/archival-edition-to-html.xsl](src/pte_plugin_archival_edition/static/archival-edition-to-html.xsl) | Reading view in the XML editor's XSL viewer ("Archival edition (pages)"): the transcription as HTML, one box per page delimited by `<pb/>` |
 | [schema/](schema) | Composable RNG source of the schema |
 
 [examples/sample-letter.tei.xml](examples/sample-letter.tei.xml) shows the output for the test PDF (with a canned transcription instead of a real model).
 
-[schlote-letter-1906.pdf](plugins/archival_edition/tests/fixtures/schlote-letter-1906.pdf) is an example of a real input PDF: the filled-in form followed by the scans of a handwritten letter from 1906 (German Kurrent script with Chinese numerals, CC0, from Wikimedia Commons; see the [fixtures README](plugins/archival_edition/tests/fixtures/README.md)). Upload it to the editor to try the extractor.
-
-## Extending the PDF-TEI-Editor
-
-This repository is an example of a plugin that lives outside the editor's source tree. How external plugins work (discovery, the `pte-plugin.json` manifest, packages, routes, static files, dependencies) is described in the editor's [backend plugin guide](https://github.com/mpilhlt/pdf-tei-editor/blob/devel/docs/code-assistant/backend-plugins.md#external-plugins).
+[schlote-letter-1906.pdf](src/pte_plugin_archival_edition/tests/fixtures/schlote-letter-1906.pdf) is an example of a real input PDF: the filled-in form followed by the scans of a handwritten letter from 1906 (German Kurrent script with Chinese numerals, CC0, from Wikimedia Commons; see the [fixtures README](src/pte_plugin_archival_edition/tests/fixtures/README.md)). Upload it to the editor to try the extractor.
 
 ## Development
 
-Tests run in the Python environment of a PDF-TEI-Editor checkout (default `../pdf-tei-editor`, or set `PTE_ROOT`):
-
-```bash
-uv run --project ../pdf-tei-editor python -m pytest
-PTE_ROOT=../pdf-tei-editor node --test plugins/archival_edition/tests/pb-sync.test.mjs   # frontend extension
-```
+The tests run with the tests of the other plugins (see the [repository README](../../README.md#development)). The commands below run from this directory, with `PTE_ROOT` pointing to the editor checkout whose environment the plugins are installed into.
 
 After editing anything in `schema/`, regenerate the flattened schema (written to `docs/schema/` and the plugin's `static/schema/`):
 
 ```bash
-uv run --project ../pdf-tei-editor python scripts/build_schema.py
+"$PTE_ROOT/.venv/bin/python" scripts/build_schema.py
 ```
 
 Regenerate the test PDF (needs LibreOffice and python-docx) and the example output:
 
 ```bash
-uv run --project ../pdf-tei-editor --with python-docx python scripts/make_sample_pdf.py
-uv run --project ../pdf-tei-editor python scripts/make_example_tei.py
+uv run --project "$PTE_ROOT" --with python-docx python scripts/make_sample_pdf.py
+"$PTE_ROOT/.venv/bin/python" scripts/make_example_tei.py
 ```
 
-The schema and guidelines are served by GitHub Pages from the `docs/` directory of the `main` branch.
+The schema and guidelines are published to GitHub Pages from the `docs/` directory on the `main` branch, by the repository's [pages workflow](../../.github/workflows/pages.yml).

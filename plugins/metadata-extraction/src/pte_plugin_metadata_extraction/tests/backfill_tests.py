@@ -4,7 +4,7 @@ Ad-hoc tests for the metadata backfill of the Metadata Extraction plugin.
 Deliberately not named test_*.py so that the general test runners do not pick them up.
 Run during development with:
 
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/metadata_extraction/tests/backfill_tests.py
+    uv run --project "$PTE_ROOT" python -m pytest plugins/metadata-extraction/src/pte_plugin_metadata_extraction/tests/backfill_tests.py
 """
 
 import unittest
@@ -18,8 +18,8 @@ from lxml import etree
 
 from fastapi_app.lib.models.models import FileMetadata
 from fastapi_app.lib.services.metadata_extraction import BibliographicMetadata
-from fastapi_app.plugins.metadata_extraction import backfill
-from fastapi_app.plugins.metadata_extraction.backfill import (
+from pte_plugin_metadata_extraction import backfill
+from pte_plugin_metadata_extraction.backfill import (
     backfill_collection,
     backfill_document,
     fill_missing_fields,
@@ -27,7 +27,7 @@ from fastapi_app.plugins.metadata_extraction.backfill import (
     get_missing_fields,
     retrieve_metadata,
 )
-from fastapi_app.plugins.metadata_extraction.grobid_header import parse_grobid_header
+from pte_plugin_metadata_extraction.grobid_header import parse_grobid_header
 
 NS = {"tei": "http://www.tei-c.org/ns/1.0"}
 
@@ -485,7 +485,7 @@ class TestBackfillCollection(unittest.IsolatedAsyncioTestCase):
 class TestPluginMenuEntry(unittest.IsolatedAsyncioTestCase):
 
     async def test_opens_options_for_current_collection(self):
-        from fastapi_app.plugins.metadata_extraction.plugin import MetadataExtractionPlugin
+        from pte_plugin_metadata_extraction.plugin import MetadataExtractionPlugin
 
         plugin = MetadataExtractionPlugin()
         self.assertEqual(plugin.metadata["required_roles"], ["admin"])
@@ -504,7 +504,7 @@ class TestBackfillRoute(unittest.TestCase):
             get_session_manager,
             get_sse_service,
         )
-        from fastapi_app.plugins.metadata_extraction.routes import router
+        from pte_plugin_metadata_extraction.routes import router
 
         self.app = FastAPI()
         self.app.include_router(router)
@@ -522,7 +522,7 @@ class TestBackfillRoute(unittest.TestCase):
 
         patches = [
             patch("fastapi_app.lib.utils.collection_utils.validate_collection", side_effect=lambda c, d: c == "coll"),
-            patch("fastapi_app.plugins.metadata_extraction.grobid_header.get_live_grobid_server_url", return_value=None),
+            patch("pte_plugin_metadata_extraction.grobid_header.get_live_grobid_server_url", return_value=None),
             patch("fastapi_app.lib.sse.sse_utils.ProgressBar"),
             patch("fastapi_app.lib.sse.sse_utils.send_notification"),
         ]
@@ -555,7 +555,7 @@ class TestBackfillRoute(unittest.TestCase):
 
     def test_runs_backfill(self):
         report = {"summary": {"documents": 0, "documents_updated": 0, "errors": 0}}
-        with patch("fastapi_app.plugins.metadata_extraction.backfill.backfill_collection", return_value=report) as run:
+        with patch("pte_plugin_metadata_extraction.backfill.backfill_collection", return_value=report) as run:
             response = self.client.post(
                 self.url, params={"collection": "coll", "session_id": "s", "dry_run": "true", "limit": "5"}
             )

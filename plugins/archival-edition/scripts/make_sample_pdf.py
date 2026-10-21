@@ -1,5 +1,5 @@
 """
-Build the test fixture plugins/archival_edition/tests/fixtures/sample-letter.pdf.
+Build the test fixture src/pte_plugin_archival_edition/tests/fixtures/sample-letter.pdf.
 
 Fills the Document Description Form (DOCX) with fictional values for a letter,
 converts it to PDF with LibreOffice and appends two generated "photo" pages
@@ -17,7 +17,7 @@ from pathlib import Path
 import docx
 import pymupdf
 
-FIXTURES = Path(__file__).resolve().parent.parent / "plugins" / "archival_edition" / "tests" / "fixtures"
+FIXTURES = Path(__file__).resolve().parent.parent / "src" / "pte_plugin_archival_edition" / "tests" / "fixtures"
 FORM = FIXTURES / "document-description-form.docx"
 OUTPUT = FIXTURES / "sample-letter.pdf"
 

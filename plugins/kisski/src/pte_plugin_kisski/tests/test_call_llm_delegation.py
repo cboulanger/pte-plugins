@@ -2,13 +2,13 @@
 Unit test confirming KisskiExtractor._call_llm delegates to the shared
 chat_completion_sync function, rather than duplicating the HTTP call.
 
-@testCovers fastapi_app/plugins/kisski/extractor.py:_call_llm
+@testCovers plugins/kisski/src/pte_plugin_kisski/extractor.py:_call_llm
 """
 
 import unittest
 from unittest.mock import patch
 
-from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+from pte_plugin_kisski.extractor import KisskiExtractor
 
 
 class TestCallLlmDelegation(unittest.TestCase):
@@ -17,10 +17,10 @@ class TestCallLlmDelegation(unittest.TestCase):
         extractor.client = "test-api-key"
 
         with patch(
-            "fastapi_app.plugins.kisski.extractor.chat_completion_sync",
+            "pte_plugin_kisski.extractor.chat_completion_sync",
             return_value="delegated response",
         ) as mock_fn, patch(
-            "fastapi_app.plugins.kisski.extractor.get_config"
+            "pte_plugin_kisski.extractor.get_config"
         ) as mock_get_config:
             mock_get_config.return_value.get.return_value = "https://chat-ai.academiccloud.de/v1"
 

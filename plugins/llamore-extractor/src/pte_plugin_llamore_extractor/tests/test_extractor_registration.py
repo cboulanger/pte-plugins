@@ -12,8 +12,8 @@ from unittest.mock import patch
 from fastapi_app.lib.extraction import ExtractorRegistry
 from fastapi_app.lib.plugins.plugin_base import PluginContext
 
-from fastapi_app.plugins.llamore_extractor.plugin import LLamorePlugin
-from fastapi_app.plugins.llamore_extractor.extractor import LLamoreExtractor
+from pte_plugin_llamore_extractor.plugin import LLamorePlugin
+from pte_plugin_llamore_extractor.extractor import LLamoreExtractor
 
 
 class TestLLamorePluginRegistration(unittest.TestCase):

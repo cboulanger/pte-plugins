@@ -12,8 +12,8 @@ from unittest.mock import patch
 from fastapi_app.lib.extraction import ExtractorRegistry
 from fastapi_app.lib.plugins.plugin_base import PluginContext
 
-from fastapi_app.plugins.grobid.plugin import GrobidPlugin
-from fastapi_app.plugins.grobid.extractor import GrobidTrainingExtractor
+from pte_plugin_grobid.plugin import GrobidPlugin
+from pte_plugin_grobid.extractor import GrobidTrainingExtractor
 
 
 class TestGrobidPluginRegistration(unittest.TestCase):

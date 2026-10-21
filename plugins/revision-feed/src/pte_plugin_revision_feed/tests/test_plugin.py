@@ -1,14 +1,14 @@
 """
 Unit tests for the revision feed plugin's metadata and config registration.
 
-@testCovers fastapi_app/plugins/revision_feed/plugin.py
+@testCovers plugins/revision-feed/src/pte_plugin_revision_feed/plugin.py
 """
 
 import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from fastapi_app.plugins.revision_feed.plugin import RevisionFeedPlugin
+from pte_plugin_revision_feed.plugin import RevisionFeedPlugin
 
 
 class TestRevisionFeedPlugin(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestRevisionFeedPlugin(unittest.TestCase):
         """RevisionFeedPlugin.__init__ does a LOCAL `from
         fastapi_app.lib.utils.config_utils import get_config` (both directly and inside
         get_plugin_config()), so patching that attribute on the source module - rather than
-        on fastapi_app.plugins.revision_feed.plugin, which never imports get_config at module
+        on pte_plugin_revision_feed.plugin, which never imports get_config at module
         level - is what's actually read at call time. This keeps the test from reading or
         writing the real on-disk data/db/config.json (see the kisski plugin's
         test_plugin_llm_registration.py for the same pattern applied to a module-level import).

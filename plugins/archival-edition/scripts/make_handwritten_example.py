@@ -1,5 +1,5 @@
 """
-Build the example and test fixture plugins/archival_edition/tests/fixtures/schlote-letter-1906.pdf.
+Build the example and test fixture src/pte_plugin_archival_edition/tests/fixtures/schlote-letter-1906.pdf.
 
 A real handwritten letter: Ernst Schlote to Maria Lüdeke, Lifang (Tsingtao),
 10 June 1906, German in Kurrent script with Chinese numerals on pages 3 and 4.
@@ -44,7 +44,7 @@ SOURCES = [("1.jpg", "1r"), ("2 und 3.jpg", "1v-2r"), ("4.jpg", "2v")]
 
 # Width of the downloaded images (one of the thumbnail sizes Wikimedia serves)
 WIDTH = 1920
-USER_AGENT = "pte-edition-plugin-fixture/1.0 (https://github.com/cboulanger/pte-edition-plugin; fixture build script)"
+USER_AGENT = "pte-plugins-fixture/1.0 (https://github.com/cboulanger/pte-plugins; fixture build script)"
 
 # Description taken from the Commons file pages and from the scans themselves
 VALUES = {

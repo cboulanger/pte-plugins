@@ -1,7 +1,7 @@
 """
 Unit tests for rule-excerpt gathering and review orchestration.
 
-@testCovers fastapi_app/plugins/annotation_review/review_logic.py
+@testCovers plugins/annotation-review/src/pte_plugin_annotation_review/review_logic.py
 """
 
 import socket
@@ -10,7 +10,7 @@ from unittest import mock
 
 from fastapi_app.lib.llm import LLMModel, LLMProvider
 from fastapi_app.lib.utils.annotation_rules_utils import RuleFetchError
-from fastapi_app.plugins.annotation_review.review_logic import (
+from pte_plugin_annotation_review.review_logic import (
     NoRuleExcerptsError,
     _is_safe_fetch_url,
     count_chunks,
@@ -132,8 +132,8 @@ class TestExtractTextContent(unittest.TestCase):
 
 
 class TestGatherRuleExcerpts(unittest.TestCase):
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     def test_fetches_one_excerpt_per_category_machine_ref(self, mock_fetch, mock_is_safe):
         # _is_safe_fetch_url is mocked here: TEI_DOC's "raw.example.org" targets are
         # deliberately non-resolvable (test isolation from real DNS/network), which
@@ -145,7 +145,7 @@ class TestGatherRuleExcerpts(unittest.TestCase):
         self.assertIn("primary", categories)
         self.assertIn("footnote-annotation", categories)
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     def test_skips_category_with_no_machine_ref(self, mock_fetch):
         excerpts = gather_rule_excerpts(
             NO_MACHINE_REF_DOC, cache=mock.MagicMock(), store=_no_override_store(), owner="alice"
@@ -153,15 +153,15 @@ class TestGatherRuleExcerpts(unittest.TestCase):
         self.assertEqual(excerpts, [])
         mock_fetch.assert_not_called()
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     def test_skips_category_whose_fetch_raises(self, mock_fetch, mock_is_safe):
         mock_fetch.side_effect = RuleFetchError("got HTML")
-        with self.assertLogs("fastapi_app.plugins.annotation_review.review_logic", level="WARNING"):
+        with self.assertLogs("pte_plugin_annotation_review.review_logic", level="WARNING"):
             excerpts = gather_rule_excerpts(TEI_DOC, cache=mock.MagicMock(), store=_no_override_store(), owner="alice")
         self.assertEqual(excerpts, [])
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.socket.getaddrinfo")
+    @mock.patch("pte_plugin_annotation_review.review_logic.socket.getaddrinfo")
     def test_skips_category_with_unsafe_fetch_target(self, mock_getaddrinfo):
         # Mock DNS resolution rather than relying on real DNS/NXDOMAIN
         # behavior for "raw.example.org" (deliberately non-resolvable), so
@@ -181,7 +181,7 @@ class TestGatherRuleExcerpts(unittest.TestCase):
         )
         cache = mock.MagicMock()
         with mock.patch(
-            "fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt"
+            "pte_plugin_annotation_review.review_logic.fetch_rule_excerpt"
         ) as mock_fetch:
             mock_fetch.return_value = "footnote rule excerpt"
             excerpts = gather_rule_excerpts(unsafe_doc, cache=cache, store=_no_override_store(), owner="alice")
@@ -190,7 +190,7 @@ class TestGatherRuleExcerpts(unittest.TestCase):
             )
         self.assertEqual(excerpts, [("footnote-annotation", "footnote rule excerpt")])
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     def test_uses_the_selected_override_instead_of_fetching(self, mock_fetch):
         # SINGLE_CATEGORY_TEI_DOC (not the shared, two-category TEI_DOC) is used here:
         # the mocked store below returns the same override text unconditionally, so a
@@ -206,7 +206,7 @@ class TestGatherRuleExcerpts(unittest.TestCase):
         self.assertEqual(excerpts, [("primary", "Overridden rule text.")])
         mock_fetch.assert_not_called()
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     def test_override_lookup_uses_the_human_ref_key_not_the_machine_ref_key(self, mock_fetch):
         from fastapi_app.lib.doc_rules.resource_key import normalize_resource_key
 
@@ -239,8 +239,8 @@ class TestGatherRuleExcerpts(unittest.TestCase):
         )
         mock_fetch.assert_not_called()
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     def test_falls_back_to_fetch_when_owner_has_no_selected_override(self, mock_fetch, mock_is_safe):
         # SINGLE_CATEGORY_TEI_DOC, not the shared two-category TEI_DOC - see the
         # comment in test_uses_the_selected_override_instead_of_fetching above;
@@ -256,8 +256,8 @@ class TestGatherRuleExcerpts(unittest.TestCase):
 
 
 class TestRunReview(unittest.IsolatedAsyncioTestCase):
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     async def test_full_flow_returns_validated_findings(self, mock_fetch, mock_is_safe):
         # _is_safe_fetch_url is mocked for the same reason as in TestGatherRuleExcerpts:
         # TEI_DOC's "raw.example.org" targets are deliberately non-resolvable.
@@ -275,8 +275,8 @@ class TestRunReview(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(provider.calls[0]["model_id"], "stub-model")
         self.assertIn("persName must have a ref attribute", provider.calls[0]["user_prompt"])
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     async def test_reviews_only_the_requested_chunk_and_validates_against_the_whole_text(self, mock_fetch, mock_is_safe):
         mock_fetch.side_effect = lambda url, cache, **kwargs: "rule"
         bibls = "".join(f"<bibl>Author {i:03d}, <title>Title {i:03d}</title>.</bibl>\n" for i in range(400))
@@ -300,8 +300,8 @@ class TestRunReview(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Title 399", provider.calls[1]["user_prompt"])
         self.assertNotIn("Title 000", provider.calls[1]["user_prompt"])
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     async def test_reviews_only_the_scope_and_validates_against_the_whole_document(self, mock_fetch, mock_is_safe):
         mock_fetch.side_effect = lambda url, cache, **kwargs: "rule"
         scope = "<title>A Paper</title>"
@@ -321,8 +321,8 @@ class TestRunReview(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([f["old"] for f in findings], ["<title>A Paper</title>"])
         self.assertEqual(_discarded, 2)
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     async def test_retries_once_with_feedback_when_every_finding_was_discarded(self, mock_fetch, mock_is_safe):
         mock_fetch.side_effect = lambda url, cache, **kwargs: "rule"
         paraphrased = '[{"old": "<persName> J. Doe </persName>", "new": "x", "rationale": "r"}]'
@@ -337,8 +337,8 @@ class TestRunReview(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([f["old"] for f in findings], ["<persName>J. Doe</persName>"])
         self.assertEqual(discarded, 0)
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     async def test_reports_discarded_count_when_the_retry_fails_too(self, mock_fetch, mock_is_safe):
         mock_fetch.side_effect = lambda url, cache, **kwargs: "rule"
         provider = _StubProvider('[{"old": "nope", "new": "x", "rationale": "r"}]', "not json")
@@ -349,8 +349,8 @@ class TestRunReview(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(findings, [])
         self.assertEqual(discarded, 1)
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic._is_safe_fetch_url", return_value=True)
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic._is_safe_fetch_url", return_value=True)
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     async def test_does_not_retry_an_empty_review(self, mock_fetch, mock_is_safe):
         mock_fetch.side_effect = lambda url, cache, **kwargs: "rule"
         provider = _StubProvider("[]")
@@ -381,7 +381,7 @@ class TestRunReview(unittest.IsolatedAsyncioTestCase):
             )
         self.assertEqual(provider.calls, [])
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.fetch_rule_excerpt")
+    @mock.patch("pte_plugin_annotation_review.review_logic.fetch_rule_excerpt")
     async def test_raises_when_no_excerpts_could_be_gathered(self, mock_fetch):
         provider = _StubProvider("[]")
         with self.assertRaises(NoRuleExcerptsError):
@@ -416,7 +416,7 @@ class TestIsSafeFetchUrl(unittest.TestCase):
     def test_rejects_link_local(self):
         self.assertFalse(_is_safe_fetch_url("http://169.254.169.254/latest/meta-data/"))
 
-    @mock.patch("fastapi_app.plugins.annotation_review.review_logic.socket.getaddrinfo")
+    @mock.patch("pte_plugin_annotation_review.review_logic.socket.getaddrinfo")
     def test_accepts_public_https_url(self, mock_getaddrinfo):
         # Mocked rather than relying on a real DNS lookup, to keep this test
         # deterministic in CI environments without DNS/internet access.

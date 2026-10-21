@@ -1,14 +1,14 @@
 """
 Unit tests for KisskiPlugin's LLM provider registration.
 
-@testCovers fastapi_app/plugins/kisski/plugin.py
+@testCovers plugins/kisski/src/pte_plugin_kisski/plugin.py
 """
 
 import unittest
 from unittest.mock import MagicMock, patch
 
 from fastapi_app.lib.llm import LLMProviderRegistry
-from fastapi_app.plugins.kisski.plugin import KisskiPlugin
+from pte_plugin_kisski.plugin import KisskiPlugin
 
 
 class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
@@ -24,7 +24,7 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         # (see plugin.py's app_mode guard), so app_mode stays at its
         # "development" default for these tests.
         self.service_available_patcher = patch(
-            "fastapi_app.plugins.kisski.plugin.KisskiService.is_available",
+            "pte_plugin_kisski.plugin.KisskiService.is_available",
             return_value=False,
         )
         self.service_available_patcher.start()
@@ -36,7 +36,7 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
     def _mock_config(self, api_key, base_url="https://example.com/v1"):
         """Build a get_config() replacement returning controlled values for our two keys.
 
-        Patching fastapi_app.plugins.kisski.plugin.get_config (rather than
+        Patching pte_plugin_kisski.plugin.get_config (rather than
         relying on real env vars + get_plugin_config's global persistence)
         keeps these tests isolated from any other test's config state.
         KisskiPlugin.__init__'s own get_plugin_config(...) calls still run
@@ -48,7 +48,7 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         mock_config.get.side_effect = lambda key, *a, **kw: values.get(key)
         return mock_config
 
-    @patch("fastapi_app.plugins.kisski.plugin.get_config")
+    @patch("pte_plugin_kisski.plugin.get_config")
     async def test_initialize_registers_llm_provider_when_api_key_present(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key="real-key")
         plugin = KisskiPlugin()
@@ -59,7 +59,7 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(provider.label, "KISSKI Academic Cloud")
         self.assertTrue(provider.is_available())
 
-    @patch("fastapi_app.plugins.kisski.plugin.get_config")
+    @patch("pte_plugin_kisski.plugin.get_config")
     async def test_initialize_registers_llm_provider_for_user_keys_without_api_key(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key=None)
         plugin = KisskiPlugin()
@@ -70,7 +70,7 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(provider.has_shared_key())
         self.assertEqual(provider.secret_service, "kisski")
 
-    @patch("fastapi_app.plugins.kisski.plugin.get_config")
+    @patch("pte_plugin_kisski.plugin.get_config")
     async def test_cleanup_unregisters_llm_provider(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key="real-key")
         plugin = KisskiPlugin()
@@ -82,7 +82,7 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(KeyError):
             LLMProviderRegistry.get_instance().get_provider("kisski")
 
-    @patch("fastapi_app.plugins.kisski.plugin.get_config")
+    @patch("pte_plugin_kisski.plugin.get_config")
     async def test_initialize_skips_llm_provider_in_testing_mode(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key="real-key")
         plugin = KisskiPlugin()

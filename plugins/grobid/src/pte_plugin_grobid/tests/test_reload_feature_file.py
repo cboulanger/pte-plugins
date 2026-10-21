@@ -1,10 +1,10 @@
 """
-Unit tests for fastapi_app/plugins/grobid/reload_feature_file.py.
+Unit tests for plugins/grobid/src/pte_plugin_grobid/reload_feature_file.py.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_reload_feature_file.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_reload_feature_file.py -v
 
-@testCovers fastapi_app/plugins/grobid/reload_feature_file.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/reload_feature_file.py
 """
 
 import asyncio
@@ -16,7 +16,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 from fastapi_app.lib.models.models import FileMetadata
-from fastapi_app.plugins.grobid.reload_feature_file import (
+from pte_plugin_grobid.reload_feature_file import (
     ReloadPreconditionError,
     ReloadResult,
     ReloadTarget,
@@ -79,7 +79,7 @@ class ResolveReloadTargetTestCase(unittest.TestCase):
         # Isolate resolve_reload_target's own logic from the real
         # access-control mode configuration; individual tests override this.
         check_access_patch = mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.check_file_access",
+            "pte_plugin_grobid.reload_feature_file.check_file_access",
             return_value=True,
         )
         self.mock_check_access = check_access_patch.start()
@@ -179,23 +179,23 @@ class PerformReloadTestCase(unittest.TestCase):
     def _patch_network(self, grobid_revision="new-rev-2"):
         patches = {
             "check_health": mock.patch(
-                "fastapi_app.plugins.grobid.extractor.GrobidTrainingExtractor._check_grobid_health",
+                "pte_plugin_grobid.extractor.GrobidTrainingExtractor._check_grobid_health",
                 return_value=None,
             ),
             "get_version": mock.patch(
-                "fastapi_app.plugins.grobid.extractor.GrobidTrainingExtractor._get_grobid_version",
+                "pte_plugin_grobid.extractor.GrobidTrainingExtractor._get_grobid_version",
                 return_value=("0.8.1", grobid_revision),
             ),
             "fetch_package": mock.patch(
-                "fastapi_app.plugins.grobid.handlers.training.TrainingHandler._fetch_training_package",
+                "pte_plugin_grobid.handlers.training.TrainingHandler._fetch_training_package",
                 return_value=("/tmp/fake-temp-dir", ["doc-1.training.segmentation"]),
             ),
             "cache_training_data": mock.patch(
-                "fastapi_app.plugins.grobid.reload_feature_file.cache_training_data",
+                "pte_plugin_grobid.reload_feature_file.cache_training_data",
                 return_value=None,
             ),
             "rmtree": mock.patch(
-                "fastapi_app.plugins.grobid.reload_feature_file.shutil.rmtree", return_value=None
+                "pte_plugin_grobid.reload_feature_file.shutil.rmtree", return_value=None
             ),
         }
         mocks = {name: p.start() for name, p in patches.items()}
@@ -255,7 +255,7 @@ class PerformReloadTestCase(unittest.TestCase):
     def test_propagates_grobid_health_failure(self):
         target = self._make_target()
         with mock.patch(
-            "fastapi_app.plugins.grobid.extractor.GrobidTrainingExtractor._check_grobid_health",
+            "pte_plugin_grobid.extractor.GrobidTrainingExtractor._check_grobid_health",
             side_effect=RuntimeError("GROBID server is not ready"),
         ):
             with self.assertRaises(RuntimeError):
@@ -329,7 +329,7 @@ class ReloadFeatureFileTriggerTestCase(unittest.TestCase):
     """Tests for GrobidPlugin.reload_feature_file(), the preview/execute trigger."""
 
     def setUp(self):
-        from fastapi_app.plugins.grobid.plugin import GrobidPlugin
+        from pte_plugin_grobid.plugin import GrobidPlugin
 
         self.plugin = GrobidPlugin.__new__(GrobidPlugin)  # skip __init__ (config bootstrap)
         self.context = mock.Mock()

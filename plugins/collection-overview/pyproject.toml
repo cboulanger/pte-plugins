@@ -1,0 +1,31 @@
+[project]
+name = "pte-plugin-collection-overview"
+dynamic = ["version"]
+description = "Overview of gold-standard coverage and annotation progress across all accessible collections"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = [
+    "pte-plugin-annotation-progress",
+]
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+collection-overview = "pte_plugin_collection_overview"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_collection_overview/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_collection_overview"]
+exclude = ["src/pte_plugin_collection_overview/tests"]
+
+[tool.uv.sources]
+pte-plugin-annotation-progress = { workspace = true }

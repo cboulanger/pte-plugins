@@ -46,7 +46,7 @@ async def view_history(
         HTML page with annotation history
     """
     from fastapi_app.config import get_settings
-    from fastapi_app.plugins.annotation_history.plugin import AnnotationHistoryPlugin
+    from pte_plugin_annotation_history.plugin import AnnotationHistoryPlugin
 
     # Extract session ID (header takes precedence)
     session_id_value = x_session_id or session_id
@@ -186,7 +186,7 @@ async def export_csv(
     Returns:
         CSV file download with complete revision history
     """
-    from fastapi_app.plugins.annotation_history.plugin import AnnotationHistoryPlugin
+    from pte_plugin_annotation_history.plugin import AnnotationHistoryPlugin
 
     try:
         file_repo = FileRepository(db)

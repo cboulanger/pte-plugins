@@ -2,9 +2,9 @@
 Unit tests for the GROBID plugin's schema URL redirect registration.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_schema_redirect.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_schema_redirect.py -v
 
-@testCovers fastapi_app/plugins/grobid/config/__init__.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/config/__init__.py
 """
 
 import unittest
@@ -13,7 +13,7 @@ from fastapi_app.lib.core.schema_validator import (
     resolve_schema_location,
     unregister_schema_redirect,
 )
-from fastapi_app.plugins.grobid.config import init_plugin_config
+from pte_plugin_grobid.config import init_plugin_config
 
 OLD_SCHEMA_BASE_URL = "https://mpilhlt.github.io/grobid-footnote-flavour/"
 

@@ -20,7 +20,7 @@ from fastapi_app.lib.utils.annotation_rules_utils import (
     resolve_forge_permalink,
     translate_anchor_to_line_range,
 )
-from fastapi_app.plugins.grobid.config import (
+from pte_plugin_grobid.config import (
     AnnotationGuide,
     SCHEMA_FRAGMENT_LABELS,
     get_annotation_guides,

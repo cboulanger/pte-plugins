@@ -13,7 +13,7 @@ correctness properties that were previously broken:
     a different hash, _apply_upsert_op performs a hash-replacement rather than
     a bare INSERT, avoiding the UNIQUE constraint error.
 
-@testCovers fastapi_app/plugins/webdav_sync/service.py
+@testCovers plugins/webdav-sync/src/pte_plugin_webdav_sync/service.py
 """
 
 import gc
@@ -31,7 +31,7 @@ from fastapi_app.lib.repository.file_repository import FileRepository
 from fastapi_app.lib.sse.sse_service import SSEService
 from fastapi_app.lib.storage.file_storage import FileStorage
 from fastapi_app.lib.sync.models import SyncSummary
-from fastapi_app.plugins.webdav_sync.service import SyncService
+from pte_plugin_webdav_sync.service import SyncService
 
 
 # ---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ from fastapi_app.plugins.webdav_sync.service import SyncService
 
 def _make_service(file_repo: FileRepository, file_storage: FileStorage) -> SyncService:
     """Create a SyncService with mocked WebDAV transport."""
-    with patch('fastapi_app.plugins.webdav_sync.service.WebdavFileSystem'):
+    with patch('pte_plugin_webdav_sync.service.WebdavFileSystem'):
         return SyncService(
             file_repo, file_storage,
             {'base_url': 'http://x', 'username': 'u', 'password': 'p',

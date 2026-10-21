@@ -12,7 +12,7 @@ from fastapi_app.lib.core.dependencies import (
     get_file_storage,
     get_session_manager,
 )
-from fastapi_app.plugins.kisski.extractor import KisskiExtractor
+from pte_plugin_kisski.extractor import KisskiExtractor
 
 logger = logging.getLogger(__name__)
 

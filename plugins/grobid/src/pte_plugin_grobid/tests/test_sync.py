@@ -2,9 +2,9 @@
 Unit tests for encodingDesc label patching in the grobid plugin's sync module.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_sync.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_sync.py -v
 
-@testCovers fastapi_app/plugins/grobid/sync.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/sync.py
 """
 
 import sys
@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
-from fastapi_app.plugins.grobid.sync import set_revision_label
+from pte_plugin_grobid.sync import set_revision_label
 
 SAMPLE_TEI = """<TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>

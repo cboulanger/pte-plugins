@@ -8,7 +8,7 @@ optional, machine-only excerpts for LLM validation). URLs are branch-relative
 GitHub blob links; they get permalink-pinned to a commit SHA when embedded
 into a document's editorialDecl, and a heading-anchor URL will additionally
 be used to auto-derive a machine-targeted (line-range) sibling ref, once
-implemented - see fastapi_app/plugins/grobid/annotation_rules.py and
+implemented - see plugins/grobid/src/pte_plugin_grobid/annotation_rules.py and
 docs/superpowers/specs/2026-09-22-annotation-guide-dual-target-refs-design.md.
 """
 

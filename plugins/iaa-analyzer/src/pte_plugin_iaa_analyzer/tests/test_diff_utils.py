@@ -6,7 +6,7 @@ Tests the preprocessing and serialization logic used for semantic diffs.
 
 import pytest
 from lxml import etree
-from fastapi_app.plugins.iaa_analyzer.diff_utils import (
+from pte_plugin_iaa_analyzer.diff_utils import (
     preprocess_for_diff,
     serialize_with_linebreaks,
     escape_html,

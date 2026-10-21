@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "readme": "https://github.com/cboulanger/pte-plugins/tree/main/plugins/google-llm#readme",
+  "engines": {
+    "pte": ">=0.76.0",
+    "pte-plugin-api": "^1.0"
+  }
+}

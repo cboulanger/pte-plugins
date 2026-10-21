@@ -19,7 +19,7 @@ from fastapi_app.lib.core.dependencies import (
     get_session_manager,
 )
 from fastapi_app.lib.repository.file_repository import FileRepository
-from fastapi_app.plugins.iaa_analyzer.diff_utils import (
+from pte_plugin_iaa_analyzer.diff_utils import (
     escape_html,
     find_element_line_offset,
     preprocess_for_diff,
@@ -53,7 +53,7 @@ async def export_csv(
     Returns:
         CSV file download
     """
-    from fastapi_app.plugins.iaa_analyzer.plugin import IAAAnalyzerPlugin
+    from pte_plugin_iaa_analyzer.plugin import IAAAnalyzerPlugin
 
     try:
         db = get_db()
@@ -325,7 +325,7 @@ async def show_diff(
     """
     from fastapi_app.config import get_settings
     from fastapi_app.lib.utils.tei_utils import extract_tei_metadata
-    from fastapi_app.plugins.iaa_analyzer.plugin import (
+    from pte_plugin_iaa_analyzer.plugin import (
         IGNORE_ATTRIBUTES,
         IGNORE_TAGS,
     )

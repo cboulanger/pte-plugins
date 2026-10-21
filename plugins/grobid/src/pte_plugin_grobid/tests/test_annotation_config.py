@@ -2,10 +2,10 @@
 Unit tests for schema-driven annotation tag generation in the grobid plugin.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_annotation_config.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_annotation_config.py -v
 
-@testCovers fastapi_app/plugins/grobid/config/__init__.py
-@testCovers fastapi_app/plugins/grobid/config/annotation_tags_generator.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/config/__init__.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/config/annotation_tags_generator.py
 
 `get_annotation_tags()` reads each variant's RelaxNG schema from
 `get_settings().schema_cache_dir` (normally `data/schema/cache/`, populated
@@ -32,7 +32,7 @@ FIXTURE_SCHEMA_CACHE_DIR = Path(__file__).parent / "fixtures" / "schema-cache"
 
 class TestGetSchemaFragmentUrl(unittest.TestCase):
     def setUp(self):
-        import fastapi_app.plugins.grobid.config as grobid_config
+        import pte_plugin_grobid.config as grobid_config
         self.get_schema_fragment_url = grobid_config.get_schema_fragment_url
         self.SCHEMA_FRAGMENT_VARIANTS = grobid_config.SCHEMA_FRAGMENT_VARIANTS
         self.SCHEMA_FRAGMENT_LABELS = grobid_config.SCHEMA_FRAGMENT_LABELS
@@ -65,7 +65,7 @@ class TestGetSchemaFragmentUrl(unittest.TestCase):
 class TestGetAnnotationTags(unittest.TestCase):
 
     def setUp(self):
-        import fastapi_app.plugins.grobid.config as grobid_config
+        import pte_plugin_grobid.config as grobid_config
 
         # Regenerate against the fixtures instead of any stale (possibly empty)
         # result cached from an earlier call in this process.
@@ -243,7 +243,7 @@ class TestGetAnnotationTagsDownloadsMissingSchema(unittest.TestCase):
     def setUp(self):
         import shutil
         import tempfile
-        import fastapi_app.plugins.grobid.config as grobid_config
+        import pte_plugin_grobid.config as grobid_config
         self.grobid_config = grobid_config
 
         clear_annotation_tags_cache()
@@ -283,7 +283,7 @@ class TestGetAnnotationTagsDownloadsMissingSchema(unittest.TestCase):
     def test_failed_download_yields_empty_list_and_is_not_retried_immediately(self):
         from fastapi_app.lib.core.schema_validator import ValidationError
         failing = mock.patch.object(self.grobid_config, "download_schema_file", side_effect=ValidationError("offline"))
-        with failing as download, self.assertLogs("fastapi_app.plugins.grobid.config", level="WARNING"):
+        with failing as download, self.assertLogs("pte_plugin_grobid.config", level="WARNING"):
             tags = self.grobid_config.get_annotation_tags()
         self.assertEqual(tags[self.SEGMENTATION], [])
         first_call_count = download.call_count
@@ -297,20 +297,20 @@ class TestAnnotationGuidesCategory(unittest.TestCase):
     """Test that every configured guide has a category, variant_ids, and a fossil-hosted URL."""
 
     def test_every_entry_has_a_category(self):
-        from fastapi_app.plugins.grobid.config.annotation_guides import ANNOTATION_GUIDES
+        from pte_plugin_grobid.config.annotation_guides import ANNOTATION_GUIDES
         for guide in ANNOTATION_GUIDES:
             self.assertIn("category", guide)
             self.assertTrue(guide["category"])
 
     def test_every_entry_has_variant_ids(self):
-        from fastapi_app.plugins.grobid.config.annotation_guides import ANNOTATION_GUIDES
+        from pte_plugin_grobid.config.annotation_guides import ANNOTATION_GUIDES
         for guide in ANNOTATION_GUIDES:
             self.assertIn("variant_ids", guide)
             self.assertIsInstance(guide["variant_ids"], list)
             self.assertTrue(guide["variant_ids"])
 
     def test_segmentation_guide_points_at_fossil(self):
-        from fastapi_app.plugins.grobid.config.annotation_guides import ANNOTATION_GUIDES
+        from pte_plugin_grobid.config.annotation_guides import ANNOTATION_GUIDES
         segmentation = [g for g in ANNOTATION_GUIDES if "grobid.training.segmentation" in g["variant_ids"]]
         self.assertEqual(len(segmentation), 1)
         self.assertEqual(segmentation[0]["category"], "primary")

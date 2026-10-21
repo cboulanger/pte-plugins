@@ -16,16 +16,16 @@ from fastapi_app.lib.core.schema_validator import (
     get_schema_cache_info,
     register_schema_redirect,
 )
-from fastapi_app.plugins.grobid.config.annotation_guides import ANNOTATION_GUIDES, AnnotationGuide
-from fastapi_app.plugins.grobid.config.annotation_tags_generator import (
+from pte_plugin_grobid.config.annotation_guides import ANNOTATION_GUIDES, AnnotationGuide
+from pte_plugin_grobid.config.annotation_tags_generator import (
     AnnotationTagsMap,
     generate_annotation_tags,
 )
-from fastapi_app.plugins.grobid.config.annotation_tags_scope import ANNOTATION_TAG_SCOPE
-from fastapi_app.plugins.grobid.config.content_locations import VARIANT_CONTENT_LOCATIONS, VariantContentLocations
-from fastapi_app.plugins.grobid.config.form_options import FORM_OPTIONS, FormOptions
-from fastapi_app.plugins.grobid.config.navigation import NAVIGATION_XPATH, NavigationXPath
-from fastapi_app.plugins.grobid.config.variants import PROCESSING_FLAVORS, SUPPORTED_VARIANTS
+from pte_plugin_grobid.config.annotation_tags_scope import ANNOTATION_TAG_SCOPE
+from pte_plugin_grobid.config.content_locations import VARIANT_CONTENT_LOCATIONS, VariantContentLocations
+from pte_plugin_grobid.config.form_options import FORM_OPTIONS, FormOptions
+from pte_plugin_grobid.config.navigation import NAVIGATION_XPATH, NavigationXPath
+from pte_plugin_grobid.config.variants import PROCESSING_FLAVORS, SUPPORTED_VARIANTS
 
 logger = logging.getLogger(__name__)
 

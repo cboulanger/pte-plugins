@@ -14,7 +14,7 @@ from fastapi_app.lib.core.dependencies import (
     get_file_storage,
     get_session_manager,
 )
-from fastapi_app.plugins.rng_converter.rng_generator import generate_rng_schema
+from pte_plugin_rng_converter.rng_generator import generate_rng_schema
 
 logger = logging.getLogger(__name__)
 

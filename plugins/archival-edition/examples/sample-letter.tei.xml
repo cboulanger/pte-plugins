@@ -1,4 +1,4 @@
-<?xml-model href="https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://cboulanger.github.io/pte-plugins/archival-edition/schema/tei-archival.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
     <fileDesc xml:id="sample-letter">
@@ -92,7 +92,7 @@
       <editorialDecl>
         <interpretation type="primary" n="Archival edition annotation guidelines">
           <p>
-            <ref target="https://cboulanger.github.io/pte-edition-plugin/guidelines.md" subtype="human" type="markdown"/>
+            <ref target="https://cboulanger.github.io/pte-plugins/archival-edition/guidelines.md" subtype="human" type="markdown"/>
           </p>
         </interpretation>
       </editorialDecl>
@@ -107,8 +107,8 @@
           <label type="form-pages">6</label>
           <label type="provider">Example provider</label>
           <label type="model">example-model</label>
-          <ref target="https://github.com/cboulanger/pte-edition-plugin"/>
-          <ref target="https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng"/>
+          <ref target="https://github.com/cboulanger/pte-plugins/tree/main/plugins/archival-edition"/>
+          <ref target="https://cboulanger.github.io/pte-plugins/archival-edition/schema/tei-archival.rng"/>
         </application>
       </appInfo>
       <classDecl>

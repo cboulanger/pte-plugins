@@ -8,7 +8,7 @@ from pathlib import Path
 
 from fastapi_app.lib.utils.annotation_tags import AnnotationTag, AnnotationTagsMap
 from fastapi_app.lib.utils.annotation_tags import generate_annotation_tags as generate_tags_from_schema
-from fastapi_app.plugins.grobid.config.annotation_tags_scope import ANNOTATION_TAG_SCOPE
+from pte_plugin_grobid.config.annotation_tags_scope import ANNOTATION_TAG_SCOPE
 
 __all__ = ["AnnotationTag", "AnnotationTagsMap", "generate_annotation_tags"]
 

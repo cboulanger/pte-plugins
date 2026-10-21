@@ -3,9 +3,9 @@ Unit tests for generate_annotation_tags() — builds one variant's chip
 list from its RelaxNG schema.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_annotation_tags_generator.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_annotation_tags_generator.py -v
 
-@testCovers fastapi_app/plugins/grobid/config/annotation_tags_generator.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/config/annotation_tags_generator.py
 """
 
 import tempfile
@@ -15,7 +15,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
-from fastapi_app.plugins.grobid.config.annotation_tags_generator import generate_annotation_tags
+from pte_plugin_grobid.config.annotation_tags_generator import generate_annotation_tags
 
 FIXTURE_RNG = """<?xml version="1.0" encoding="UTF-8"?>
 <grammar xmlns="http://relaxng.org/ns/structure/1.0"

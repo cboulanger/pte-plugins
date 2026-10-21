@@ -1,7 +1,7 @@
 """
 Unit tests for the revision feed plugin's token store.
 
-@testCovers fastapi_app/plugins/revision_feed/token_store.py
+@testCovers plugins/revision-feed/src/pte_plugin_revision_feed/token_store.py
 """
 
 import unittest
@@ -9,8 +9,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import MagicMock, patch
 
-from fastapi_app.plugins.revision_feed import token_store
-from fastapi_app.plugins.revision_feed.token_store import (
+from pte_plugin_revision_feed import token_store
+from pte_plugin_revision_feed.token_store import (
     get_or_create_token,
     regenerate_token,
     resolve_token,
@@ -59,7 +59,7 @@ class TestTokenStoreLocking(unittest.TestCase):
     """Verify the read-modify-write operations actually go through the
     thread lock + OS file lock, rather than relying on a flaky real
     concurrency/threading test. This proves the locking mechanism from
-    fastapi_app/plugins/revision_feed/token_store.py is wired up, mirroring
+    plugins/revision-feed/src/pte_plugin_revision_feed/token_store.py is wired up, mirroring
     the thread-lock + file-lock pattern used for users.json/config.json
     elsewhere in the backend.
     """

@@ -1,16 +1,16 @@
 """
 Unit tests for Annotation Progress plugin.
 
-@testCovers fastapi_app/plugins/annotation_progress/plugin.py
-@testCovers fastapi_app/plugins/annotation_progress/routes.py
+@testCovers plugins/annotation-progress/src/pte_plugin_annotation_progress/plugin.py
+@testCovers plugins/annotation-progress/src/pte_plugin_annotation_progress/routes.py
 """
 
 import asyncio
 import unittest
 from unittest.mock import MagicMock
 
-from fastapi_app.plugins.annotation_progress.plugin import AnnotationProgressPlugin
-from fastapi_app.plugins.annotation_progress.routes import (
+from pte_plugin_annotation_progress.plugin import AnnotationProgressPlugin
+from pte_plugin_annotation_progress.routes import (
     _extract_annotation_info,
     _format_version_chains_html,
     _select_representative_annotation,

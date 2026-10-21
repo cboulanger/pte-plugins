@@ -79,7 +79,7 @@ async def preview_sync(
             return HTMLResponse(content=f"<p>Error: Repository path does not exist: {repo_path}</p>")
 
         # Run sync in dry-run mode
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         plugin = LocalSyncPlugin()
 
         # Create a simple context object for the plugin
@@ -164,7 +164,7 @@ async def execute_sync(
             return HTMLResponse(content=f"<p>Error: Repository path does not exist: {repo_path}</p>")
 
         # Run sync in execute mode
-        from fastapi_app.plugins.local_sync.plugin import LocalSyncPlugin
+        from pte_plugin_local_sync.plugin import LocalSyncPlugin
         plugin = LocalSyncPlugin()
 
         # Create a simple context object for the plugin

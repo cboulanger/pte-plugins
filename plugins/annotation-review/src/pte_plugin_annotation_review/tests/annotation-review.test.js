@@ -1,7 +1,7 @@
 /**
  * Unit tests for the annotation-review frontend extension.
  *
- * @testCovers fastapi_app/plugins/annotation_review/extensions/annotation-review.js
+ * @testCovers plugins/annotation-review/src/pte_plugin_annotation_review/extensions/annotation-review.js
  */
 
 import { describe, it } from 'node:test';

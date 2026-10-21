@@ -1,7 +1,7 @@
 /**
  * Edit History Plugin E2E Tests
  *
- * @testCovers fastapi_app/plugins/edit_history/routes.py
+ * @testCovers plugins/edit-history/src/pte_plugin_edit_history/routes.py
  */
 
 import { test, expect } from '../fixtures/debug-on-failure.js';

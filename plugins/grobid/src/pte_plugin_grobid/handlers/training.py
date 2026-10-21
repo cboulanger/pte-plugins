@@ -11,8 +11,8 @@ from requests.exceptions import ConnectionError, RequestException, RetryError  #
 
 from fastapi_app.config import get_settings
 from fastapi_app.lib.extraction import get_retry_session
-from fastapi_app.plugins.grobid.handlers.base import GrobidHandler
-from fastapi_app.plugins.grobid.config import get_grobid_extraction_timeout, get_supported_variants, get_variant_content_locations
+from pte_plugin_grobid.handlers.base import GrobidHandler
+from pte_plugin_grobid.config import get_grobid_extraction_timeout, get_supported_variants, get_variant_content_locations
 
 logger = logging.getLogger(__name__)
 

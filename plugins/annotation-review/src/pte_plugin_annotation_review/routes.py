@@ -22,8 +22,8 @@ from fastapi_app.lib.doc_rules.storage import DocumentRulesStore
 from fastapi_app.lib.llm import LLMProviderError, LLMProviderRegistry
 from fastapi_app.lib.llm.model_access import ModelAccessDenied, check_model_access
 from fastapi_app.lib.secrets import MissingSecretError, secret_required_detail
-from fastapi_app.plugins.annotation_review.prompts import UnusableResponseError
-from fastapi_app.plugins.annotation_review.review_logic import (
+from pte_plugin_annotation_review.prompts import UnusableResponseError
+from pte_plugin_annotation_review.review_logic import (
     NoRuleExcerptsError,
     count_chunks,
     run_review,

@@ -2,9 +2,9 @@
 Unit tests for the reload-feature-file preview/execute HTTP routes.
 
 Run manually:
-    uv run python tests/unit-test-runner.py fastapi_app/plugins/grobid/tests/test_reload_feature_file_routes.py -v
+    uv run --project "$PTE_ROOT" python -m pytest plugins/grobid/src/pte_plugin_grobid/tests/test_reload_feature_file_routes.py -v
 
-@testCovers fastapi_app/plugins/grobid/routes.py
+@testCovers plugins/grobid/src/pte_plugin_grobid/routes.py
 """
 
 import sys
@@ -19,8 +19,8 @@ from fastapi.testclient import TestClient
 
 from fastapi_app.lib.core.dependencies import get_auth_manager, get_db, get_file_storage, get_session_manager
 from fastapi_app.lib.models.models import FileMetadata
-from fastapi_app.plugins.grobid.reload_feature_file import ReloadResult
-from fastapi_app.plugins.grobid.routes import router
+from pte_plugin_grobid.reload_feature_file import ReloadResult
+from pte_plugin_grobid.routes import router
 
 TEI_TEMPLATE = """<TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
@@ -149,10 +149,10 @@ class ReloadFeatureFileRoutesTestCase(unittest.TestCase):
         # these are mocked to a hard failure so the test would fail loudly
         # (rather than silently hitting a real server) if that ever regresses.
         with mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.check_file_access",
+            "pte_plugin_grobid.reload_feature_file.check_file_access",
             return_value=False,
         ) as mock_check, mock.patch(
-            "fastapi_app.plugins.grobid.routes.get_grobid_server_url",
+            "pte_plugin_grobid.routes.get_grobid_server_url",
             side_effect=AssertionError("must not contact GROBID when access is denied"),
         ):
             response = self.client.get(
@@ -168,13 +168,13 @@ class ReloadFeatureFileRoutesTestCase(unittest.TestCase):
         self._set_up_valid_target(revision="rev-1")
 
         with mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.check_file_access",
+            "pte_plugin_grobid.reload_feature_file.check_file_access",
             return_value=False,
         ), mock.patch(
-            "fastapi_app.plugins.grobid.routes.get_grobid_server_url",
+            "pte_plugin_grobid.routes.get_grobid_server_url",
             side_effect=AssertionError("must not contact GROBID when access is denied"),
         ), mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.perform_reload",
+            "pte_plugin_grobid.reload_feature_file.perform_reload",
             new=mock.AsyncMock(),
         ) as mock_perform:
             response = self.client.get(
@@ -201,10 +201,10 @@ class ReloadFeatureFileRoutesTestCase(unittest.TestCase):
         self._set_up_valid_target(revision="rev-1")
 
         with mock.patch(
-            "fastapi_app.plugins.grobid.routes.get_grobid_server_url",
+            "pte_plugin_grobid.routes.get_grobid_server_url",
             return_value="http://grobid.example",
         ), mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.check_grobid_revision",
+            "pte_plugin_grobid.reload_feature_file.check_grobid_revision",
             return_value=("0.8.1", "rev-2"),
         ):
             response = self.client.get(
@@ -220,10 +220,10 @@ class ReloadFeatureFileRoutesTestCase(unittest.TestCase):
         self._set_up_valid_target(revision="rev-1")
 
         with mock.patch(
-            "fastapi_app.plugins.grobid.routes.get_grobid_server_url",
+            "pte_plugin_grobid.routes.get_grobid_server_url",
             return_value="http://grobid.example",
         ), mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.check_grobid_revision",
+            "pte_plugin_grobid.reload_feature_file.check_grobid_revision",
             side_effect=RuntimeError("Connection refused"),
         ):
             response = self.client.get(
@@ -249,10 +249,10 @@ class ReloadFeatureFileRoutesTestCase(unittest.TestCase):
         self._set_up_valid_target(revision="rev-1")
 
         with mock.patch(
-            "fastapi_app.plugins.grobid.routes.get_grobid_server_url",
+            "pte_plugin_grobid.routes.get_grobid_server_url",
             return_value="http://grobid.example",
         ), mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.perform_reload",
+            "pte_plugin_grobid.reload_feature_file.perform_reload",
             new=mock.AsyncMock(
                 return_value=ReloadResult(grobid_revision="rev-2", updated_label=True)
             ),
@@ -270,10 +270,10 @@ class ReloadFeatureFileRoutesTestCase(unittest.TestCase):
         self._set_up_valid_target(revision="rev-1")
 
         with mock.patch(
-            "fastapi_app.plugins.grobid.routes.get_grobid_server_url",
+            "pte_plugin_grobid.routes.get_grobid_server_url",
             return_value="http://grobid.example",
         ), mock.patch(
-            "fastapi_app.plugins.grobid.reload_feature_file.perform_reload",
+            "pte_plugin_grobid.reload_feature_file.perform_reload",
             new=mock.AsyncMock(side_effect=RuntimeError("GROBID request failed")),
         ):
             response = self.client.get(

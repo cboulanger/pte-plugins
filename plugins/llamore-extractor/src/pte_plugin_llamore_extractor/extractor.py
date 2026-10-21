@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 ADDITIONAL_INSTRUCTIONS_URL = (
     "https://github.com/mpilhlt/pdf-tei-editor/blob/main/"
-    "fastapi_app/plugins/llamore_extractor/prompts/additional-instructions.md"
+    "plugins/llamore-extractor/src/pte_plugin_llamore_extractor/prompts/additional-instructions.md"
 )
 
 # Kept as the extractor id (rather than renamed to "llamore") so stored

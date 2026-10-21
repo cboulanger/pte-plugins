@@ -4,7 +4,7 @@ Google Gemini LLM provider plugin.
 Registers a GoogleLLMProvider into the core LLM provider registry
 (fastapi_app/lib/llm/) so Gemini models are selectable anywhere the
 registry is consumed (e.g. the annotation-review plugin), following the
-same registration lifecycle as fastapi_app/plugins/kisski/plugin.py. This
+same registration lifecycle as plugins/kisski/src/pte_plugin_kisski/plugin.py. This
 plugin has no menu endpoints of its own - it only contributes a connector
 to the registry.
 """

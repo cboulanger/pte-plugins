@@ -21,7 +21,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_SRC = REPO_ROOT / "schema"
 OUTPUT_DIRS = [
     REPO_ROOT / "docs" / "schema",
-    REPO_ROOT / "plugins" / "archival_edition" / "static" / "schema",
+    REPO_ROOT / "src" / "pte_plugin_archival_edition" / "static" / "schema",
 ]
 
 RNG_NS = "http://relaxng.org/ns/structure/1.0"

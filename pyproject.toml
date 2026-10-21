@@ -1,0 +1,12 @@
+# uv workspace of the PDF-TEI-Editor plugin packages (one package per plugins/<name>/).
+# The packages are installed into the editor's environment; see README.md.
+[tool.uv.workspace]
+members = ["plugins/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "plugins"]
+python_files = ["test_*.py"]
+filterwarnings = ["ignore::DeprecationWarning"]
+markers = [
+  "integration: marks tests as integration tests that check actual project structure (deselect with '-m \"not integration\"')"
+]

@@ -1,7 +1,7 @@
 """
 Unit tests for the revision feed plugin's session-authenticated management routes.
 
-@testCovers fastapi_app/plugins/revision_feed/routes.py
+@testCovers plugins/revision-feed/src/pte_plugin_revision_feed/routes.py
 """
 
 import unittest
@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 
 class TestManagementRoutes(unittest.TestCase):
     def setUp(self):
-        from fastapi_app.plugins.revision_feed.routes import router
+        from pte_plugin_revision_feed.routes import router
         from fastapi_app.lib.core.dependencies import (
             get_auth_manager,
             get_session_manager,
@@ -71,7 +71,7 @@ class TestManagementRoutes(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 401)
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.get_or_create_token")
+    @patch("pte_plugin_revision_feed.token_store.get_or_create_token")
     @patch("fastapi_app.lib.utils.project_utils.get_user_projects")
     @patch("fastapi_app.config.get_settings")
     def test_my_feeds_returns_token_and_urls(self, mock_settings, mock_get_projects, mock_get_token):
@@ -101,7 +101,7 @@ class TestManagementRoutes(unittest.TestCase):
         self.assertIn("token=tok_abc123", data["feeds"][0]["url"])
         self.assertIn("/api/plugins/revision-feed/feed/proj-1.atom", data["feeds"][0]["url"])
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.regenerate_token")
+    @patch("pte_plugin_revision_feed.token_store.regenerate_token")
     @patch("fastapi_app.lib.utils.project_utils.get_user_projects")
     @patch("fastapi_app.config.get_settings")
     def test_regenerate_token_returns_new_token(self, mock_settings, mock_get_projects, mock_regenerate):
@@ -126,7 +126,7 @@ class TestManagementRoutes(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["token"], "tok_new456")
 
-    @patch("fastapi_app.plugins.revision_feed.token_store.get_or_create_token")
+    @patch("pte_plugin_revision_feed.token_store.get_or_create_token")
     @patch("fastapi_app.lib.utils.project_utils.get_projects_with_details")
     @patch("fastapi_app.lib.utils.project_utils.get_user_projects")
     @patch("fastapi_app.config.get_settings")

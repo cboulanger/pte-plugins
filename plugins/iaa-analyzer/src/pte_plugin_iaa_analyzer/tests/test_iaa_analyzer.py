@@ -1,16 +1,16 @@
 """
 Unit tests for Inter-Annotator Agreement Analyzer plugin.
 
-@testCovers fastapi_app/plugins/iaa_analyzer/plugin.py
-@testCovers fastapi_app/plugins/iaa_analyzer/diff_utils.py
+@testCovers plugins/iaa-analyzer/src/pte_plugin_iaa_analyzer/plugin.py
+@testCovers plugins/iaa-analyzer/src/pte_plugin_iaa_analyzer/diff_utils.py
 """
 
 import unittest
 from unittest.mock import MagicMock, patch
 from lxml import etree
 
-from fastapi_app.plugins.iaa_analyzer.plugin import IAAAnalyzerPlugin
-from fastapi_app.plugins.iaa_analyzer.diff_utils import (
+from pte_plugin_iaa_analyzer.plugin import IAAAnalyzerPlugin
+from pte_plugin_iaa_analyzer.diff_utils import (
     preprocess_for_diff,
     find_element_line_offset,
     escape_html,
@@ -167,7 +167,7 @@ class TestIAAAnalyzerPlugin(unittest.TestCase):
     </teiHeader>
 </TEI>"""
 
-        with self.assertLogs("fastapi_app.plugins.iaa_analyzer.plugin", level="WARNING"):
+        with self.assertLogs("pte_plugin_iaa_analyzer.plugin", level="WARNING"):
             sequence = self.plugin._extract_element_sequence(xml_content)
 
         self.assertEqual(len(sequence), 0)

@@ -1,7 +1,7 @@
 """
 Unit tests for the annotation progress dashboard summary route.
 
-@testCovers fastapi_app/plugins/annotation_progress/routes.py
+@testCovers plugins/annotation-progress/src/pte_plugin_annotation_progress/routes.py
 """
 
 import unittest
@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from fastapi_app.lib.core.dependencies import get_file_repository, require_authenticated_user
-from fastapi_app.plugins.annotation_progress.routes import router
+from pte_plugin_annotation_progress.routes import router
 from fastapi_app.plugins.dashboard.tests.fixtures import TempFileRepository
 
 LIFECYCLE = ["extraction", "draft", "in-review", "approved", "published"]

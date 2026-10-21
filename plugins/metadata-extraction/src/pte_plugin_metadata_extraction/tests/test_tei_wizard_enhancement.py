@@ -1,7 +1,7 @@
 """
 The metadata-extraction plugin registers its enhancement with tei-wizard and removes it on cleanup.
 
-@testCovers fastapi_app/plugins/metadata_extraction/plugin.py
+@testCovers plugins/metadata-extraction/src/pte_plugin_metadata_extraction/plugin.py
 """
 
 import unittest
@@ -16,7 +16,7 @@ class TestTeiWizardEnhancement(unittest.IsolatedAsyncioTestCase):
         FrontendExtensionRegistry.reset_instance()
 
     async def test_dependent_cleanup_removes_its_enhancements(self):
-        from fastapi_app.plugins.metadata_extraction.plugin import MetadataExtractionPlugin
+        from pte_plugin_metadata_extraction.plugin import MetadataExtractionPlugin
         from fastapi_app.plugins.tei_wizard.plugin import TeiWizardPlugin
         registry = PluginRegistry()
         wizard, meta = TeiWizardPlugin(), MetadataExtractionPlugin()

@@ -4,7 +4,7 @@ Unit tests for Update Metadata plugin admin authentication.
 Verifies that _authenticate_admin recognizes the wildcard "*" role,
 not just the literal "admin" role string.
 
-@testCovers fastapi_app/plugins/update_metadata/routes.py
+@testCovers plugins/update-metadata/src/pte_plugin_update_metadata/routes.py
 """
 
 import unittest
@@ -19,7 +19,7 @@ class TestUpdateMetadataAdminAuth(unittest.IsolatedAsyncioTestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from fastapi_app.plugins.update_metadata.routes import router
+        from pte_plugin_update_metadata.routes import router
         from fastapi_app.lib.core.dependencies import (
             get_auth_manager,
             get_session_manager,
