@@ -15,9 +15,8 @@ on:
         required: false
 
 env:
-  # Editor branch to test against. TODO: switch to devel once mpilhlt/pdf-tei-editor#586
-  # (entry point discovery, plugin API) is merged.
-  PTE_REF: ${{ inputs.pte_ref || 'claude/project-thread-6whkbd' }}
+  # Editor branch to test against
+  PTE_REF: ${{ inputs.pte_ref || 'devel' }}
   PTE_ROOT: ${{ github.workspace }}/pdf-tei-editor
   # Keep the editable plugin installs: uv run would otherwise re-sync the editor's environment
   UV_NO_SYNC: '1'
