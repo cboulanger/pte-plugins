@@ -95,6 +95,8 @@ jobs:
         working-directory: pdf-tei-editor
         env:
           TEST_IN_PROGRESS: '1'
+          # The runner starts the server itself; Playwright must not start a container
+          E2E_SKIP_WEBSERVER: '1'
         run: |
           node scripts/build/build.js
           node tests/e2e-runner.js --plugin-tests "$GITHUB_WORKSPACE/pte-plugins"
