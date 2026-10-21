@@ -37,7 +37,7 @@ try {
 }
 
 const { LocalServerManager } = await coreImport('tests/lib/local-server-manager.js');
-const { WebdavServerManager } = await coreImport('tests/lib/webdav-server-manager.js');
+const { WebdavServerManager } = await import('./webdav-server-manager.js');
 
 const serverManager = new LocalServerManager({
   dbDir: 'tests/api/runtime/db',

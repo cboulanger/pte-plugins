@@ -44,7 +44,8 @@ plugins/webdav-sync/src/pte_plugin_webdav_sync/
     ├── test_two_instance_sync.py   # Unit tests for _apply_ops / _collect_own_ops
     └── integration/
         ├── run-integration-tests.js  # Starts the editor and a WebDAV test server, runs sync.test.js
-        └── sync.test.js
+        ├── sync.test.js
+        └── webdav-server-manager.js  # WsgiDAV test server, run with uvx
 ```
 
 ### Backend
