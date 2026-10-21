@@ -10,8 +10,7 @@ import logging
 from pathlib import Path
 from typing import Any, Callable
 
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
-from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
+from fastapi_app.plugin_api import get_plugin_config, Plugin, PluginContext
 
 logger = logging.getLogger(__name__)
 

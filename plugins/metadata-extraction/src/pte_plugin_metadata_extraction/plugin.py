@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import urlencode
 
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
+from fastapi_app.plugin_api import Plugin, PluginContext
 from fastapi_app.plugins.tei_wizard.plugin import TeiWizardPlugin
 
 logger = logging.getLogger(__name__)

@@ -13,8 +13,7 @@ from typing import Any, Callable
 
 from lxml import etree
 
-from fastapi_app.lib.plugins.frontend_extension_registry import FrontendExtensionRegistry
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
+from fastapi_app.plugin_api import FrontendExtensionRegistry, Plugin, PluginContext
 
 logger = logging.getLogger(__name__)
 

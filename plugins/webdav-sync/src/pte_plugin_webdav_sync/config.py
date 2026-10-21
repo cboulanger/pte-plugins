@@ -1,7 +1,6 @@
 """WebDAV sync plugin configuration helpers."""
 
-from fastapi_app.lib.plugins.plugin_tools import PluginConfigSpec, get_plugin_config
-from fastapi_app.lib.utils.config_utils import get_config
+from fastapi_app.plugin_api import get_config, get_plugin_config, PluginConfigSpec
 
 PLUGIN_CONFIG_SPECS: list[PluginConfigSpec] = [
     {

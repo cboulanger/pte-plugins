@@ -19,7 +19,7 @@ from fastapi_app.lib.core.url_cache import UrlCache
 from fastapi_app.lib.doc_rules.interpretation_ref_kind import representative_ref
 from fastapi_app.lib.doc_rules.resource_key import normalize_resource_key
 from fastapi_app.lib.doc_rules.storage import DocumentRulesStore
-from fastapi_app.lib.llm import LLMProvider
+from fastapi_app.plugin_api import LLMProvider
 from fastapi_app.lib.utils.annotation_rules_utils import (
     extract_annotation_rule_refs,
     fetch_rule_excerpt,

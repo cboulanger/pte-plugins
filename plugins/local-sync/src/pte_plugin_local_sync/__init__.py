@@ -1,4 +1,4 @@
-from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
+from fastapi_app.plugin_api import get_plugin_config
 
 # Initialize config values from environment variables
 get_plugin_config("plugin.local-sync.enabled", "PLUGIN_LOCAL_SYNC_ENABLED", default=False, value_type="boolean", description="Enable local-sync plugin to mirror files to/from a local git repository")

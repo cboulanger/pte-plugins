@@ -25,9 +25,8 @@ from typing import Any, Dict, List, Optional
 from webdav4.fsspec import WebdavFileSystem
 
 from fastapi_app.lib.models.models import FileCreate
-from fastapi_app.lib.repository.file_repository import FileRepository
+from fastapi_app.plugin_api import FileRepository, FileStorage
 from fastapi_app.lib.sse.sse_service import SSEService
-from fastapi_app.lib.storage.file_storage import FileStorage
 from fastapi_app.lib.sync.base import SyncServiceBase
 from fastapi_app.lib.sync.models import (
     ConflictInfo,

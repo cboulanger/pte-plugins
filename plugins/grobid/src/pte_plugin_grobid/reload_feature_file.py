@@ -19,8 +19,7 @@ from fastapi_app.lib.plugins.plugin_tools import (
     escape_html,
     wrap_html_with_sandbox_client,
 )
-from fastapi_app.lib.repository.file_repository import FileRepository
-from fastapi_app.lib.storage.file_storage import FileStorage
+from fastapi_app.plugin_api import FileRepository, FileStorage
 from pte_plugin_grobid.cache import cache_training_data
 from pte_plugin_grobid.extractor import GrobidTrainingExtractor
 from pte_plugin_grobid.handlers.training import TrainingHandler

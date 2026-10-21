@@ -13,11 +13,8 @@ import logging
 import os
 from typing import Any, Callable
 
-from fastapi_app.lib.llm import LLMProviderRegistry
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
+from fastapi_app.plugin_api import get_config, get_plugin_config, LLMProviderRegistry, Plugin, PluginContext
 from fastapi_app.lib.secrets import register_secret_service
-from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
-from fastapi_app.lib.utils.config_utils import get_config
 
 from .llm_provider import GoogleLLMProvider
 

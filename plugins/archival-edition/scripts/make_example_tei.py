@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PTE_ROOT = Path(os.environ.get("PTE_ROOT", REPO_ROOT.parents[2] / "pdf-tei-editor")).resolve()
 sys.path[:0] = [str(PTE_ROOT), str(REPO_ROOT / "src")]
 
-from fastapi_app.lib.llm import LLMProviderRegistry  # noqa: E402
+from fastapi_app.plugin_api import LLMProviderRegistry
 
 from pte_plugin_archival_edition import extractor  # noqa: E402
 from pte_plugin_archival_edition.tests.test_extractor import FakeProvider  # noqa: E402

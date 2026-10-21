@@ -8,13 +8,16 @@ Provides PDF and text extraction endpoints using KISSKI Academic Cloud API.
 import logging
 from typing import Any, Callable
 
-from fastapi_app.lib.extraction import ExtractorRegistry
-from fastapi_app.lib.llm import LLMProviderRegistry
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
-from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
+from fastapi_app.plugin_api import (
+    ExtractorRegistry,
+    get_config,
+    get_plugin_config,
+    get_service_registry,
+    LLMProviderRegistry,
+    Plugin,
+    PluginContext,
+)
 from fastapi_app.lib.secrets import register_secret_service
-from fastapi_app.lib.services.service_registry import get_service_registry
-from fastapi_app.lib.utils.config_utils import get_config
 
 from .extractor import KisskiExtractor
 from .llm_provider import KisskiLLMProvider

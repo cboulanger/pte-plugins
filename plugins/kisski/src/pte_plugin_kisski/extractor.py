@@ -10,7 +10,7 @@ from typing import Any
 
 from fastapi_app.lib.extraction import LLMBaseExtractor, get_retry_session
 from fastapi_app.lib.llm.openai_compatible import chat_completion_sync
-from fastapi_app.lib.utils.config_utils import get_config
+from fastapi_app.plugin_api import get_config
 
 logger = logging.getLogger(__name__)
 

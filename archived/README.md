@@ -4,4 +4,4 @@ Plugins that are no longer maintained, kept with their history for reference. Th
 
 | Plugin | Notes |
 | --- | --- |
-| [tei_annotator](tei_annotator) | LLM-based annotation through an external TEI Annotator webservice |
+| [tei_annotator](tei_annotator) | LLM-based annotation through an external TEI Annotator webservice; superseded by [annotation-review](../plugins/annotation-review) |

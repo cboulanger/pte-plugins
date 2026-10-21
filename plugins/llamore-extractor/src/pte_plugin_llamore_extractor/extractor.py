@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from lxml import etree
 
-from fastapi_app.lib.extraction import BaseExtractor
+from fastapi_app.plugin_api import BaseExtractor, get_config
 from fastapi_app.lib.llm import LLMProvider, LLMProviderRegistry, get_default_model
 from fastapi_app.lib.llm.model_access import check_model_access
 from fastapi_app.lib.services.metadata_extraction import get_metadata_for_document
@@ -23,7 +23,6 @@ from fastapi_app.lib.utils.tei_utils import (
 )
 from fastapi_app.lib.utils.doi_utils import encode_for_xml_id
 from fastapi_app.lib.utils.debug_utils import log_extraction_response, log_xml_parsing_error
-from fastapi_app.lib.utils.config_utils import get_config
 from fastapi_app.lib.core.dependencies import get_auth_manager, get_db, get_document_rules_store
 from fastapi_app.lib.doc_rules.extraction_contribution import ExtractionFragment, for_extraction
 from fastapi_app.lib.utils.annotation_rules_utils import AnnotationRuleRef

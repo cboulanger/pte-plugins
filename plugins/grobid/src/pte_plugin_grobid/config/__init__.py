@@ -6,10 +6,8 @@ import time
 from pathlib import Path
 from typing import Optional
 
-from fastapi_app.lib.plugins.plugin_tools import PluginConfigSpec, get_plugin_config
-from fastapi_app.lib.utils.config_utils import get_config
+from fastapi_app.plugin_api import get_config, get_plugin_config, get_settings, PluginConfigSpec
 
-from fastapi_app.config import get_settings
 from fastapi_app.lib.core.schema_validator import (
     ValidationError,
     download_schema_file,

@@ -17,7 +17,7 @@ from pathlib import Path
 import requests
 
 from fastapi_app.lib.extraction.http_utils import get_retry_session
-from fastapi_app.lib.llm.base import LLMImage, LLMModel, LLMProvider
+from fastapi_app.plugin_api import LLMImage, LLMModel, LLMProvider
 
 logger = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ can access, with a one-click link into annotation-progress for each one.
 
 from typing import Any, Callable
 
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
+from fastapi_app.plugin_api import Plugin, PluginContext
 
 
 class CollectionOverviewPlugin(Plugin):

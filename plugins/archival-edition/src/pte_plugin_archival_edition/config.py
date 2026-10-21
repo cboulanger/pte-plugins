@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from fastapi_app.lib.utils.config_utils import get_config
+from fastapi_app.plugin_api import get_config
 
 MANIFEST_FILE = Path(__file__).parent / "pte-plugin.json"
 

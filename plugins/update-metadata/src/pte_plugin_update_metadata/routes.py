@@ -19,7 +19,7 @@ from fastapi_app.lib.core.dependencies import (
 )
 from fastapi_app.lib.permissions.acl_utils import user_is_admin
 from fastapi_app.lib.sse.sse_utils import ProgressBar, send_notification
-from fastapi_app.lib.repository.file_repository import FileRepository
+from fastapi_app.plugin_api import FileRepository
 from fastapi_app.lib.services.metadata_update_utils import update_tei_metadata
 
 logger = logging.getLogger(__name__)

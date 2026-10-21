@@ -25,7 +25,7 @@ from fastapi_app.lib.core.dependencies import (
 )
 from fastapi_app.lib.core.database import DatabaseManager
 from fastapi_app.lib.core.sessions import SessionManager
-from fastapi_app.lib.storage.file_storage import FileStorage
+from fastapi_app.plugin_api import FileStorage
 from fastapi_app.lib.utils.auth import AuthManager
 from fastapi_app.lib.sse.sse_service import SSEService
 from fastapi_app.lib.sse.sse_utils import ProgressBar, send_notification

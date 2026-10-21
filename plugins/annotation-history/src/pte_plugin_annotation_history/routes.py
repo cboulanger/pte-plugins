@@ -13,7 +13,7 @@ from fastapi_app.lib.core.dependencies import (
     get_auth_manager,
     get_session_manager,
 )
-from fastapi_app.lib.repository.file_repository import FileRepository
+from fastapi_app.plugin_api import FileRepository
 
 logger = logging.getLogger(__name__)
 

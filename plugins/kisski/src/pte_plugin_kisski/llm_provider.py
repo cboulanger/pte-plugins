@@ -17,8 +17,7 @@ than inventing new ones.
 from typing import Literal
 
 from fastapi_app.lib.extraction.http_utils import get_retry_session
-from fastapi_app.lib.llm.base import LLMModel, ModelStatus
-from fastapi_app.lib.llm.openai_compatible import OpenAICompatibleProvider
+from fastapi_app.plugin_api import LLMModel, ModelStatus, OpenAICompatibleProvider
 
 
 def _demand_to_availability(demand: int) -> Literal["available", "busy", "very_busy"]:

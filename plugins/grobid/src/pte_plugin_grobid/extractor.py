@@ -43,8 +43,7 @@ from fastapi_app.lib.utils.tei_utils import (
 )
 from fastapi_app.lib.utils.doi_utils import encode_for_xml_id
 from fastapi_app.lib.utils.debug_utils import log_extraction_response, log_xml_parsing_error
-from fastapi_app.lib.utils.config_utils import get_config
-from fastapi_app.config import get_settings
+from fastapi_app.plugin_api import get_config, get_settings
 from fastapi_app.lib.core.url_cache import UrlCache
 from pte_plugin_grobid.annotation_rules import build_editorial_decl_entries
 

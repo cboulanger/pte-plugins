@@ -18,7 +18,7 @@ from fastapi_app.lib.core.dependencies import (
     get_file_storage,
     get_session_manager,
 )
-from fastapi_app.lib.repository.file_repository import FileRepository
+from fastapi_app.plugin_api import FileRepository
 from pte_plugin_iaa_analyzer.diff_utils import (
     escape_html,
     find_element_line_offset,

@@ -16,7 +16,7 @@ from pathlib import Path
 import pymupdf
 from lxml import etree
 
-from fastapi_app.lib.llm import LLMImage, LLMProvider
+from fastapi_app.plugin_api import LLMImage, LLMProvider
 
 logger = logging.getLogger(__name__)
 

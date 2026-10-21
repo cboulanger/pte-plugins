@@ -8,9 +8,7 @@ import threading
 from pathlib import Path
 from typing import Any
 
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
-from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
-from fastapi_app.lib.sse.event_bus import get_event_bus
+from fastapi_app.plugin_api import get_event_bus, get_plugin_config, Plugin, PluginContext
 from fastapi_app.lib.utils.logging_utils import get_logger
 
 from .config import init_plugin_config, get_webdav_config, is_configured

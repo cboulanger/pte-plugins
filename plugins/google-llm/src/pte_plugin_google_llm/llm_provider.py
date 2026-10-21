@@ -16,7 +16,7 @@ import httpx
 from google import genai
 from google.genai import errors as genai_errors, types
 
-from fastapi_app.lib.llm.base import LLMModel, LLMProvider, LLMProviderError
+from fastapi_app.plugin_api import LLMModel, LLMProvider, LLMProviderError
 
 logger = logging.getLogger(__name__)
 

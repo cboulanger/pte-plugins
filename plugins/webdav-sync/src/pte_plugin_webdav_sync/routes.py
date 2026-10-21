@@ -15,7 +15,7 @@ from fastapi_app.lib.core.dependencies import (
     get_session_manager,
     get_auth_manager,
 )
-from fastapi_app.lib.repository.file_repository import FileRepository
+from fastapi_app.plugin_api import FileRepository
 from fastapi_app.lib.sync.models import (
     SyncStatusResponse,
     SyncRequest,

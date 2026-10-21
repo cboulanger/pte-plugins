@@ -2,7 +2,7 @@
 Local Sync Plugin - Synchronize collection documents with local filesystem.
 """
 
-from fastapi_app.lib.plugins.plugin_base import Plugin
+from fastapi_app.plugin_api import Plugin
 from typing import Any
 from pathlib import Path
 import hashlib

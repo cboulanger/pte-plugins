@@ -25,7 +25,7 @@ from lxml import etree
 
 from fastapi_app.lib.core.locking import check_lock
 from fastapi_app.lib.models.models import FileMetadata, FileUpdate
-from fastapi_app.lib.repository.file_repository import FileRepository
+from fastapi_app.plugin_api import FileRepository, FileStorage
 from fastapi_app.lib.services.language_detection import (
     LANGUAGE_FROM_PDF_TEXT,
     LANGUAGE_FROM_TEI_TEXT,
@@ -34,7 +34,6 @@ from fastapi_app.lib.services.language_detection import (
     predict_document_language_with_source,
 )
 from fastapi_app.lib.services.metadata_extraction import BibliographicMetadata
-from fastapi_app.lib.storage.file_storage import FileStorage
 from fastapi_app.lib.utils.doi_utils import decode_filename, fetch_doi_metadata, normalize_doi, validate_doi
 from fastapi_app.lib.utils.tei_utils import (
     normalize_language_code,

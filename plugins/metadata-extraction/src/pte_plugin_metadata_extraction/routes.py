@@ -25,7 +25,7 @@ from fastapi_app.lib.core.dependencies import (
 )
 from fastapi_app.lib.permissions.acl_utils import user_is_admin
 from fastapi_app.lib.sse.sse_service import SSEService
-from fastapi_app.lib.storage.file_storage import FileStorage
+from fastapi_app.plugin_api import FileStorage
 from fastapi_app.lib.utils.auth import AuthManager
 
 logger = logging.getLogger(__name__)

@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 from requests.exceptions import ConnectionError, RequestException, RetryError  # type: ignore[import-untyped]
 
-from fastapi_app.config import get_settings
+from fastapi_app.plugin_api import get_settings
 from fastapi_app.lib.extraction import get_retry_session
 from pte_plugin_grobid.handlers.base import GrobidHandler
 from pte_plugin_grobid.config import get_grobid_extraction_timeout, get_supported_variants, get_variant_content_locations

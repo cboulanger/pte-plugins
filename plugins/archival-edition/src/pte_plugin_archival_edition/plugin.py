@@ -11,11 +11,15 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 
 from fastapi_app.lib.core.url_cache import UrlCache
-from fastapi_app.lib.doc_rules.rules_providers import register_document_rules_provider, unregister_document_rules_provider
-from fastapi_app.lib.extraction import ExtractorRegistry
-from fastapi_app.lib.plugins.frontend_extension_registry import FrontendExtensionRegistry
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
-from fastapi_app.lib.plugins.plugin_tools import get_plugin_config
+from fastapi_app.plugin_api import (
+    ExtractorRegistry,
+    FrontendExtensionRegistry,
+    get_plugin_config,
+    Plugin,
+    PluginContext,
+    register_document_rules_provider,
+    unregister_document_rules_provider,
+)
 from fastapi_app.lib.secrets import register_secret_service
 from fastapi_app.lib.utils.annotation_rules_utils import AnnotationRuleRef
 

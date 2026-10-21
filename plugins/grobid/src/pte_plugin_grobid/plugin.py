@@ -9,16 +9,23 @@ import logging
 from pathlib import Path
 from typing import Any, Callable
 
-from fastapi_app.lib.core.gc_hooks import clear_directory, register_gc_handler, unregister_gc_handler
-from fastapi_app.lib.core.schema_validator import register_schema_config, unregister_schema_config
-from fastapi_app.lib.doc_rules.rules_providers import register_document_rules_provider, unregister_document_rules_provider
-from fastapi_app.lib.plugins.plugin_base import Plugin, PluginContext
+from fastapi_app.plugin_api import (
+    clear_directory,
+    ExtractorRegistry,
+    get_event_bus,
+    Plugin,
+    PluginContext,
+    register_document_rules_provider,
+    register_gc_handler,
+    register_schema_config,
+    unregister_document_rules_provider,
+    unregister_gc_handler,
+    unregister_schema_config,
+)
 from pte_plugin_grobid.annotation_rules import GrobidRulesProvider
 from fastapi_app.plugins.tei_wizard.plugin import TeiWizardPlugin
 from .config import init_plugin_config
 
-from fastapi_app.lib.extraction import ExtractorRegistry
-from fastapi_app.lib.sse.event_bus import get_event_bus
 from .cache import get_cache_dir
 from .extractor import GrobidTrainingExtractor
 

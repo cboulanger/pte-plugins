@@ -15,13 +15,11 @@ from typing import Any, Optional
 import pymupdf
 from lxml import etree
 
-from fastapi_app.lib.extraction import BaseExtractor
-from fastapi_app.lib.llm import LLMProvider
+from fastapi_app.plugin_api import BaseExtractor, get_config, LLMProvider
 from fastapi_app.lib.secrets import require_user_secret
 from pte_plugin_anthropic_llm.llm_provider import AnthropicLLMProvider
 from fastapi_app.lib.utils.annotation_rules_utils import AnnotationRuleRef
 from fastapi_app.lib.utils.annotation_tags import generate_annotation_tags
-from fastapi_app.lib.utils.config_utils import get_config
 from fastapi_app.lib.utils.debug_utils import log_extraction_response
 from fastapi_app.lib.utils.doi_utils import encode_for_xml_id
 from fastapi_app.lib.utils.tei_utils import (

@@ -15,11 +15,10 @@ import requests
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from fastapi_app.config import get_settings
+from fastapi_app.plugin_api import get_settings, LLMProviderError, LLMProviderRegistry
 from fastapi_app.lib.core.dependencies import get_document_rules_store, require_authenticated_user
 from fastapi_app.lib.core.url_cache import UrlCache
 from fastapi_app.lib.doc_rules.storage import DocumentRulesStore
-from fastapi_app.lib.llm import LLMProviderError, LLMProviderRegistry
 from fastapi_app.lib.llm.model_access import ModelAccessDenied, check_model_access
 from fastapi_app.lib.secrets import MissingSecretError, secret_required_detail
 from pte_plugin_annotation_review.prompts import UnusableResponseError

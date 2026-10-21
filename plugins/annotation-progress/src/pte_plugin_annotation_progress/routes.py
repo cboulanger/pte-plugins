@@ -21,7 +21,7 @@ from fastapi_app.lib.core.dependencies import (
     require_authenticated_user,
 )
 from fastapi_app.lib.models import FileMetadata
-from fastapi_app.lib.repository.file_repository import FileRepository
+from fastapi_app.plugin_api import FileRepository
 
 logger = logging.getLogger(__name__)
 
