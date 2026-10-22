@@ -16,6 +16,7 @@ Plugins for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor). Eac
 | [google-llm](plugins/google-llm) | `pte-plugin-google-llm` | 1.0.0 | Registers Google's Gemini API as an LLM inference provider |
 | [grobid](plugins/grobid) | `pte-plugin-grobid` | 1.0.0 | Extract training data using GROBID server |
 | [iaa-analyzer](plugins/iaa-analyzer) | `pte-plugin-iaa-analyzer` | 1.0.0 | Compute agreement between annotation versions by comparing element positions in <text> |
+| [inference-endpoints](plugins/inference-endpoints) | `pte-plugin-inference-endpoints` | 1.0.0 | Registers OpenAI-compatible inference endpoints (e.g. Ollama) as LLM providers |
 | [kisski](plugins/kisski) | `pte-plugin-kisski` | 2.0.0 | Text and PDF processing using KISSKI Academic Cloud API |
 | [llamore](plugins/llamore-extractor) | `pte-plugin-llamore-extractor` | 1.0.0 | Extract references using LLamore with the configured LLM model |
 | [local-sync](plugins/local-sync) | `pte-plugin-local-sync` | 1.0.0 | Synchronize collection documents with local filesystem |
