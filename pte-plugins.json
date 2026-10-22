@@ -1,5 +1,5 @@
 {
-  "repository": "https://github.com/cboulanger/pte-plugins",
+  "repository": "https://github.com/mpilhlt/pte-plugins",
   "plugins": [
     {
       "id": "annotation-history",
@@ -9,6 +9,7 @@
       "version": "1.0.0",
       "description": "Shows detailed annotation history for PDF documents",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -22,6 +23,7 @@
       "version": "1.0.0",
       "description": "View annotation progress in the current collection",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -35,6 +37,7 @@
       "version": "1.0.0",
       "description": "Reviews a document's annotations against its own editorialDecl-linked rules using an LLM",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -48,6 +51,7 @@
       "version": "1.0.0",
       "description": "Registers Anthropic's Claude API as an LLM inference provider",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -62,6 +66,9 @@
       "description": "Extractor for photographed archival documents with a description form, schema and annotation guidelines",
       "requires": [
         "anthropic-llm"
+      ],
+      "dependencies": [
+        "pymupdf>=1.25.0"
       ],
       "engines": {
         "pte": ">=0.76.0",
@@ -78,6 +85,7 @@
       "requires": [
         "annotation-progress"
       ],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -91,6 +99,7 @@
       "version": "1.0.0",
       "description": "View recent activity in the current collection",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -104,6 +113,10 @@
       "version": "1.0.0",
       "description": "Registers Google's Gemini API as an LLM inference provider",
       "requires": [],
+      "dependencies": [
+        "google-genai>=1.56.0",
+        "httpx>=0.28.0"
+      ],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -117,6 +130,7 @@
       "version": "1.0.0",
       "description": "Extract training data using GROBID server",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -130,6 +144,7 @@
       "version": "1.0.0",
       "description": "Compute agreement between annotation versions by comparing element positions in <text>",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -143,6 +158,10 @@
       "version": "2.0.0",
       "description": "Text and PDF processing using KISSKI Academic Cloud API",
       "requires": [],
+      "dependencies": [
+        "jsonschema>=4.23.0",
+        "pdf2image>=1.17.0"
+      ],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -156,6 +175,10 @@
       "version": "1.0.0",
       "description": "Extract references using LLamore with the configured LLM model",
       "requires": [],
+      "dependencies": [
+        "llamore>=0.2.0",
+        "pypdf>=6.16.1"
+      ],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -169,6 +192,7 @@
       "version": "1.0.0",
       "description": "Synchronize collection documents with local filesystem",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -184,6 +208,7 @@
       "requires": [
         "grobid"
       ],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -197,6 +222,7 @@
       "version": "1.0.0",
       "description": "Per-project Atom feeds of document revisions",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -210,6 +236,7 @@
       "version": "1.0.0",
       "description": "Generate RelaxNG schema from TEI document structure",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -223,6 +250,7 @@
       "version": "1.0.0",
       "description": "Update TEI documents with complete bibliographic metadata from DOI lookup",
       "requires": [],
+      "dependencies": [],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
@@ -236,6 +264,9 @@
       "version": "1.0.0",
       "description": "Synchronize files with a WebDAV server",
       "requires": [],
+      "dependencies": [
+        "webdav4[fsspec]>=0.10.0"
+      ],
       "engines": {
         "pte": ">=0.76.0",
         "pte-plugin-api": "^1.0"
