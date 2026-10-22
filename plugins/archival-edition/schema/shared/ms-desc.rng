@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Manuscript description (msDesc) subset for archival originals: where the
+  document is kept, its contents, physical description, origin and related
+  publications.
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  ns="http://www.tei-c.org/ns/1.0">
+
+  <define name="msDesc">
+    <element name="msDesc">
+      <a:documentation>(manuscript description) the archival original of the document.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <ref name="msIdentifier"/>
+      <optional><ref name="msContents"/></optional>
+      <optional><ref name="physDesc"/></optional>
+      <optional><ref name="history"/></optional>
+      <optional><ref name="additional"/></optional>
+    </element>
+  </define>
+
+  <define name="msIdentifier">
+    <element name="msIdentifier">
+      <a:documentation>(manuscript identifier) country, city, holding institution, collection and shelfmark.</a:documentation>
+      <ref name="att.global"/>
+      <interleave>
+        <optional><ref name="country"/></optional>
+        <optional><ref name="settlement"/></optional>
+        <optional><ref name="repository"/></optional>
+        <zeroOrMore><ref name="collection"/></zeroOrMore>
+        <zeroOrMore><ref name="idno"/></zeroOrMore>
+      </interleave>
+    </element>
+  </define>
+
+  <define name="country">
+    <element name="country"><ref name="att.global"/><ref name="att.canonical"/><text/></element>
+  </define>
+
+  <define name="settlement">
+    <element name="settlement"><ref name="att.global"/><ref name="att.canonical"/><text/></element>
+  </define>
+
+  <define name="repository">
+    <element name="repository"><ref name="att.global"/><ref name="att.canonical"/><text/></element>
+  </define>
+
+  <define name="collection">
+    <element name="collection"><ref name="att.global"/><ref name="att.typed"/><text/></element>
+  </define>
+
+  <define name="msContents">
+    <element name="msContents">
+      <ref name="att.global"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="msItem"/>
+          <ref name="summary"/>
+          <ref name="p"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+  <define name="summary">
+    <element name="summary"><ref name="att.global"/><ref name="macro.phrase"/></element>
+  </define>
+
+  <define name="msItem">
+    <element name="msItem">
+      <a:documentation>(manuscript item) the text contained in the document, its author(s) and, for papers, the stage of the text.</a:documentation>
+      <ref name="att.global"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="author"/>
+          <ref name="title"/>
+          <ref name="note"/>
+          <ref name="textLang"/>
+          <ref name="locus"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+  <define name="textLang">
+    <element name="textLang">
+      <ref name="att.global"/>
+      <optional><attribute name="mainLang"><data type="language"/></attribute></optional>
+      <optional><attribute name="otherLangs"><list><zeroOrMore><data type="language"/></zeroOrMore></list></attribute></optional>
+      <text/>
+    </element>
+  </define>
+
+  <define name="locus">
+    <element name="locus">
+      <ref name="att.global"/>
+      <optional><attribute name="from"/></optional>
+      <optional><attribute name="to"/></optional>
+      <text/>
+    </element>
+  </define>
+
+  <define name="physDesc">
+    <element name="physDesc">
+      <a:documentation>(physical description) material, extent, condition, hands and type, additions and accompanying material.</a:documentation>
+      <ref name="att.global"/>
+      <interleave>
+        <optional><ref name="objectDesc"/></optional>
+        <optional><ref name="handDesc"/></optional>
+        <optional><ref name="typeDesc"/></optional>
+        <zeroOrMore><ref name="additions"/></zeroOrMore>
+        <zeroOrMore><ref name="accMat"/></zeroOrMore>
+      </interleave>
+    </element>
+  </define>
+
+  <define name="objectDesc">
+    <element name="objectDesc">
+      <ref name="att.global"/>
+      <optional>
+        <attribute name="form">
+          <a:documentation>original, carbon-copy, photocopy, draft or transcript.</a:documentation>
+          <choice>
+            <value>original</value>
+            <value>carbon-copy</value>
+            <value>photocopy</value>
+            <value>draft</value>
+            <value>transcript</value>
+          </choice>
+        </attribute>
+      </optional>
+      <optional><ref name="supportDesc"/></optional>
+    </element>
+  </define>
+
+  <define name="supportDesc">
+    <element name="supportDesc">
+      <ref name="att.global"/>
+      <optional><attribute name="material"/></optional>
+      <interleave>
+        <optional><ref name="support"/></optional>
+        <optional><ref name="extent"/></optional>
+        <optional><ref name="foliation"/></optional>
+        <optional><ref name="condition"/></optional>
+      </interleave>
+    </element>
+  </define>
+
+  <define name="support">
+    <element name="support"><ref name="att.global"/><ref name="macro.phrase"/></element>
+  </define>
+
+  <define name="extent">
+    <element name="extent">
+      <ref name="att.global"/>
+      <mixed><zeroOrMore><choice><ref name="measure"/><ref name="dimensions"/></choice></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="measure">
+    <element name="measure">
+      <ref name="att.global"/>
+      <optional><attribute name="unit"/></optional>
+      <optional><attribute name="quantity"><data type="decimal"/></attribute></optional>
+      <text/>
+    </element>
+  </define>
+
+  <define name="dimensions">
+    <element name="dimensions">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="unit"/></optional>
+      <interleave>
+        <optional><element name="height"><text/></element></optional>
+        <optional><element name="width"><text/></element></optional>
+      </interleave>
+    </element>
+  </define>
+
+  <define name="foliation">
+    <element name="foliation"><ref name="att.global"/><ref name="macro.phrase"/></element>
+  </define>
+
+  <define name="condition">
+    <element name="condition"><ref name="att.global"/><ref name="macro.phrase"/></element>
+  </define>
+
+  <define name="handDesc">
+    <element name="handDesc">
+      <ref name="att.global"/>
+      <optional><attribute name="hands"><data type="nonNegativeInteger"/></attribute></optional>
+      <oneOrMore><ref name="handNote"/></oneOrMore>
+    </element>
+  </define>
+
+  <define name="handNote">
+    <element name="handNote">
+      <a:documentation>a hand that wrote in the document: the main hand (scope="major", xml:id="hand-main") or a later hand (scope="minor").</a:documentation>
+      <ref name="att.global"/>
+      <optional>
+        <attribute name="scope">
+          <choice><value>sole</value><value>major</value><value>minor</value></choice>
+        </attribute>
+      </optional>
+      <optional><attribute name="script"/></optional>
+      <optional><attribute name="medium"/></optional>
+      <optional><attribute name="scribe"/></optional>
+      <optional><attribute name="scribeRef"><ref name="data.pointers"/></attribute></optional>
+      <ref name="macro.phrase"/>
+    </element>
+  </define>
+
+  <define name="typeDesc">
+    <element name="typeDesc">
+      <ref name="att.global"/>
+      <oneOrMore><ref name="typeNote"/></oneOrMore>
+    </element>
+  </define>
+
+  <define name="typeNote">
+    <element name="typeNote">
+      <a:documentation>a typewritten or printed part of the document.</a:documentation>
+      <ref name="att.global"/>
+      <optional>
+        <attribute name="scope">
+          <choice><value>sole</value><value>major</value><value>minor</value></choice>
+        </attribute>
+      </optional>
+      <ref name="macro.phrase"/>
+    </element>
+  </define>
+
+  <define name="additions">
+    <element name="additions">
+      <a:documentation>letterhead, stamps and seals (type="letterhead"), and notes or marks added later (type="later").</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <ref name="macro.phrase"/>
+    </element>
+  </define>
+
+  <define name="accMat">
+    <element name="accMat">
+      <a:documentation>(accompanying material) envelope, clippings, photographs.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <ref name="macro.phrase"/>
+    </element>
+  </define>
+
+  <define name="history">
+    <element name="history">
+      <ref name="att.global"/>
+      <optional><ref name="origin"/></optional>
+      <zeroOrMore><ref name="provenance"/></zeroOrMore>
+      <optional><ref name="acquisition"/></optional>
+    </element>
+  </define>
+
+  <define name="origin">
+    <element name="origin">
+      <a:documentation>date and place of creation.</a:documentation>
+      <ref name="att.global"/>
+      <mixed>
+        <zeroOrMore>
+          <choice>
+            <ref name="origDate"/>
+            <ref name="origPlace"/>
+            <ref name="p"/>
+          </choice>
+        </zeroOrMore>
+      </mixed>
+    </element>
+  </define>
+
+  <define name="origDate">
+    <element name="origDate">
+      <ref name="att.global"/><ref name="att.datable"/>
+      <optional><attribute name="evidence"><ref name="data.evidence"/></attribute></optional>
+      <text/>
+    </element>
+  </define>
+
+  <define name="origPlace">
+    <element name="origPlace">
+      <ref name="att.global"/>
+      <mixed><zeroOrMore><ref name="placeName"/></zeroOrMore></mixed>
+    </element>
+  </define>
+
+  <define name="provenance">
+    <element name="provenance"><ref name="att.global"/><ref name="macro.phrase"/></element>
+  </define>
+
+  <define name="acquisition">
+    <element name="acquisition"><ref name="att.global"/><ref name="macro.phrase"/></element>
+  </define>
+
+  <define name="additional">
+    <element name="additional">
+      <ref name="att.global"/>
+      <optional><ref name="listBibl"/></optional>
+    </element>
+  </define>
+
+  <define name="listBibl">
+    <element name="listBibl">
+      <a:documentation>related documents and later publications of the text.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <oneOrMore>
+        <choice>
+          <ref name="bibl"/>
+          <ref name="biblStruct"/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+
+</grammar>

@@ -1,0 +1,26 @@
+[project]
+name = "pte-plugin-revision-feed"
+dynamic = ["version"]
+description = "Per-project Atom feeds of document revisions"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "CC0-1.0"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/cboulanger/pte-plugins"
+
+[project.entry-points."pte.plugins"]
+revision-feed = "pte_plugin_revision_feed"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pte_plugin_revision_feed/pte-plugin.json"
+pattern = '"version":\s*"(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pte_plugin_revision_feed"]
+exclude = ["src/pte_plugin_revision_feed/tests"]

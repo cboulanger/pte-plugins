@@ -1,0 +1,101 @@
+name: Tests
+
+# Tests the plugins installed into a PDF-TEI-Editor checkout: the plugins' own unit tests,
+# then the editor's API and E2E suites (which also stage the plugins' tests/api and tests/e2e
+# files, see tests/lib/plugin-tests.js in the editor).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      pte_ref:
+        description: 'mpilhlt/pdf-tei-editor branch, tag or commit to test against'
+        required: false
+
+env:
+  # Editor branch to test against
+  PTE_REF: ${{ inputs.pte_ref || 'devel' }}
+  PTE_ROOT: ${{ github.workspace }}/pdf-tei-editor
+  # Keep the editable plugin installs: uv run would otherwise re-sync the editor's environment
+  UV_NO_SYNC: '1'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout plugins
+        uses: actions/checkout@v7
+        with:
+          path: pte-plugins
+
+      - name: Checkout editor
+        uses: actions/checkout@v7
+        with:
+          repository: mpilhlt/pdf-tei-editor
+          ref: ${{ env.PTE_REF }}
+          path: pdf-tei-editor
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install the editor
+        working-directory: pdf-tei-editor
+        run: |
+          uv sync --frozen
+          npm ci
+
+      - name: Replace the editor's built-in copies of the plugins with the packages
+        run: |
+          # Until the editor drops them, fastapi_app/plugins/ still contains the moved plugins;
+          # the same plugin id must not be loaded twice
+          for module in $(jq -r '.plugins[].module' pte-plugins/pte-plugins.json); do
+            rm -rf "pdf-tei-editor/fastapi_app/plugins/${module#pte_plugin_}"
+          done
+          args=()
+          for dir in pte-plugins/plugins/*/; do args+=(-e "$dir"); done
+          uv pip install --python pdf-tei-editor/.venv/bin/python "${args[@]}"
+
+      - name: Check generated files
+        working-directory: pte-plugins
+        run: |
+          python3 scripts/build_index.py --check
+          "$PTE_ROOT/.venv/bin/python" plugins/archival-edition/scripts/build_schema.py --check
+
+      - name: Plugin unit tests (Python)
+        working-directory: pte-plugins
+        run: |
+          "$PTE_ROOT/.venv/bin/python" -m pytest -q
+
+      - name: Plugin unit tests (JavaScript)
+        working-directory: pte-plugins
+        run: |
+          npm ci
+          npm test
+
+      - name: Editor API tests with the plugins
+        working-directory: pdf-tei-editor
+        run: node tests/backend-test-runner.js --test-dir tests/api/v1 --plugin-tests "$GITHUB_WORKSPACE/pte-plugins"
+
+      - name: Install Playwright browsers
+        working-directory: pdf-tei-editor
+        run: npx playwright install --with-deps chromium
+
+      - name: Editor E2E tests with the plugins
+        working-directory: pdf-tei-editor
+        env:
+          TEST_IN_PROGRESS: '1'
+          # The runner starts the server itself; Playwright must not start a container
+          E2E_SKIP_WEBSERVER: '1'
+        run: |
+          node scripts/build/build.js
+          node tests/e2e-runner.js --plugin-tests "$GITHUB_WORKSPACE/pte-plugins"

@@ -1,0 +1,45 @@
+name: Pages
+
+# Publishes the documentation that plugins serve to the public, at
+# https://cboulanger.github.io/pte-plugins/<plugin>/ (the plugin's docs/ directory):
+# - archival-edition: schema and annotation guidelines (their URLs are recorded in TEI documents)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/*/docs/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          for plugin in archival-edition; do
+            cp -r "plugins/$plugin/docs" "_site/$plugin"
+          done
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

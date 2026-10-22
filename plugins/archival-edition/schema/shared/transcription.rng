@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Facsimile and diplomatic transcription of handwritten, typewritten and
+  printed archival documents.
+-->
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  ns="http://www.tei-c.org/ns/1.0">
+
+  <!-- ===== Facsimile ===== -->
+
+  <define name="facsimile">
+    <element name="facsimile">
+      <a:documentation>the photographs of the document, one surface per photographed page.</a:documentation>
+      <ref name="att.global"/>
+      <oneOrMore><ref name="surface"/></oneOrMore>
+    </element>
+  </define>
+
+  <define name="surface">
+    <element name="surface">
+      <a:documentation>one photographed page; @n holds the page label (1r, 1v, ...), xml:id is referenced by pb/@facs.</a:documentation>
+      <ref name="att.global"/>
+      <zeroOrMore><ref name="graphic"/></zeroOrMore>
+      <zeroOrMore><ref name="zone"/></zeroOrMore>
+    </element>
+  </define>
+
+  <define name="graphic">
+    <element name="graphic">
+      <ref name="att.global"/>
+      <attribute name="url"><ref name="data.pointer"/></attribute>
+      <optional><attribute name="mimeType"/></optional>
+      <optional><attribute name="width"/></optional>
+      <optional><attribute name="height"/></optional>
+      <empty/>
+    </element>
+  </define>
+
+  <define name="zone">
+    <element name="zone">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="ulx"><data type="decimal"/></attribute></optional>
+      <optional><attribute name="uly"><data type="decimal"/></attribute></optional>
+      <optional><attribute name="lrx"><data type="decimal"/></attribute></optional>
+      <optional><attribute name="lry"><data type="decimal"/></attribute></optional>
+      <optional><attribute name="points"/></optional>
+      <zeroOrMore><ref name="graphic"/></zeroOrMore>
+    </element>
+  </define>
+
+  <!-- ===== Text structure ===== -->
+
+  <define name="text">
+    <element name="text">
+      <a:documentation>the transcription; @xml:lang gives the main language.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><ref name="front"/></optional>
+      <ref name="body"/>
+      <optional><ref name="back"/></optional>
+    </element>
+  </define>
+
+  <define name="front">
+    <element name="front"><ref name="att.global"/><ref name="macro.divContent"/></element>
+  </define>
+
+  <define name="back">
+    <element name="back"><ref name="att.global"/><ref name="macro.divContent"/></element>
+  </define>
+
+  <define name="body">
+    <element name="body"><ref name="att.global"/><ref name="macro.divContent"/></element>
+  </define>
+
+  <define name="div">
+    <element name="div">
+      <a:documentation>a section of the text; the top-level div has the document type as @type (letter, postcard, program, manuscript, ...).</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.handFeatures"/>
+      <ref name="macro.divContent"/>
+    </element>
+  </define>
+
+  <define name="macro.divContent">
+    <oneOrMore>
+      <choice>
+        <ref name="div"/>
+        <ref name="head"/>
+        <ref name="opener"/>
+        <ref name="closer"/>
+        <ref name="postscript"/>
+        <ref name="p"/>
+        <ref name="ab"/>
+        <ref name="list"/>
+        <ref name="table"/>
+        <ref name="figure"/>
+        <ref name="note"/>
+        <ref name="fw"/>
+        <ref name="address"/>
+        <ref name="dateline"/>
+        <ref name="salute"/>
+        <ref name="signed"/>
+        <ref name="pb"/>
+        <ref name="cb"/>
+        <ref name="lb"/>
+        <ref name="gap"/>
+        <ref name="milestone"/>
+      </choice>
+    </oneOrMore>
+  </define>
+
+  <define name="head">
+    <element name="head">
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.handFeatures"/>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="ab">
+    <element name="ab">
+      <a:documentation>(anonymous block) a block of text that is not a paragraph, e.g. a line of a program or an isolated note.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.handFeatures"/>
+      <optional><attribute name="part"><ref name="data.part"/></attribute></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="opener">
+    <element name="opener">
+      <a:documentation>the beginning of a letter: dateline, address and salutation.</a:documentation>
+      <ref name="att.global"/><ref name="att.handFeatures"/>
+      <ref name="macro.letterPart"/>
+    </element>
+  </define>
+
+  <define name="closer">
+    <element name="closer">
+      <a:documentation>the end of a letter: closing salutation, signature, dateline.</a:documentation>
+      <ref name="att.global"/><ref name="att.handFeatures"/>
+      <ref name="macro.letterPart"/>
+    </element>
+  </define>
+
+  <define name="macro.letterPart">
+    <mixed>
+      <zeroOrMore>
+        <choice>
+          <ref name="dateline"/>
+          <ref name="salute"/>
+          <ref name="signed"/>
+          <ref name="address"/>
+          <ref name="macro.inline"/>
+        </choice>
+      </zeroOrMore>
+    </mixed>
+  </define>
+
+  <define name="postscript">
+    <element name="postscript">
+      <ref name="att.global"/><ref name="att.handFeatures"/>
+      <oneOrMore>
+        <choice>
+          <ref name="p"/>
+          <ref name="ab"/>
+          <ref name="opener"/>
+          <ref name="closer"/>
+          <ref name="signed"/>
+          <ref name="pb"/>
+          <ref name="lb"/>
+          <ref name="label"/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+
+  <define name="dateline">
+    <element name="dateline"><ref name="att.global"/><ref name="att.handFeatures"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="salute">
+    <element name="salute"><ref name="att.global"/><ref name="att.handFeatures"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="signed">
+    <element name="signed"><ref name="att.global"/><ref name="att.handFeatures"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="address">
+    <element name="address">
+      <ref name="att.global"/>
+      <oneOrMore>
+        <choice>
+          <ref name="addrLine"/>
+          <ref name="lb"/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+
+  <define name="addrLine">
+    <element name="addrLine"><ref name="att.global"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="fw">
+    <element name="fw">
+      <a:documentation>(forme work) running heads, page numbers, catchwords, printed letterhead.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.handFeatures"/>
+      <optional><attribute name="place"/></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="list">
+    <element name="list">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><ref name="head"/></optional>
+      <oneOrMore>
+        <choice>
+          <ref name="item"/>
+          <ref name="label"/>
+          <ref name="pb"/>
+          <ref name="lb"/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+
+  <define name="item">
+    <element name="item"><ref name="att.global"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="table">
+    <element name="table">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><ref name="head"/></optional>
+      <oneOrMore><ref name="row"/></oneOrMore>
+    </element>
+  </define>
+
+  <define name="row">
+    <element name="row">
+      <ref name="att.global"/>
+      <optional><attribute name="role"/></optional>
+      <oneOrMore><ref name="cell"/></oneOrMore>
+    </element>
+  </define>
+
+  <define name="cell">
+    <element name="cell">
+      <ref name="att.global"/>
+      <optional><attribute name="role"/></optional>
+      <optional><attribute name="rows"><data type="nonNegativeInteger"/></attribute></optional>
+      <optional><attribute name="cols"><data type="nonNegativeInteger"/></attribute></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="figure">
+    <element name="figure">
+      <a:documentation>a drawing, photograph, stamp or seal in the document.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="head"/>
+          <ref name="figDesc"/>
+          <ref name="p"/>
+          <ref name="ab"/>
+          <ref name="graphic"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+
+  <define name="figDesc">
+    <element name="figDesc"><ref name="att.global"/><ref name="macro.phrase"/></element>
+  </define>
+
+  <!-- ===== Inline transcription ===== -->
+
+  <define name="macro.transcription">
+    <mixed><zeroOrMore><ref name="macro.inline"/></zeroOrMore></mixed>
+  </define>
+
+  <define name="macro.inline">
+    <choice>
+      <ref name="lb"/>
+      <ref name="pb"/>
+      <ref name="cb"/>
+      <ref name="hi"/>
+      <ref name="foreign"/>
+      <ref name="unclear"/>
+      <ref name="gap"/>
+      <ref name="del"/>
+      <ref name="add"/>
+      <ref name="subst"/>
+      <ref name="choice"/>
+      <ref name="supplied"/>
+      <ref name="damage"/>
+      <ref name="space"/>
+      <ref name="seg"/>
+      <ref name="num"/>
+      <ref name="persName"/>
+      <ref name="orgName"/>
+      <ref name="placeName"/>
+      <ref name="date"/>
+      <ref name="title"/>
+      <ref name="bibl"/>
+      <ref name="ref"/>
+      <ref name="ptr"/>
+      <ref name="note"/>
+      <ref name="metamark"/>
+      <ref name="figure"/>
+      <ref name="milestone"/>
+    </choice>
+  </define>
+
+  <define name="lb">
+    <element name="lb">
+      <a:documentation>(line beginning) the start of a new line in the source; break="no" when a word is split across the line break.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="break"><choice><value>yes</value><value>no</value><value>maybe</value></choice></attribute></optional>
+      <empty/>
+    </element>
+  </define>
+
+  <define name="pb">
+    <element name="pb">
+      <a:documentation>(page beginning) the start of a page; @n holds the page label, @facs points to the surface of its photograph.</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="break"><choice><value>yes</value><value>no</value><value>maybe</value></choice></attribute></optional>
+      <empty/>
+    </element>
+  </define>
+
+  <define name="cb">
+    <element name="cb"><ref name="att.global"/><ref name="att.typed"/><empty/></element>
+  </define>
+
+  <define name="milestone">
+    <element name="milestone">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <attribute name="unit"/>
+      <empty/>
+    </element>
+  </define>
+
+  <define name="unclear">
+    <element name="unclear">
+      <a:documentation>text that cannot be read with certainty; @reason (illegible, faded, damage, ...) and @cert.</a:documentation>
+      <ref name="att.global"/><ref name="att.handFeatures"/>
+      <optional><attribute name="reason"/></optional>
+      <optional><attribute name="agent"/></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="gap">
+    <element name="gap">
+      <a:documentation>text omitted from the transcription because it is illegible or lost; @reason, @quantity and @unit (chars, words, lines).</a:documentation>
+      <ref name="att.global"/>
+      <optional><attribute name="reason"/></optional>
+      <optional><attribute name="agent"/></optional>
+      <optional><attribute name="quantity"><data type="decimal"/></attribute></optional>
+      <optional><attribute name="extent"/></optional>
+      <optional>
+        <attribute name="unit">
+          <choice><value>chars</value><value>words</value><value>lines</value><value>pages</value></choice>
+        </attribute>
+      </optional>
+      <optional><ref name="desc"/></optional>
+    </element>
+  </define>
+
+  <define name="del">
+    <element name="del">
+      <a:documentation>(deletion) text struck through, erased or otherwise deleted in the source; @rend says how (strikethrough, overwritten, erased).</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.handFeatures"/>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="add">
+    <element name="add">
+      <a:documentation>(addition) text added between the lines or in the margin; @place (above, below, margin-left, margin-right, inline).</a:documentation>
+      <ref name="att.global"/><ref name="att.typed"/><ref name="att.handFeatures"/>
+      <optional><attribute name="place"/></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="subst">
+    <element name="subst">
+      <a:documentation>(substitution) a deletion and the addition replacing it.</a:documentation>
+      <ref name="att.global"/><ref name="att.handFeatures"/>
+      <oneOrMore><choice><ref name="del"/><ref name="add"/></choice></oneOrMore>
+    </element>
+  </define>
+
+  <define name="choice">
+    <element name="choice">
+      <a:documentation>alternative encodings of the same passage: abbr/expan, sic/corr, orig/reg.</a:documentation>
+      <ref name="att.global"/>
+      <oneOrMore>
+        <choice>
+          <ref name="abbr"/>
+          <ref name="expan"/>
+          <ref name="sic"/>
+          <ref name="corr"/>
+          <ref name="orig"/>
+          <ref name="reg"/>
+        </choice>
+      </oneOrMore>
+    </element>
+  </define>
+
+  <define name="abbr">
+    <element name="abbr"><ref name="att.global"/><ref name="att.typed"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="expan">
+    <element name="expan"><ref name="att.global"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="sic">
+    <element name="sic"><ref name="att.global"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="corr">
+    <element name="corr"><ref name="att.global"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="orig">
+    <element name="orig"><ref name="att.global"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="reg">
+    <element name="reg"><ref name="att.global"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="supplied">
+    <element name="supplied">
+      <a:documentation>text supplied by the editor where the source is damaged or the writer omitted it; @reason.</a:documentation>
+      <ref name="att.global"/>
+      <optional><attribute name="reason"/></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="damage">
+    <element name="damage">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="agent"/></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="space">
+    <element name="space">
+      <ref name="att.global"/>
+      <optional><attribute name="quantity"><data type="decimal"/></attribute></optional>
+      <optional><attribute name="unit"/></optional>
+      <optional><attribute name="dim"><choice><value>horizontal</value><value>vertical</value></choice></attribute></optional>
+      <empty/>
+    </element>
+  </define>
+
+  <define name="seg">
+    <element name="seg"><ref name="att.global"/><ref name="att.typed"/><ref name="macro.transcription"/></element>
+  </define>
+
+  <define name="num">
+    <element name="num">
+      <ref name="att.global"/><ref name="att.typed"/>
+      <optional><attribute name="value"/></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+  <define name="metamark">
+    <element name="metamark">
+      <a:documentation>a mark of the writer about the text itself, e.g. an insertion sign or a line marking a passage.</a:documentation>
+      <ref name="att.global"/><ref name="att.handFeatures"/>
+      <optional><attribute name="function"/></optional>
+      <optional><attribute name="target"><ref name="data.pointers"/></attribute></optional>
+      <ref name="macro.transcription"/>
+    </element>
+  </define>
+
+</grammar>
