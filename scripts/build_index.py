@@ -2,8 +2,10 @@
 Write pte-plugins.json, the index of the plugins in this repository, from the plugin packages.
 
 For each plugins/<name>/ the index lists the plugin id (the ``pte.plugins`` entry point name),
-the distribution and module name, the version (from pte-plugin.json), the description and the
-plugins it requires (its pte-plugin-* dependencies).
+the distribution and module name, the version (from pte-plugin.json), the description, the
+plugins it requires (its pte-plugin-* dependencies) and its other Python dependencies. The
+editor's plugin manager reads the index to list the plugins for installation; a plugin whose
+dependencies are not installed in the editor's environment cannot be installed at runtime.
 
 Usage:
     python scripts/build_index.py           # write pte-plugins.json
@@ -27,7 +29,8 @@ def read_plugin(plugin_dir: Path) -> dict[str, object]:
     project = tomllib.loads((plugin_dir / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     (plugin_id, module), = project["entry-points"][ENTRY_POINT_GROUP].items()
     manifest = json.loads((plugin_dir / "src" / module / "pte-plugin.json").read_text(encoding="utf-8"))
-    requires = [re.split(r"[\s<>=!~\[;]", dep, maxsplit=1)[0] for dep in project.get("dependencies", [])]
+    dependencies = list(project.get("dependencies", []))
+    requires = [re.split(r"[\s<>=!~\[;]", dep, maxsplit=1)[0] for dep in dependencies]
     return {
         "id": plugin_id,
         "package": project["name"],
@@ -36,6 +39,7 @@ def read_plugin(plugin_dir: Path) -> dict[str, object]:
         "version": manifest["version"],
         "description": project.get("description", ""),
         "requires": [dep for dep in requires if dep.startswith("pte-plugin-")],
+        "dependencies": [dep for dep, name in zip(dependencies, requires) if not name.startswith("pte-plugin-")],
         "engines": manifest.get("engines", {}),
     }
 
