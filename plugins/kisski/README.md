@@ -11,9 +11,20 @@ Extract structured JSON data from PDFs and text using the KISSKI Academic Cloud 
 
 ## Requirements
 
+### Configuration
+
+| Config key | Environment variable | Default |
+| --- | --- | --- |
+| `plugin.kisski.api.key` | `KISSKI_API_KEY` | none |
+| `plugin.kisski.api.url` | `KISSKI_API_URL` | `https://chat-ai.academiccloud.de/v1` |
+
+The environment variables set the initial value when the key is not yet in `config.json`.
+
 ### API Key
 
-Set the `KISSKI_API_KEY` environment variable with your KISSKI Academic Cloud API key.
+For KISSKI models in the inference model picker, Each user enters their own key in the web interface (user menu > API Keys); it is stored encrypted on the server (see the PDF-TEI Editor documentation on user API keys). Optionally, an administrator can set a shared key in `plugin.kisski.api.key`, which is then used for all users instead.
+
+The structured-data extractor (`/api/plugins/kisski/extract`) uses only the shared key and is unavailable without it.
 
 Obtain a key from the [KISSKI LLM Service](https://docs.hpc.gwdg.de/services/saia/index.html) booking page.
 
@@ -225,5 +236,5 @@ plugins/kisski/src/pte_plugin_kisski/
 |-------|-------|----------|
 | `PDF support not available` | poppler not installed | Install poppler |
 | `Model does not support image input` | Using text-only model for PDF | Use a multimodal model |
-| `API key not available` | Missing KISSKI_API_KEY | Set environment variable |
+| `API key not available` | No shared key configured | Set `plugin.kisski.api.key` (or `KISSKI_API_KEY`) |
 | `Schema validation failed` | Output doesn't match schema | Automatic retry, then returns error with raw response |

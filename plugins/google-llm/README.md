@@ -8,9 +8,9 @@ The plugin has no menu entries or routes of its own.
 
 | Config key | Environment variable | Default |
 | --- | --- | --- |
-| `plugin.google-llm.api.key` | `GEMINI_API_KEY` | none (required) |
+| `plugin.google-llm.api.key` | `GEMINI_API_KEY` | none |
 
-Obtain a key from Google AI Studio. The plugin is unavailable without an API key. The provider is not registered when `FASTAPI_APPLICATION_MODE=testing`.
+API keys: Each user enters their own key in the web interface (user menu > API Keys); it is stored encrypted on the server (see the PDF-TEI Editor documentation on user API keys). Optionally, an administrator can set a shared key in `plugin.google-llm.api.key`, which is then used for all users instead. Keys are obtained from Google AI Studio. The provider is not registered when `FASTAPI_APPLICATION_MODE=testing`.
 
 ## Provider
 
