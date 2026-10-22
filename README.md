@@ -27,6 +27,8 @@ Plugins for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor). Eac
 
 [pte-plugins.json](pte-plugins.json) lists the same information in machine-readable form. It is generated from the packages by `python scripts/build_index.py`; CI checks that it is up to date.
 
+The [overview page](https://mpilhlt.github.io/pte-plugins/) on GitHub Pages lists the plugins with their metadata and links to their READMEs. The [Pages workflow](.github/workflows/pages.yml) rebuilds it with `python scripts/build_site.py` on every push to `main`. The site also publishes `pte-plugins.json` and each plugin's `docs/` directory at `https://mpilhlt.github.io/pte-plugins/<name>/` (e.g. the archival-edition schema and guidelines).
+
 `archived/` contains plugins that are no longer maintained. They are not packaged and not tested.
 
 ## Installing plugins
