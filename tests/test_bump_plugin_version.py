@@ -43,6 +43,8 @@ class TestBumpPluginVersion(unittest.TestCase):
         self.assertEqual(manifest["readme"], "https://example.com")
         self.assertEqual(manifest["engines"], {"pte": ">=0.76.0"})
         self.assertTrue(text.endswith("}\n"))
+        expected = {"version": "1.1.0", "readme": "https://example.com", "engines": {"pte": ">=0.76.0"}}
+        self.assertEqual(text, json.dumps(expected, indent=2, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

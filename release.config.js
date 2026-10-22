@@ -19,7 +19,11 @@ export default {
       '@semantic-release/git',
       {
         assets: ['pte-plugins.json', `${pluginPath}/src/**/pte-plugin.json`],
-        message: `chore(release): ${pluginId} \${nextRelease.version} [skip ci]\n\n\${nextRelease.notes}`,
+        // No [skip ci]: it would also suppress release.yml's tag-push trigger, since GitHub's
+        // skip-ci detection applies per pushed ref and the tag points at this same commit.
+        // Re-triggering this workflow is instead guarded by semantic-release.yml's own
+        // `if:` condition on the commit message prefix.
+        message: `chore(release): ${pluginId} \${nextRelease.version}\n\n\${nextRelease.notes}`,
       },
     ],
   ],
