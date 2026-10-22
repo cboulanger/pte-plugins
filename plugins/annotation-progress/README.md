@@ -28,6 +28,14 @@ The plugin generates a sortable DataTables page with:
 
 Documents without any annotations are listed with "No annotations" in the annotations column.
 
+## Configuration
+
+| Config key | Environment variable | Default | Description |
+| --- | --- | --- | --- |
+| `plugin.annotation-progress.dashboard-threshold` | `PLUGIN_ANNOTATION_PROGRESS_DASHBOARD_THRESHOLD` | `approved` | Lifecycle status (from `annotation.lifecycle.order`) from which a document counts as done in the dashboard's progress box |
+
+The environment variable sets the initial value when the key is not yet in `config.json`.
+
 ## Implementation
 
 - **Plugin file**: [plugin.py](src/pte_plugin_annotation_progress/plugin.py)
