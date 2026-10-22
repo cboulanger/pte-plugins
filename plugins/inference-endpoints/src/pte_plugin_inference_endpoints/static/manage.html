@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Inference Endpoints</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px 20px; margin: 0; color: #333; font-size: 14px; }
+    h2 { margin: 0 0 12px; border-bottom: 2px solid #2196F3; padding-bottom: 8px; font-size: 1.2em; }
+    h3 { margin: 24px 0 8px; font-size: 1.05em; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+    th { background: #f5f5f5; font-weight: 600; }
+    td.url { font-family: monospace; font-size: 0.9em; word-break: break-all; }
+    td.actions { white-space: nowrap; }
+    .empty { color: #666; font-style: italic; }
+    .tag { display: inline-block; background: #e3f2fd; border-radius: 3px; padding: 0 5px; margin: 0 3px 2px 0; font-size: 0.85em; }
+    form { background: #f5f5f5; border-radius: 5px; padding: 12px 15px; }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+    .field { display: flex; flex-direction: column; gap: 3px; flex: 1 1 220px; }
+    .field.narrow { flex: 0 1 120px; }
+    label { font-weight: 600; font-size: 0.9em; }
+    label.check { font-weight: normal; display: flex; gap: 6px; align-items: center; }
+    input[type=text], input[type=url], input[type=password], input[type=number], select { padding: 6px; border: 1px solid #bbb; border-radius: 3px; font-size: 1em; }
+    .hint { font-size: 0.85em; color: #666; }
+    button { padding: 6px 14px; border: none; border-radius: 4px; font-size: 0.95em; cursor: pointer; }
+    button.primary { background: #2196F3; color: white; }
+    button.primary:hover { background: #1976D2; }
+    button.secondary { background: #e0e0e0; color: #333; }
+    button.secondary:hover { background: #bdbdbd; }
+    button.danger { background: #fdecea; color: #b71c1c; }
+    button.danger:hover { background: #f8c9c4; }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    .buttons { display: flex; gap: 10px; align-items: center; }
+    #status { margin-top: 10px; padding: 8px 10px; border-radius: 4px; display: none; white-space: pre-wrap; }
+    #status.ok { display: block; background: #e8f5e9; color: #1b5e20; }
+    #status.error { display: block; background: #fdecea; color: #b71c1c; }
+    details { margin-top: 20px; }
+    summary { cursor: pointer; font-weight: 600; }
+    details p, details li { line-height: 1.4; }
+    code { background: #eee; padding: 0 3px; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <h2>Inference Endpoints</h2>
+  <p class="hint">
+    OpenAI-compatible endpoints (Ollama, vLLM, LM Studio, llama.cpp, LiteLLM, OpenRouter, ...). Their models appear in the model picker under the endpoint name.
+    The server sends the requests, so the URL must be reachable from the server, not from your browser.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Base URL</th><th>Models</th><th>Key</th><th>Options</th><th></th></tr>
+    </thead>
+    <tbody id="endpoints">
+      <tr><td colspan="6" class="empty">Loading...</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Add endpoint</h3>
+  <form id="form" autocomplete="off">
+    <div class="row">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" required maxlength="80" placeholder="Ollama (local)">
+      </div>
+      <div class="field" style="flex-basis: 320px">
+        <label for="base_url">Base URL</label>
+        <input type="url" id="base_url" required placeholder="http://localhost:11434/v1">
+        <span class="hint">The part before <code>/chat/completions</code>; for Ollama it ends in <code>/v1</code>.</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="key_mode">API key</label>
+        <select id="key_mode">
+          <option value="none">No key</option>
+          <option value="shared">Shared key, used for all users</option>
+          <option value="user">Each user enters their own key</option>
+        </select>
+      </div>
+      <div class="field" id="api_key_field">
+        <label for="api_key">Key</label>
+        <input type="password" id="api_key" autocomplete="new-password">
+        <span class="hint" id="api_key_hint"></span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="models">Models</label>
+        <input type="text" id="models" placeholder="e.g. llama3.2, qwen2.5vl:7b">
+        <span class="hint">Comma-separated model ids. Leave empty to offer all models the endpoint lists.</span>
+      </div>
+      <div class="field narrow">
+        <label for="timeout">Timeout (s)</label>
+        <input type="number" id="timeout" min="10" max="3600" value="600">
+      </div>
+    </div>
+    <div class="row">
+      <label class="check"><input type="checkbox" id="vision"> Models accept images (vision)</label>
+      <label class="check"><input type="checkbox" id="free"> Free: non-admin users may use these models</label>
+    </div>
+    <div class="buttons">
+      <button type="button" class="secondary" id="test">Test connection</button>
+      <button type="submit" class="primary" id="add">Add endpoint</button>
+    </div>
+    <div id="status"></div>
+  </form>
+
+  <details>
+    <summary>Using a model on your own computer</summary>
+    <p>Requests go from the server to the endpoint. <code>localhost</code> therefore means the machine (or container) the editor runs on.</p>
+    <ul>
+      <li><b>Editor runs on your computer:</b> use <code>http://localhost:11434/v1</code>. If the editor runs in Docker, use <code>http://host.docker.internal:11434/v1</code> (on Linux, start the container with <code>--add-host=host.docker.internal:host-gateway</code> and let Ollama listen on all interfaces with <code>OLLAMA_HOST=0.0.0.0</code>).</li>
+      <li><b>Editor runs on a server:</b> the server cannot reach your computer's <code>localhost</code>. Make Ollama reachable from the server, e.g. through a VPN such as Tailscale (<code>http://my-laptop.tailnet-name.ts.net:11434/v1</code>), an SSH reverse tunnel (<code>ssh -R 11434:localhost:11434 server</code>, then <code>http://localhost:11434/v1</code>), or a tunnel service. Ollama has no authentication; protect a publicly reachable tunnel with a key and enter it here.</li>
+      <li>Browser CORS settings such as <code>OLLAMA_ORIGINS</code> are not needed, since the browser never calls the endpoint.</li>
+    </ul>
+  </details>
+
+  <script>
+    const BASE = '/api/plugins/inference-endpoints';
+    const $ = (id) => document.getElementById(id);
+
+    /** @param {string} text */
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /**
+     * @param {string} message
+     * @param {'ok'|'error'|''} kind
+     */
+    function showStatus(message, kind) {
+      const status = $('status');
+      status.textContent = message;
+      status.className = kind;
+    }
+
+    /** Field values of the form, as the API expects them */
+    function formData() {
+      return {
+        name: $('name').value.trim(),
+        base_url: $('base_url').value.trim(),
+        key_mode: $('key_mode').value,
+        api_key: $('api_key').value.trim() || null,
+        models: $('models').value.split(',').map((m) => m.trim()).filter(Boolean),
+        vision: $('vision').checked,
+        free: $('free').checked,
+        timeout: Number($('timeout').value) || 600,
+      };
+    }
+
+    function updateKeyField() {
+      const mode = $('key_mode').value;
+      $('api_key_field').style.display = mode === 'none' ? 'none' : '';
+      $('api_key_hint').textContent = mode === 'shared'
+        ? 'Stored encrypted on the server.'
+        : 'Optional, only used for "Test connection". Users enter their key under API Keys.';
+    }
+
+    const KEY_LABELS = { none: 'none', shared: 'shared', user: 'per user' };
+
+    async function load() {
+      const tbody = $('endpoints');
+      let endpoints;
+      try {
+        endpoints = await sandbox.callPluginApi(`${BASE}/endpoints`, 'GET');
+      } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty">Could not load the endpoints: ${escapeHtml(String(error.message || error))}</td></tr>`;
+        return;
+      }
+      if (!endpoints.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">No endpoints yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = endpoints.map((e) => `
+        <tr data-id="${escapeHtml(e.id)}">
+          <td>${escapeHtml(e.name)}</td>
+          <td class="url">${escapeHtml(e.base_url)}</td>
+          <td>${e.models.length ? e.models.map((m) => `<span class="tag">${escapeHtml(m)}</span>`).join('') : '<span class="hint">all listed</span>'}</td>
+          <td>${KEY_LABELS[e.key_mode]}${e.key_mode === 'shared' && !e.has_key ? ' <b>(missing)</b>' : ''}</td>
+          <td>${[e.vision ? 'vision' : '', e.free ? 'free' : '', `${e.timeout}s`].filter(Boolean).join(', ')}</td>
+          <td class="actions">
+            <button type="button" class="secondary" data-action="test">Test</button>
+            <button type="button" class="danger" data-action="delete">Delete</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    /** @param {{ok: boolean, message: string, models: string[]}} result */
+    function testMessage(result) {
+      const models = result.models.length ? `\nModels: ${result.models.join(', ')}` : '';
+      return `${result.message}${models}`;
+    }
+
+    $('endpoints').addEventListener('click', async (event) => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      const row = button.closest('tr');
+      const id = row.dataset.id;
+      const name = row.cells[0].textContent;
+      if (button.dataset.action === 'delete') {
+        if (!confirm(`Delete the endpoint "${name}"? Its models will no longer be available.`)) return;
+        button.disabled = true;
+        try {
+          await sandbox.callPluginApi(`${BASE}/endpoints/${encodeURIComponent(id)}`, 'DELETE');
+          sandbox.notify(`Endpoint "${name}" deleted`, 'success', 'check-circle');
+          await load();
+        } catch (error) {
+          button.disabled = false;
+          showStatus(`Could not delete "${name}": ${error.message || error}`, 'error');
+        }
+      } else if (button.dataset.action === 'test') {
+        button.disabled = true;
+        showStatus(`Testing "${name}"...`, '');
+        try {
+          const result = await sandbox.callPluginApi(`${BASE}/endpoints/${encodeURIComponent(id)}/test`, 'POST');
+          showStatus(`${name}: ${testMessage(result)}`, result.ok ? 'ok' : 'error');
+        } catch (error) {
+          showStatus(`${name}: ${error.message || error}`, 'error');
+        } finally {
+          button.disabled = false;
+        }
+      }
+    });
+
+    /** @returns {string|null} An error message, or null if the form is complete */
+    function validate(data) {
+      if (!data.name) return 'Enter a name';
+      if (!/^https?:\/\/[^/]/.test(data.base_url)) return 'Enter a base URL starting with http:// or https://';
+      if (data.key_mode === 'shared' && !data.api_key) return 'Enter the shared key';
+      return null;
+    }
+
+    $('test').addEventListener('click', async () => {
+      const data = formData();
+      const problem = validate({ ...data, key_mode: 'none' });
+      if (problem) return showStatus(problem, 'error');
+      $('test').disabled = true;
+      showStatus('Testing...', '');
+      try {
+        const result = await sandbox.callPluginApi(`${BASE}/test`, 'POST', data);
+        showStatus(testMessage(result), result.ok ? 'ok' : 'error');
+      } catch (error) {
+        showStatus(String(error.message || error), 'error');
+      } finally {
+        $('test').disabled = false;
+      }
+    });
+
+    $('form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = formData();
+      const problem = validate(data);
+      if (problem) return showStatus(problem, 'error');
+      if (data.key_mode !== 'shared') data.api_key = null;
+      $('add').disabled = true;
+      try {
+        const endpoint = await sandbox.callPluginApi(`${BASE}/endpoints`, 'POST', data);
+        $('form').reset();
+        updateKeyField();
+        showStatus(`Endpoint "${endpoint.name}" added. Its models are now in the model picker.`, 'ok');
+        await load();
+      } catch (error) {
+        showStatus(String(error.message || error), 'error');
+      } finally {
+        $('add').disabled = false;
+      }
+    });
+
+    $('key_mode').addEventListener('change', updateKeyField);
+    updateKeyField();
+    load();
+  </script>
+</body>
+</html>

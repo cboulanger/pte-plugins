@@ -151,6 +151,20 @@
       }
     },
     {
+      "id": "inference-endpoints",
+      "package": "pte-plugin-inference-endpoints",
+      "module": "pte_plugin_inference_endpoints",
+      "path": "plugins/inference-endpoints",
+      "version": "1.0.0",
+      "description": "Registers OpenAI-compatible inference endpoints (e.g. Ollama) as LLM providers",
+      "requires": [],
+      "dependencies": [],
+      "engines": {
+        "pte": ">=0.76.0",
+        "pte-plugin-api": "^1.0"
+      }
+    },
+    {
       "id": "kisski",
       "package": "pte-plugin-kisski",
       "module": "pte_plugin_kisski",
