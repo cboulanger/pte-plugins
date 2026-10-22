@@ -1,5 +1,5 @@
 {
-  "repository": "https://github.com/cboulanger/pte-plugins",
+  "repository": "https://github.com/mpilhlt/pte-plugins",
   "plugins": [
     {
       "id": "annotation-history",

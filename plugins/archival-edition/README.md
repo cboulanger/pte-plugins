@@ -8,14 +8,14 @@ It contains:
 - **a schema**, [tei-archival.rng](docs/schema/tei-archival.rng): a lightweight RELAX NG schema written from scratch (no ODD), derived from the schemas of [fossil](https://github.com/mpilhlt/fossil) and extended for archival material (`msDesc`, `correspDesc`, `facsimile`, diplomatic transcription);
 - **annotation guidelines**, [docs/guidelines.md](docs/guidelines.md), which also document how each form field maps to TEI.
 
-The schema and guidelines are published at <https://cboulanger.github.io/pte-plugins/archival-edition/>. Documents created before the move refer to the schema at `https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng`; the plugin validates them with the bundled schema as well.
+The schema and guidelines are published at <https://mpilhlt.github.io/pte-plugins/archival-edition/>. Documents created before the move refer to the schema at `https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng` or `https://cboulanger.github.io/pte-plugins/archival-edition/schema/tei-archival.rng`; the plugin validates them with the bundled schema as well.
 
 ## Installation
 
 Install the package into the editor's environment (see the [repository README](../../README.md#installing-plugins)); it also installs the `anthropic-llm` plugin it depends on:
 
 ```bash
-uv pip install "pte-plugin-archival-edition @ git+https://github.com/cboulanger/pte-plugins#subdirectory=plugins/archival-edition"
+uv pip install "pte-plugin-archival-edition @ git+https://github.com/mpilhlt/pte-plugins#subdirectory=plugins/archival-edition"
 ```
 
 The package declares the editor versions and plugin API versions it works with in `pte-plugin.json`; an incompatible plugin is shown as "Incompatible" in the plugin manager and not loaded.

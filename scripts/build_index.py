@@ -18,7 +18,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 INDEX_FILE = REPO_ROOT / "pte-plugins.json"
-REPOSITORY = "https://github.com/cboulanger/pte-plugins"
+REPOSITORY = "https://github.com/mpilhlt/pte-plugins"
 ENTRY_POINT_GROUP = "pte.plugins"
 
 

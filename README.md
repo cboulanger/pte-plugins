@@ -34,7 +34,7 @@ Plugins for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor). Eac
 The packages are installed into the Python environment of the editor. From a checkout of the editor:
 
 ```bash
-uv pip install "pte-plugin-grobid @ git+https://github.com/cboulanger/pte-plugins#subdirectory=plugins/grobid"
+uv pip install "pte-plugin-grobid @ git+https://github.com/mpilhlt/pte-plugins#subdirectory=plugins/grobid"
 ```
 
 Plugins that depend on other plugins of this repository (see the "requires" field of the index) declare them as package dependencies; uv resolves them within this repository's workspace. Some plugins need configuration (server URLs, API keys) before they become available; see their READMEs.

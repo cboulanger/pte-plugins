@@ -2,8 +2,8 @@
 
 These guidelines describe how archival documents (letters, postcards, telegrams, conference programs, manuscripts of papers and talks, notes) are encoded in TEI with the `tei-archival` schema, and how annotators review and correct the documents produced by the archival edition extractor of the PDF-TEI-Editor.
 
-- Schema: [tei-archival.rng](https://cboulanger.github.io/pte-plugins/archival-edition/schema/tei-archival.rng)
-- Plugin and source: [cboulanger/pte-plugins](https://github.com/cboulanger/pte-plugins/tree/main/plugins/archival-edition)
+- Schema: [tei-archival.rng](https://mpilhlt.github.io/pte-plugins/archival-edition/schema/tei-archival.rng)
+- Plugin and source: [mpilhlt/pte-plugins](https://github.com/mpilhlt/pte-plugins/tree/main/plugins/archival-edition)
 
 ## Workflow
 
