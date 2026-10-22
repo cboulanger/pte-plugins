@@ -83,6 +83,11 @@ def _build_refs_for_guide(guide: AnnotationGuide, cache: UrlCache) -> list[Annot
       can't be found in the fetched document, only the "human" ref is
       returned - this never fails extraction/refresh, matching this
       feature's established error-handling philosophy.
+
+    If the guide has a `machine_url` (a condensed, LLM-only version of the
+    section), the "machine" ref is derived from it instead - a line-range
+    fragment as is, a markdown heading anchor translated to a line range -
+    and the ref derived from `url` is only the fallback when that fails.
     """
     _, _, fragment = guide["url"].partition("#")
     content_type = guide["type"]
@@ -99,17 +104,35 @@ def _build_refs_for_guide(guide: AnnotationGuide, cache: UrlCache) -> list[Annot
     refs: list[AnnotationRuleRefTarget] = [
         {"target": human_target, "content_type": content_type, "subtype": "human"},
     ]
-    if content_type == "markdown":
-        pinned_base = human_target.partition("#")[0]
-        line_range = translate_anchor_to_line_range(pinned_base, fragment, cache)
-        if line_range is not None:
-            start, end = line_range
-            refs.append({
-                "target": f"{pinned_base}#L{start}-L{end}",
-                "content_type": content_type,
-                "subtype": "machine",
-            })
+    if content_type != "markdown":
+        return refs
+    machine_target: Optional[str] = None
+    if "machine_url" in guide:
+        machine_target = _machine_target(resolve_forge_permalink(guide["machine_url"], cache), cache)
+    if machine_target is None:
+        machine_target = _machine_target(human_target, cache)
+    if machine_target is not None:
+        refs.append({"target": machine_target, "content_type": content_type, "subtype": "machine"})
     return refs
+
+
+def _machine_target(pinned_url: str, cache: UrlCache) -> Optional[str]:
+    """
+    Line-range URL for an already permalink-pinned markdown url: the url
+    itself if its fragment is a line range, else the range its heading
+    anchor covers. None if it has no fragment or the anchor can't be
+    resolved.
+    """
+    pinned_base, _, fragment = pinned_url.partition("#")
+    if not fragment:
+        return None
+    if is_line_range_fragment(fragment):
+        return pinned_url
+    line_range = translate_anchor_to_line_range(pinned_base, fragment, cache)
+    if line_range is None:
+        return None
+    start, end = line_range
+    return f"{pinned_base}#L{start}-L{end}"
 
 
 class GrobidRulesProvider:
