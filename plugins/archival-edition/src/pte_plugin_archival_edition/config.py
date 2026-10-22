@@ -21,14 +21,18 @@ EXTRACTOR_ID = "archival-edition"
 VARIANT_ID = "archival-edition"
 PLUGIN_ID = "archival-edition"
 
-REPOSITORY_URL = "https://github.com/cboulanger/pte-plugins/tree/main/plugins/archival-edition"
-PAGES_URL = "https://cboulanger.github.io/pte-plugins/archival-edition"
+REPOSITORY_URL = "https://github.com/mpilhlt/pte-plugins/tree/main/plugins/archival-edition"
+PAGES_URL = "https://mpilhlt.github.io/pte-plugins/archival-edition"
 SCHEMA_URL = f"{PAGES_URL}/schema/tei-archival.rng"
 GUIDELINES_MARKDOWN_URL = f"{PAGES_URL}/guidelines.md"
-GUIDELINES_HTML_URL = "https://github.com/cboulanger/pte-plugins/blob/main/plugins/archival-edition/docs/guidelines.md"
-# Schema URL of documents created before the plugin moved to the pte-plugins repository;
+GUIDELINES_HTML_URL = "https://github.com/mpilhlt/pte-plugins/blob/main/plugins/archival-edition/docs/guidelines.md"
+# Schema URLs of documents created before the plugin moved to mpilhlt/pte-plugins
+# (the former pte-edition-plugin repository and the cboulanger/pte-plugins fork);
 # validated with the bundled schema as well
-LEGACY_SCHEMA_URLS = ("https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng",)
+LEGACY_SCHEMA_URLS = (
+    "https://cboulanger.github.io/pte-edition-plugin/schema/tei-archival.rng",
+    "https://cboulanger.github.io/pte-plugins/archival-edition/schema/tei-archival.rng",
+)
 
 # publicationStmt/authority of generated documents (the project responsible for the edition)
 AUTHORITY_CONFIG_KEY = "plugin.archival-edition.authority"

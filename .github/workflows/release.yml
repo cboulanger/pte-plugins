@@ -1,0 +1,54 @@
+name: Release
+
+# Publishes a plugin release that the editor's plugin manager can install at runtime:
+# pushing a tag <plugin-id>-v<version> (the version in the plugin's pte-plugin.json) builds the
+# plugin's wheel and creates a GitHub release with the wheel, a SHA256SUMS file and a build
+# provenance attestation. The plugin manager installs only release wheels whose sha256
+# matches SHA256SUMS.
+#
+#   git tag grobid-v1.1.0 && git push origin grobid-v1.1.0
+
+on:
+  push:
+    tags: ['*-v*']
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Resolve the plugin of the tag
+        id: plugin
+        run: python3 scripts/release_plugin.py "$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Check the index
+        run: python3 scripts/build_index.py --check
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Build the wheel
+        run: |
+          uv build --wheel "${{ steps.plugin.outputs.path }}" --out-dir dist
+          cd dist && sha256sum *.whl > SHA256SUMS && cat SHA256SUMS
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        # optional: the plugin manager verifies the sha256, not the attestation
+        continue-on-error: true
+        with:
+          subject-path: dist/*.whl
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "${{ steps.plugin.outputs.id }} ${{ steps.plugin.outputs.version }}" \
+            --notes "Plugin \`${{ steps.plugin.outputs.id }}\` version ${{ steps.plugin.outputs.version }}. Install it in the PDF-TEI-Editor plugin manager (Available tab) or with \`uv\` (see README.md)."

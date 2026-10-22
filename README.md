@@ -34,10 +34,25 @@ Plugins for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor). Eac
 The packages are installed into the Python environment of the editor. From a checkout of the editor:
 
 ```bash
-uv pip install "pte-plugin-grobid @ git+https://github.com/cboulanger/pte-plugins#subdirectory=plugins/grobid"
+uv pip install "pte-plugin-grobid @ git+https://github.com/mpilhlt/pte-plugins#subdirectory=plugins/grobid"
 ```
 
 Plugins that depend on other plugins of this repository (see the "requires" field of the index) declare them as package dependencies; uv resolves them within this repository's workspace. Some plugins need configuration (server URLs, API keys) before they become available; see their READMEs.
+
+If the operator enabled runtime install (`PTE_PLUGIN_INSTALL=1`), administrators can also install the released plugins in the editor's plugin manager ("Available" tab). This works for plugins whose Python dependencies (the "dependencies" field of the index) are already installed in the editor's environment; other plugins must be installed as above.
+
+## Releasing a plugin
+
+Releases are what the plugin manager installs. To release a plugin:
+
+1. Raise `version` in its `pte-plugin.json`, run `python scripts/build_index.py` and merge the change.
+2. Tag the merge commit with `<plugin-id>-v<version>` and push the tag:
+
+   ```bash
+   git tag grobid-v1.1.0 && git push origin grobid-v1.1.0
+   ```
+
+The [release workflow](.github/workflows/release.yml) checks that the tag matches the manifest version, builds the wheel, and creates a GitHub release with the wheel, a `SHA256SUMS` file and a build provenance attestation. The plugin manager installs only wheels whose sha256 matches `SHA256SUMS`.
 
 ## Package layout
 

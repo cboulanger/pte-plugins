@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/cboulanger/pte-plugins"
+Repository = "https://github.com/mpilhlt/pte-plugins"
 
 [project.entry-points."pte.plugins"]
 webdav-sync = "pte_plugin_webdav_sync"

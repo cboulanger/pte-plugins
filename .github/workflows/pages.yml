@@ -1,7 +1,7 @@
 name: Pages
 
 # Publishes the documentation that plugins serve to the public, at
-# https://cboulanger.github.io/pte-plugins/<plugin>/ (the plugin's docs/ directory):
+# https://mpilhlt.github.io/pte-plugins/<plugin>/ (the plugin's docs/ directory):
 # - archival-edition: schema and annotation guidelines (their URLs are recorded in TEI documents)
 
 on:

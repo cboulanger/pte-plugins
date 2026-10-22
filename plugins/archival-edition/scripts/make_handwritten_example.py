@@ -44,7 +44,7 @@ SOURCES = [("1.jpg", "1r"), ("2 und 3.jpg", "1v-2r"), ("4.jpg", "2v")]
 
 # Width of the downloaded images (one of the thumbnail sizes Wikimedia serves)
 WIDTH = 1920
-USER_AGENT = "pte-plugins-fixture/1.0 (https://github.com/cboulanger/pte-plugins; fixture build script)"
+USER_AGENT = "pte-plugins-fixture/1.0 (https://github.com/mpilhlt/pte-plugins; fixture build script)"
 
 # Description taken from the Commons file pages and from the scans themselves
 VALUES = {
