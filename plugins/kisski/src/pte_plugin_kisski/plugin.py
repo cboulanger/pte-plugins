@@ -58,11 +58,6 @@ class KisskiPlugin(Plugin):
         """Return available endpoints."""
         return {}
 
-    @classmethod
-    def is_available(cls) -> bool:
-        """Check if KISSKI extractor is available (API key configured)."""
-        return KisskiExtractor.is_available()
-
     async def initialize(self, context: PluginContext) -> None:
         """Register the KISSKI extractor and service."""
         import os
