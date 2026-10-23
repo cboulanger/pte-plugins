@@ -26,7 +26,7 @@ For KISSKI models in the inference model picker, Each user enters their own key 
 
 The structured-data extractor (`/api/plugins/kisski/extract`) uses only the shared key and is unavailable without it.
 
-Obtain a key from the [KISSKI LLM Service](https://docs.hpc.gwdg.de/services/saia/index.html) booking page.
+Obtain a key from the [KISSKI LLM Service](https://saia.gwdg.de/dashboard) dashboard.
 
 ### PDF Support (Optional)
 

@@ -98,7 +98,7 @@ class KisskiPlugin(Plugin):
                 SECRET_SERVICE_ID,
                 "KISSKI Academic Cloud",
                 "Used for KISSKI models in the inference model picker.",
-                "https://docs.hpc.gwdg.de/services/saia/index.html",
+                "https://saia.gwdg.de/dashboard",
             )
             LLMProviderRegistry.get_instance().register(
                 KisskiLLMProvider(
