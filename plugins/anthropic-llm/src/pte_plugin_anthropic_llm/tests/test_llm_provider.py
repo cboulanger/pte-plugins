@@ -22,7 +22,9 @@ class TestAnthropicLLMProviderAvailability(unittest.TestCase):
         provider = AnthropicLLMProvider(id="anthropic", label="Anthropic Claude", api_key="k")
         self.assertTrue(provider.has_shared_key())
 
-    def test_has_no_shared_key_without_api_key(self):
+    @patch("pte_plugin_anthropic_llm.llm_provider.get_config")
+    def test_has_no_shared_key_without_api_key(self, mock_get_config):
+        mock_get_config.return_value.get.return_value = None
         provider = AnthropicLLMProvider(id="anthropic", label="Anthropic Claude", api_key="")
         self.assertFalse(provider.has_shared_key())
 
@@ -193,6 +195,45 @@ class TestAnthropicLLMProviderImageInput(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(content[1]["source"]["media_type"], "image/jpeg")
         self.assertEqual(content[2], {"type": "text", "text": "usr"})
+
+
+class TestAnthropicLLMProviderSharedKey(unittest.TestCase):
+    """Test that the shared key is read from config on each use, not frozen at registration."""
+
+    def _provider(self):
+        return AnthropicLLMProvider(id="anthropic", label="Anthropic Claude", api_key=None, secret_service="anthropic")
+
+    @patch("pte_plugin_anthropic_llm.llm_provider.get_config")
+    def test_shared_key_set_after_registration_is_used(self, mock_get_config):
+        values = {"plugin.anthropic-llm.api.key": None}
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: values.get(key)
+        provider = self._provider()
+        self.assertFalse(provider.has_shared_key())
+
+        values["plugin.anthropic-llm.api.key"] = "admin-key"
+
+        self.assertTrue(provider.has_shared_key())
+        self.assertEqual(provider._headers()["x-api-key"], "admin-key")
+
+    @patch("pte_plugin_anthropic_llm.llm_provider.get_config")
+    def test_shared_key_removed_after_registration_is_dropped(self, mock_get_config):
+        values = {"plugin.anthropic-llm.api.key": "admin-key"}
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: values.get(key)
+        provider = self._provider()
+        self.assertTrue(provider.has_shared_key())
+
+        values["plugin.anthropic-llm.api.key"] = ""
+
+        self.assertFalse(provider.has_shared_key())
+
+    @patch("pte_plugin_anthropic_llm.llm_provider.get_config")
+    def test_user_key_takes_precedence_over_shared_key(self, mock_get_config):
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: "admin-key"
+
+        user_provider = self._provider().with_api_key("user-key")
+
+        self.assertEqual(user_provider._headers()["x-api-key"], "user-key")
+        self.assertEqual(user_provider.secret_service, "anthropic")
 
 
 if __name__ == "__main__":
