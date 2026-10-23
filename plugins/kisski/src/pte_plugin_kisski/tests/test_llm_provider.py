@@ -80,5 +80,44 @@ class TestKisskiLLMProviderListModels(unittest.TestCase):
         self.assertEqual(models[0]["status"]["availability"], "available")
 
 
+class TestKisskiLLMProviderSharedKey(unittest.TestCase):
+    """Test that the shared key is read from config on each use, not frozen at registration."""
+
+    def _provider(self):
+        return KisskiLLMProvider(id="kisski", label="KISSKI", base_url="https://x/v1", api_key=None, secret_service="kisski")
+
+    @patch("pte_plugin_kisski.llm_provider.get_config")
+    def test_shared_key_set_after_registration_is_used(self, mock_get_config):
+        values = {"plugin.kisski.api.key": None}
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: values.get(key)
+        provider = self._provider()
+        self.assertFalse(provider.has_shared_key())
+
+        values["plugin.kisski.api.key"] = "admin-key"
+
+        self.assertTrue(provider.has_shared_key())
+        self.assertEqual(provider._api_key, "admin-key")
+
+    @patch("pte_plugin_kisski.llm_provider.get_config")
+    def test_shared_key_removed_after_registration_is_dropped(self, mock_get_config):
+        values = {"plugin.kisski.api.key": "admin-key"}
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: values.get(key)
+        provider = self._provider()
+        self.assertTrue(provider.has_shared_key())
+
+        values["plugin.kisski.api.key"] = ""
+
+        self.assertFalse(provider.has_shared_key())
+
+    @patch("pte_plugin_kisski.llm_provider.get_config")
+    def test_user_key_takes_precedence_over_shared_key(self, mock_get_config):
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: "admin-key"
+
+        user_provider = self._provider().with_api_key("user-key")
+
+        self.assertEqual(user_provider._api_key, "user-key")
+        self.assertEqual(user_provider.secret_service, "kisski")
+
+
 if __name__ == "__main__":
     unittest.main()
