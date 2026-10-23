@@ -13,7 +13,7 @@ import logging
 import os
 from typing import Any, Callable
 
-from fastapi_app.plugin_api import get_config, get_plugin_config, LLMProviderRegistry, Plugin, PluginContext
+from fastapi_app.plugin_api import get_plugin_config, LLMProviderRegistry, Plugin, PluginContext
 from fastapi_app.lib.secrets import register_secret_service
 
 from .llm_provider import GoogleLLMProvider
@@ -61,7 +61,6 @@ class GoogleLLMPlugin(Plugin):
         # Skip in test mode, mirroring KisskiPlugin's guard, so a live-network-
         # capable provider never silently registers during test runs.
         app_mode = os.environ.get("FASTAPI_APPLICATION_MODE", "development")
-        api_key = get_config().get("plugin.google-llm.api.key")
         if app_mode == "testing":
             logger.info("Google LLM provider not registered in testing mode")
         else:
@@ -72,9 +71,9 @@ class GoogleLLMPlugin(Plugin):
                 "https://aistudio.google.com/apikey",
             )
             LLMProviderRegistry.get_instance().register(
-                GoogleLLMProvider(id="google", label="Google Gemini", api_key=api_key, secret_service=SECRET_SERVICE_ID)
+                GoogleLLMProvider(id="google", label="Google Gemini", api_key=None, secret_service=SECRET_SERVICE_ID)
             )
-            logger.info("Google LLM provider registered (%s)", "shared key" if api_key else "per-user keys")
+            logger.info("Google LLM provider registered")
 
     async def cleanup(self) -> None:
         """Unregister the Gemini LLM provider connector."""
