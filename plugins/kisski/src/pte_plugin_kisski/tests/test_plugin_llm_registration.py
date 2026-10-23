@@ -60,6 +60,12 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(provider.is_available())
 
     @patch("pte_plugin_kisski.plugin.get_config")
+    def test_plugin_is_available_without_shared_api_key(self, mock_get_config):
+        # Users can store their own key, so the plugin must load without a shared one
+        mock_get_config.return_value = self._mock_config(api_key=None)
+        self.assertTrue(KisskiPlugin.is_available())
+
+    @patch("pte_plugin_kisski.plugin.get_config")
     async def test_initialize_registers_llm_provider_for_user_keys_without_api_key(self, mock_get_config):
         mock_get_config.return_value = self._mock_config(api_key=None)
         plugin = KisskiPlugin()

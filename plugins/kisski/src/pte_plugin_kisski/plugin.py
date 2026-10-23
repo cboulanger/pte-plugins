@@ -58,11 +58,6 @@ class KisskiPlugin(Plugin):
         """Return available endpoints."""
         return {}
 
-    @classmethod
-    def is_available(cls) -> bool:
-        """Check if KISSKI extractor is available (API key configured)."""
-        return KisskiExtractor.is_available()
-
     async def initialize(self, context: PluginContext) -> None:
         """Register the KISSKI extractor and service."""
         import os
@@ -103,7 +98,7 @@ class KisskiPlugin(Plugin):
                 SECRET_SERVICE_ID,
                 "KISSKI Academic Cloud",
                 "Used for KISSKI models in the inference model picker.",
-                "https://docs.hpc.gwdg.de/services/saia/index.html",
+                "https://saia.gwdg.de/dashboard",
             )
             LLMProviderRegistry.get_instance().register(
                 KisskiLLMProvider(
