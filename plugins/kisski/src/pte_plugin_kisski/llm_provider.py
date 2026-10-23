@@ -17,7 +17,7 @@ than inventing new ones.
 from typing import Literal
 
 from fastapi_app.lib.extraction.http_utils import get_retry_session
-from fastapi_app.plugin_api import LLMModel, ModelStatus, OpenAICompatibleProvider
+from fastapi_app.plugin_api import LLMModel, ModelStatus, OpenAICompatibleProvider, get_config
 
 
 def _demand_to_availability(demand: int) -> Literal["available", "busy", "very_busy"]:
@@ -29,7 +29,18 @@ def _demand_to_availability(demand: int) -> Literal["available", "busy", "very_b
 
 
 class KisskiLLMProvider(OpenAICompatibleProvider):
-    """LLM provider connector for KISSKI Academic Cloud, with live demand status."""
+    """LLM provider connector for KISSKI Academic Cloud, with live demand status.
+
+    The shared key is read from `plugin.kisski.api.key` on every use, so an admin can set or remove it without a restart. A key passed to the constructor (a user's own key, see with_api_key()) takes precedence.
+    """
+
+    @property
+    def _api_key(self) -> str | None:
+        return self._own_api_key or get_config().get("plugin.kisski.api.key") or None
+
+    @_api_key.setter
+    def _api_key(self, value: str | None) -> None:
+        self._own_api_key = value
 
     def list_models(self) -> list[LLMModel]:
         session = get_retry_session(retries=3, backoff_factor=1.0)

@@ -48,9 +48,10 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         mock_config.get.side_effect = lambda key, *a, **kw: values.get(key)
         return mock_config
 
+    @patch("pte_plugin_kisski.llm_provider.get_config")
     @patch("pte_plugin_kisski.plugin.get_config")
-    async def test_initialize_registers_llm_provider_when_api_key_present(self, mock_get_config):
-        mock_get_config.return_value = self._mock_config(api_key="real-key")
+    async def test_initialize_registers_llm_provider_when_api_key_present(self, mock_get_config, mock_provider_config):
+        mock_get_config.return_value = mock_provider_config.return_value = self._mock_config(api_key="real-key")
         plugin = KisskiPlugin()
 
         await plugin.initialize(None)  # initialize() never reads from context
@@ -65,9 +66,10 @@ class TestKisskiPluginLLMRegistration(unittest.IsolatedAsyncioTestCase):
         mock_get_config.return_value = self._mock_config(api_key=None)
         self.assertTrue(KisskiPlugin.is_available())
 
+    @patch("pte_plugin_kisski.llm_provider.get_config")
     @patch("pte_plugin_kisski.plugin.get_config")
-    async def test_initialize_registers_llm_provider_for_user_keys_without_api_key(self, mock_get_config):
-        mock_get_config.return_value = self._mock_config(api_key=None)
+    async def test_initialize_registers_llm_provider_for_user_keys_without_api_key(self, mock_get_config, mock_provider_config):
+        mock_get_config.return_value = mock_provider_config.return_value = self._mock_config(api_key=None)
         plugin = KisskiPlugin()
 
         await plugin.initialize(None)

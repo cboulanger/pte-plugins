@@ -67,7 +67,6 @@ class AnthropicLLMPlugin(Plugin):
         # Skip in test mode, mirroring KisskiPlugin's guard, so a live-network-
         # capable provider never silently registers during test runs.
         app_mode = os.environ.get("FASTAPI_APPLICATION_MODE", "development")
-        api_key = get_config().get("plugin.anthropic-llm.api.key")
         base_url = get_config().get("plugin.anthropic-llm.api.url")
         if app_mode == "testing":
             logger.info("Anthropic LLM provider not registered in testing mode")
@@ -80,11 +79,11 @@ class AnthropicLLMPlugin(Plugin):
             )
             LLMProviderRegistry.get_instance().register(
                 AnthropicLLMProvider(
-                    id="anthropic", label="Anthropic Claude", api_key=api_key, base_url=base_url,
+                    id="anthropic", label="Anthropic Claude", api_key=None, base_url=base_url,
                     secret_service=SECRET_SERVICE_ID,
                 )
             )
-            logger.info("Anthropic LLM provider registered (%s)", "shared key" if api_key else "per-user keys")
+            logger.info("Anthropic LLM provider registered")
 
     async def cleanup(self) -> None:
         """Unregister the Claude LLM provider connector."""
