@@ -17,7 +17,7 @@ from pathlib import Path
 import requests
 
 from fastapi_app.lib.extraction.http_utils import get_retry_session
-from fastapi_app.plugin_api import LLMImage, LLMModel, LLMProvider
+from fastapi_app.plugin_api import LLMImage, LLMModel, LLMProvider, get_config
 
 logger = logging.getLogger(__name__)
 
@@ -29,14 +29,21 @@ REQUEST_TIMEOUT_SECONDS = 300
 
 
 class AnthropicLLMProvider(LLMProvider):
-    """LLM provider connector for Anthropic's Claude API."""
+    """LLM provider connector for Anthropic's Claude API.
+
+    The shared key is read from `plugin.anthropic-llm.api.key` on every use, so an admin can set or remove it without a restart. A key passed to the constructor (a user's own key, see with_api_key()) takes precedence.
+    """
 
     def __init__(self, id: str, label: str, api_key: str | None, base_url: str = "https://api.anthropic.com/v1", secret_service: str | None = None):
         self.id = id
         self.label = label
-        self._api_key = api_key
+        self._own_api_key = api_key
         self._base_url = base_url.rstrip("/")
         self.secret_service = secret_service
+
+    @property
+    def _api_key(self) -> str | None:
+        return self._own_api_key or get_config().get("plugin.anthropic-llm.api.key") or None
 
     def has_shared_key(self) -> bool:
         return bool(self._api_key)

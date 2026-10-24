@@ -1,0 +1,59 @@
+name: Release plugins
+
+# On every push to main, runs semantic-release once per plugin listed in pte-plugins.json,
+# scoped to that plugin's own Conventional Commits (scope must equal the plugin id, e.g.
+# "fix(grobid): ..."). A qualifying plugin gets its pte-plugin.json version bumped, a commit,
+# and a <plugin-id>-v<version> tag — which release.yml turns into a wheel + GitHub release.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release-plugins
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # The release commit this workflow pushes carries no [skip ci] (it would also suppress
+    # release.yml's tag-push trigger, see release.config.js), so it re-triggers this workflow.
+    # Guard against re-entering the loop for nothing: that second run would find only the
+    # release commit itself since each plugin's last tag, never scoped to any plugin.
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          # A deploy key, not the default GITHUB_TOKEN: pushes authenticated with GITHUB_TOKEN
+          # (a) are rejected by the "main" branch ruleset (pull_request rule, no bypass for it)
+          # and (b) never trigger other workflows even when they succeed, so the <plugin-id>-v
+          # <version> tag this job pushes would never reach release.yml. The deploy key is
+          # registered with write access and listed as a DeployKey bypass actor on the ruleset.
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - run: npm ci
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Release each plugin with qualifying commits
+        run: |
+          set -e
+          for id in $(jq -r '.plugins[].id' pte-plugins.json); do
+            echo "::group::$id"
+            path=$(jq -r --arg id "$id" '.plugins[] | select(.id==$id) | .path' pte-plugins.json)
+            PLUGIN_ID="$id" PLUGIN_PATH="$path" npx semantic-release
+            echo "::endgroup::"
+          done

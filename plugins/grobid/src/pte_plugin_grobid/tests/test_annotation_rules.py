@@ -161,6 +161,64 @@ class TestBuildRefsForGuideShapeTable(unittest.TestCase):
         ])
 
 
+    @patch("pte_plugin_grobid.annotation_rules.translate_anchor_to_line_range")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
+    def test_machine_url_replaces_the_derived_machine_ref(
+        self, mock_get_guides, mock_resolve, mock_translate
+    ):
+        mock_get_guides.return_value = [
+            {"variant_ids": ["v1"], "category": "primary", "type": "markdown",
+             "url": "https://github.com/x/y/blob/main/g.md#segmentation",
+             "machine_url": "https://github.com/x/y/blob/main/g-llm.md#segmentation", "label": "Guide"},
+        ]
+        mock_resolve.side_effect = lambda url, cache: url.replace("main", "sha1")
+        mock_translate.return_value = (5, 9)
+
+        entries = build_editorial_decl_entries("v1", MagicMock())
+
+        self.assertEqual(entries[0]["refs"], [
+            {"target": "https://github.com/x/y/blob/sha1/g.md#segmentation", "content_type": "markdown", "subtype": "human"},
+            {"target": "https://github.com/x/y/blob/sha1/g-llm.md#L5-L9", "content_type": "markdown", "subtype": "machine"},
+        ])
+        mock_translate.assert_called_once()
+        self.assertEqual(mock_translate.call_args[0][:2], ("https://github.com/x/y/blob/sha1/g-llm.md", "segmentation"))
+
+    @patch("pte_plugin_grobid.annotation_rules.translate_anchor_to_line_range")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
+    def test_machine_url_line_range_is_used_as_is(self, mock_get_guides, mock_resolve, mock_translate):
+        mock_get_guides.return_value = [
+            {"variant_ids": ["v1"], "category": "primary", "type": "markdown",
+             "url": "https://github.com/x/y/blob/main/g.md#segmentation",
+             "machine_url": "https://github.com/x/y/blob/main/g-llm.md#L3-L7", "label": "Guide"},
+        ]
+        mock_resolve.side_effect = lambda url, cache: url.replace("main", "sha1")
+
+        entries = build_editorial_decl_entries("v1", MagicMock())
+
+        self.assertEqual(entries[0]["refs"][1]["target"], "https://github.com/x/y/blob/sha1/g-llm.md#L3-L7")
+        mock_translate.assert_not_called()
+
+    @patch("pte_plugin_grobid.annotation_rules.translate_anchor_to_line_range")
+    @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
+    @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")
+    def test_falls_back_to_the_guide_section_when_machine_url_anchor_not_found(
+        self, mock_get_guides, mock_resolve, mock_translate
+    ):
+        mock_get_guides.return_value = [
+            {"variant_ids": ["v1"], "category": "primary", "type": "markdown",
+             "url": "https://github.com/x/y/blob/main/g.md#segmentation",
+             "machine_url": "https://github.com/x/y/blob/main/g-llm.md#segmentation", "label": "Guide"},
+        ]
+        mock_resolve.side_effect = lambda url, cache: url.replace("main", "sha1")
+        mock_translate.side_effect = lambda url, anchor, cache: None if "g-llm" in url else (10, 40)
+
+        entries = build_editorial_decl_entries("v1", MagicMock())
+
+        self.assertEqual(entries[0]["refs"][1]["target"], "https://github.com/x/y/blob/sha1/g.md#L10-L40")
+
+
 class TestBuildEditorialDeclEntriesSchemaFragment(unittest.TestCase):
     @patch("pte_plugin_grobid.annotation_rules.resolve_forge_permalink")
     @patch("pte_plugin_grobid.annotation_rules.get_annotation_guides")

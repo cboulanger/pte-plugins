@@ -48,7 +48,7 @@
       "package": "pte-plugin-anthropic-llm",
       "module": "pte_plugin_anthropic_llm",
       "path": "plugins/anthropic-llm",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "description": "Registers Anthropic's Claude API as an LLM inference provider",
       "requires": [],
       "dependencies": [],
@@ -110,7 +110,7 @@
       "package": "pte-plugin-google-llm",
       "module": "pte_plugin_google_llm",
       "path": "plugins/google-llm",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "description": "Registers Google's Gemini API as an LLM inference provider",
       "requires": [],
       "dependencies": [
@@ -127,7 +127,7 @@
       "package": "pte-plugin-grobid",
       "module": "pte_plugin_grobid",
       "path": "plugins/grobid",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "Extract training data using GROBID server",
       "requires": [],
       "dependencies": [],
@@ -151,11 +151,25 @@
       }
     },
     {
+      "id": "inference-endpoints",
+      "package": "pte-plugin-inference-endpoints",
+      "module": "pte_plugin_inference_endpoints",
+      "path": "plugins/inference-endpoints",
+      "version": "1.0.0",
+      "description": "Registers OpenAI-compatible inference endpoints (e.g. Ollama) as LLM providers",
+      "requires": [],
+      "dependencies": [],
+      "engines": {
+        "pte": ">=0.76.0",
+        "pte-plugin-api": "^1.0"
+      }
+    },
+    {
       "id": "kisski",
       "package": "pte-plugin-kisski",
       "module": "pte_plugin_kisski",
       "path": "plugins/kisski",
-      "version": "2.0.0",
+      "version": "2.0.2",
       "description": "Text and PDF processing using KISSKI Academic Cloud API",
       "requires": [],
       "dependencies": [

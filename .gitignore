@@ -6,3 +6,6 @@ __pycache__/
 build/
 dist/
 node_modules/
+_site/
+uv.lock
+/data/schema/

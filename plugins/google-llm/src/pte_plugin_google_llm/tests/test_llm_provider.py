@@ -18,7 +18,9 @@ class TestGoogleLLMProviderAvailability(unittest.TestCase):
         provider = GoogleLLMProvider(id="google", label="Google Gemini", api_key="k")
         self.assertTrue(provider.has_shared_key())
 
-    def test_has_no_shared_key_without_api_key(self):
+    @patch("pte_plugin_google_llm.llm_provider.get_config")
+    def test_has_no_shared_key_without_api_key(self, mock_get_config):
+        mock_get_config.return_value.get.return_value = None
         provider = GoogleLLMProvider(id="google", label="Google Gemini", api_key="")
         self.assertFalse(provider.has_shared_key())
 
@@ -58,7 +60,9 @@ class TestGoogleLLMProviderListModels(unittest.TestCase):
         self.assertEqual(models[1]["id"], "gemini-1.5-pro")
         self.assertEqual(models[1]["label"], "gemini-1.5-pro")  # falls back to id
 
-    def test_list_models_returns_empty_without_api_key(self):
+    @patch("pte_plugin_google_llm.llm_provider.get_config")
+    def test_list_models_returns_empty_without_api_key(self, mock_get_config):
+        mock_get_config.return_value.get.return_value = None
         provider = GoogleLLMProvider(id="google", label="Google Gemini", api_key="")
         self.assertEqual(provider.list_models(), [])
 
@@ -227,6 +231,67 @@ class TestGoogleLLMProviderPdfInput(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(mock_client.aio.files.upload.call_args.kwargs["file"], "/x.pdf")
         self.assertEqual(mock_client.aio.models.generate_content.call_args.kwargs["contents"], [uploaded, "usr"])
         mock_client.aio.files.delete.assert_called_once_with(name="files/abc")
+
+
+class TestGoogleLLMProviderSharedKey(unittest.TestCase):
+    """Test that the shared key is read from config on each use, not frozen at registration."""
+
+    def _provider(self):
+        return GoogleLLMProvider(id="google", label="Google Gemini", api_key=None, secret_service="google")
+
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.get_config")
+    def test_shared_key_set_after_registration_is_used(self, mock_get_config, mock_client_cls):
+        values = {"plugin.google-llm.api.key": None}
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: values.get(key)
+        mock_client_cls.return_value.models.list.return_value = []
+        provider = self._provider()
+        self.assertFalse(provider.has_shared_key())
+
+        values["plugin.google-llm.api.key"] = "admin-key"
+
+        self.assertTrue(provider.has_shared_key())
+        provider.list_models()
+        mock_client_cls.assert_called_once_with(api_key="admin-key")
+
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.get_config")
+    def test_client_is_rebuilt_when_shared_key_changes(self, mock_get_config, mock_client_cls):
+        values = {"plugin.google-llm.api.key": "old-key"}
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: values.get(key)
+        mock_client_cls.return_value.models.list.return_value = []
+        provider = self._provider()
+        provider.list_models()
+        provider.list_models()
+
+        values["plugin.google-llm.api.key"] = "new-key"
+        provider.list_models()
+
+        self.assertEqual([c.kwargs["api_key"] for c in mock_client_cls.call_args_list], ["old-key", "new-key"])
+
+    @patch("pte_plugin_google_llm.llm_provider.get_config")
+    def test_shared_key_removed_after_registration_is_dropped(self, mock_get_config):
+        values = {"plugin.google-llm.api.key": "admin-key"}
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: values.get(key)
+        provider = self._provider()
+        self.assertTrue(provider.has_shared_key())
+
+        values["plugin.google-llm.api.key"] = ""
+
+        self.assertFalse(provider.has_shared_key())
+        self.assertEqual(provider.list_models(), [])
+
+    @patch("pte_plugin_google_llm.llm_provider.genai.Client")
+    @patch("pte_plugin_google_llm.llm_provider.get_config")
+    def test_user_key_takes_precedence_over_shared_key(self, mock_get_config, mock_client_cls):
+        mock_get_config.return_value.get.side_effect = lambda key, *a, **kw: "admin-key"
+        mock_client_cls.return_value.models.list.return_value = []
+
+        user_provider = self._provider().with_api_key("user-key")
+        user_provider.list_models()
+
+        mock_client_cls.assert_called_once_with(api_key="user-key")
+        self.assertEqual(user_provider.secret_service, "google")
 
 
 if __name__ == "__main__":

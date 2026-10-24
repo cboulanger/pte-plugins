@@ -16,6 +16,7 @@ Plugins for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor). Eac
 | [google-llm](plugins/google-llm) | `pte-plugin-google-llm` | 1.0.0 | Registers Google's Gemini API as an LLM inference provider |
 | [grobid](plugins/grobid) | `pte-plugin-grobid` | 1.0.0 | Extract training data using GROBID server |
 | [iaa-analyzer](plugins/iaa-analyzer) | `pte-plugin-iaa-analyzer` | 1.0.0 | Compute agreement between annotation versions by comparing element positions in <text> |
+| [inference-endpoints](plugins/inference-endpoints) | `pte-plugin-inference-endpoints` | 1.0.0 | Registers OpenAI-compatible inference endpoints (e.g. Ollama) as LLM providers |
 | [kisski](plugins/kisski) | `pte-plugin-kisski` | 2.0.0 | Text and PDF processing using KISSKI Academic Cloud API |
 | [llamore](plugins/llamore-extractor) | `pte-plugin-llamore-extractor` | 1.0.0 | Extract references using LLamore with the configured LLM model |
 | [local-sync](plugins/local-sync) | `pte-plugin-local-sync` | 1.0.0 | Synchronize collection documents with local filesystem |
@@ -26,6 +27,8 @@ Plugins for the [PDF-TEI-Editor](https://github.com/mpilhlt/pdf-tei-editor). Eac
 | [webdav-sync](plugins/webdav-sync) | `pte-plugin-webdav-sync` | 1.0.0 | Synchronize files with a WebDAV server |
 
 [pte-plugins.json](pte-plugins.json) lists the same information in machine-readable form. It is generated from the packages by `python scripts/build_index.py`; CI checks that it is up to date.
+
+The [overview page](https://mpilhlt.github.io/pte-plugins/) on GitHub Pages lists the plugins with their metadata and links to their READMEs. The [Pages workflow](.github/workflows/pages.yml) rebuilds it with `python scripts/build_site.py` on every push to `main`. The site also publishes `pte-plugins.json` and each plugin's `docs/` directory at `https://mpilhlt.github.io/pte-plugins/<name>/` (e.g. the archival-edition schema and guidelines).
 
 `archived/` contains plugins that are no longer maintained. They are not packaged and not tested.
 
@@ -43,16 +46,26 @@ If the operator enabled runtime install (`PTE_PLUGIN_INSTALL=1`), administrators
 
 ## Releasing a plugin
 
-Releases are what the plugin manager installs. To release a plugin:
+Releases are what the plugin manager installs, and they are triggered by commit messages, not by hand. A commit releases a plugin only when its Conventional Commits **scope is exactly that plugin's id** (the `id` field in `pte-plugins.json`, e.g. `grobid` or `archival-edition`):
 
-1. Raise `version` in its `pte-plugin.json`, run `python scripts/build_index.py` and merge the change.
-2. Tag the merge commit with `<plugin-id>-v<version>` and push the tag:
+```text
+fix(grobid): handle a broken bibl split        -> patch release of grobid
+feat(archival-edition): support TEI facsimile  -> minor release of archival-edition
+```
 
-   ```bash
-   git tag grobid-v1.1.0 && git push origin grobid-v1.1.0
-   ```
+A breaking change needs a `BREAKING CHANGE:` footer (not the `type(scope)!:` shorthand, which this project's parser configuration does not recognize) to trigger a major release:
 
-The [release workflow](.github/workflows/release.yml) checks that the tag matches the manifest version, builds the wheel, and creates a GitHub release with the wheel, a `SHA256SUMS` file and a build provenance attestation. The plugin manager installs only wheels whose sha256 matches `SHA256SUMS`.
+```text
+fix(grobid): rename the public extractor function
+
+BREAKING CHANGE: `extract()` is now `extractBibl()`
+```
+
+Commits without a scope, or whose scope does not match any plugin id, release nothing. A commit scoped to one plugin is never counted for another, even one whose id is a prefix of it (`grobid` vs. a hypothetical `grobid-extra`).
+
+On every push to `main`, [`.github/workflows/semantic-release.yml`](.github/workflows/semantic-release.yml) runs `semantic-release` once per plugin listed in `pte-plugins.json`, scoped to that plugin's own commits since its last release (see [`release.config.js`](release.config.js) and [`scripts/release/scoped-release-plugin.js`](scripts/release/scoped-release-plugin.js)). For a plugin with a qualifying commit, it: raises `version` in the plugin's `pte-plugin.json` (via [`scripts/bump_plugin_version.py`](scripts/bump_plugin_version.py)), regenerates `pte-plugins.json`, commits both as `chore(release): <plugin-id> <version>`, and tags the commit `<plugin-id>-v<version>`. That tag is what the [release workflow](.github/workflows/release.yml) listens for: it checks that the tag matches the manifest version, builds the wheel, and creates a GitHub release with the wheel, a `SHA256SUMS` file and a build provenance attestation. The plugin manager installs only wheels whose sha256 matches `SHA256SUMS`.
+
+A manual `pte-plugin.json` version bump without a matching commit is not recommended: the next automated release recomputes the version from commit history and will overwrite it.
 
 ## Package layout
 

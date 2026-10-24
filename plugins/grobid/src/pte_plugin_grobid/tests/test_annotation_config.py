@@ -316,6 +316,18 @@ class TestAnnotationGuidesCategory(unittest.TestCase):
         self.assertEqual(segmentation[0]["category"], "primary")
         self.assertIn("github.com/mpilhlt/fossil", segmentation[0]["url"])
 
+    def test_fossil_guides_point_machine_refs_at_the_llm_guidelines_section_of_the_same_name(self):
+        from pte_plugin_grobid.config.annotation_guides import ANNOTATION_GUIDES
+        for guide in ANNOTATION_GUIDES:
+            if "/docs/guidelines.md#" not in guide["url"]:
+                continue
+            anchor = guide["url"].partition("#")[2]
+            self.assertEqual(
+                guide.get("machine_url"),
+                guide["url"].replace("/docs/guidelines.md#", "/docs/guidelines-llm.md#"),
+                f"guide '{anchor}' has no machine_url for its section of guidelines-llm.md",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
